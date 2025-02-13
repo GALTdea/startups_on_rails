@@ -23,9 +23,27 @@
   </head>
 
   <body>
+    <nav class="bg-white shadow-sm">
+      <div class="container mx-auto px-4 py-3 flex justify-between items-center">
+        <%= link_to "StartupsOnRails", root_path, class: "text-xl font-bold" %>
+        <div class="flex items-center space-x-4">
+          <% if user_signed_in? %>
+            <% if current_user.admin? %>
+              <%= link_to "Admin", admin_dashboard_path, class: "text-gray-600 hover:text-gray-800" %>
+            <% end %>
+            <%= link_to "Profile", edit_user_registration_path, class: "text-gray-600 hover:text-gray-800" %>
+            <%= button_to "Logout", destroy_user_session_path, method: :delete, class: "text-gray-600 hover:text-gray-800" %>
+          <% else %>
+            <%= link_to "Login", new_user_session_path, class: "text-gray-600 hover:text-gray-800" %>
+            <%= link_to "Sign Up", new_user_registration_path, class: "px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700" %>
+          <% end %>
+        </div>
+      </div>
+    </nav>
+
     <p class="notice"><%= notice %></p>
     <p class="alert"><%= alert %></p>
-    <main class="container mx-auto mt-28 px-5 flex">
+    <main class="container mx-auto mt-8 px-5 flex">
       <%= yield %>
     </main>
   </body>
