@@ -11,4 +11,10 @@ class User < ApplicationRecord
 
   devise :database_authenticatable, :registerable,
          :recoverable, :rememberable, :validatable
+
+  private
+
+  def set_default_role
+    self.role ||= :member  # Set your default role here
+  end
 end
