@@ -4,6 +4,7 @@ Rails.application.routes.draw do
   }, path: "", path_names: { sign_up: "register" }
 
   namespace :admin do
+    get "dashboard/index"
     get "dashboard", to: "dashboard#index"
     resources :users
     # Add other admin resources here
