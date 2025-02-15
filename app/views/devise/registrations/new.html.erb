@@ -21,6 +21,12 @@
     <%= f.password_field :password_confirmation, autocomplete: "new-password" %>
   </div>
 
+  <% if resource.errors[:role].any? %>
+    <div class="text-red-500 text-sm mt-2">
+      <%= resource.errors.full_messages_for(:role).first %>
+    </div>
+  <% end %>
+
   <div class="actions">
     <%= f.submit "Sign up" %>
   </div>
