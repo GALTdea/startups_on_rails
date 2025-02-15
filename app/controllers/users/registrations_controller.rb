@@ -41,8 +41,29 @@ class Users::RegistrationsController < Devise::RegistrationsController
   # protected
 
   # If you have extra params to permit, append them to the sanitizer.
+  before_action :configure_sign_up_params, only: [ :create ]
+  before_action :validate_role_assignment, only: [ :create ]
+
   def configure_sign_up_params
-    devise_parameter_sanitizer.permit(:sign_up, keys: [ :role ])
+    # Only allow role param if current_user is admin
+    if current_user&.admin?
+      devise_parameter_sanitizer.permit(:sign_up, keys: [ :role ])
+    else
+      devise_parameter_sanitizer.permit(:sign_up, keys: [])
+    end
+  end
+
+  def validate_role_assignment
+    return unless params[:user][:role].present?
+    return if current_user&.admin?
+
+    self.resource = resource_class.new(sign_up_params)
+    resource.errors.add(:role, "assignment not permitted")
+
+    respond_to do |format|
+      format.html { render :new, status: :unprocessable_entity }
+      format.turbo_stream { render turbo_stream: turbo_stream.replace(:error_messages, partial: "devise/shared/error_messages") }
+    end
   end
 
   # If you have extra params to permit, append them to the sanitizer.
