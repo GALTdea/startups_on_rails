@@ -12,9 +12,19 @@ class User < ApplicationRecord
   devise :database_authenticatable, :registerable,
          :recoverable, :rememberable, :validatable
 
+  validate :role_assignment_permission, on: :create
+
   private
 
   def set_default_role
     self.role ||= :member  # Set your default role here
+  end
+
+  def role_assignment_permission
+    return unless role_changed? && !persisted?
+
+    if User.roles[role] > User.roles[:member] && !User.current.admin?
+      errors.add(:role, "assignment not permitted")
+    end
   end
 end
