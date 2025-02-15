@@ -1,8 +1,7 @@
 Rails.application.routes.draw do
   devise_for :users, controllers: {
-    registrations: "users/registrations",
-    confirmations: "users/confirmations"
-  }
+    registrations: "users/registrations"
+  }, path: "", path_names: { sign_up: "register" }
 
   namespace :admin do
     get "dashboard", to: "dashboard#index"
