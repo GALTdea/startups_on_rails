@@ -14,6 +14,9 @@ class User < ApplicationRecord
 
   validate :role_assignment_permission, on: :create
 
+  # Add this scope
+  scope :company_owners, -> { where(role: :company_owner) }
+
   private
 
   def set_default_role
@@ -23,7 +26,7 @@ class User < ApplicationRecord
   def role_assignment_permission
     return unless role_changed? && !persisted?
 
-    if User.roles[role] > User.roles[:member] && !User.current.admin?
+    if User.roles[role] > User.roles[:member] && !current_user&.admin?
       errors.add(:role, "assignment not permitted")
     end
   end
