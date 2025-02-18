@@ -1,0 +1,9 @@
+<%= turbo_stream.replace "company_form" do %>
+  <%= render "form", company: @company %>
+<% end %>
+
+<% if @company.persisted? %>
+  <%= turbo_stream.prepend "companies" do %>
+    <%= render @company %>
+  <% end %>
+<% end %>
