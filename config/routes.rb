@@ -4,6 +4,13 @@ Rails.application.routes.draw do
   }, path: "", path_names: { sign_up: "register" }
 
   namespace :admin do
+    get "companies/index"
+    get "companies/show"
+    get "companies/new"
+    get "companies/edit"
+    get "companies/create"
+    get "companies/update"
+    get "companies/destroy"
     get "dashboard/index"
     get "dashboard", to: "dashboard#index"
     resources :users
