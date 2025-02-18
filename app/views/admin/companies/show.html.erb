@@ -1,4 +1,20 @@
-<div>
-  <h1 class="font-bold text-4xl">Admin::Companies#show</h1>
-  <p>Find me in app/views/admin/companies/show.html.erb</p>
+<div class="max-w-4xl mx-auto px-4 py-8">
+  <h1 class="text-3xl font-bold mb-6"><%= @company.name %></h1>
+  
+  <div class="bg-white p-6 rounded-lg shadow-sm space-y-4">
+    <p class="text-gray-600"><%= @company.description %></p>
+    
+    <div class="grid grid-cols-2 gap-4 text-sm">
+      <div>
+        <dt class="font-medium text-gray-700">Website</dt>
+        <dd class="mt-1 text-gray-900"><%= link_to @company.website, @company.website, class: "text-blue-600 hover:underline" %></dd>
+      </div>
+      <div>
+        <dt class="font-medium text-gray-700">Location</dt>
+        <dd class="mt-1 text-gray-900"><%= @company.location %></dd>
+      </div>
+    </div>
+    
+    <%= link_to 'Edit', edit_admin_company_path(@company), class: "mt-6 inline-block px-4 py-2 bg-gray-100 rounded-md hover:bg-gray-200" %>
+  </div>
 </div>
