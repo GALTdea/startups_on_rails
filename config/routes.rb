@@ -7,7 +7,7 @@ Rails.application.routes.draw do
     get "dashboard/index"
     get "dashboard", to: "dashboard#index"
     resources :users
-    # Add other admin resources here
+    resources :companies
   end
 
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
