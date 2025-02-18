@@ -1,8 +1,63 @@
-<% if current_user.admin? %>
-  <div class="field">
-    <%= f.label :user_id, "Company Owner" %>
-    <%= f.collection_select :user_id, @users, :id, :email, 
-          { include_blank: "Select Owner (optional)" },
-          class: "form-select" %>
+<%= form_with(model: [:admin, company], class: "space-y-6 bg-white p-6 rounded-lg shadow-sm") do |f| %>
+  <% if company.errors.any? %>
+    <div id="error_explanation" class="bg-red-50 text-red-500 p-3 rounded-lg mb-4">
+      <h2 class="text-sm font-medium"><%= pluralize(company.errors.count, "error") %> prohibited this company from being saved:</h2>
+      <ul class="mt-1 list-disc list-inside">
+        <% company.errors.each do |error| %>
+          <li class="text-sm"><%= error.full_message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+    <!-- Name Field -->
+    <div>
+      <%= f.label :name, class: "block text-sm font-medium text-gray-700 mb-2" %>
+      <%= f.text_field :name, class: "w-full rounded-md border-gray-300 #{'border-red-500' if company.errors[:name].any?} focus:border-blue-500 focus:ring-blue-500" %>
+    </div>
+
+    <!-- Website Field -->
+    <div>
+      <%= f.label :website, class: "block text-sm font-medium text-gray-700 mb-2" %>
+      <%= f.text_field :website, class: "w-full rounded-md border-gray-300 #{'border-red-500' if company.errors[:website].any?} focus:border-blue-500 focus:ring-blue-500" %>
+      <% if company.errors[:website].any? %>
+        <p class="mt-1 text-sm text-red-500"><%= company.errors[:website].join(", ") %></p>
+      <% end %>
+    </div>
+
+    <!-- Location Field -->
+    <div>
+      <%= f.label :location, class: "block text-sm font-medium text-gray-700 mb-2" %>
+      <%= f.text_field :location, class: "w-full rounded-md border-gray-300 focus:border-blue-500 focus:ring-blue-500" %>
+    </div>
+
+    <!-- Slug Field -->
+    <div>
+      <%= f.label :slug, class: "block text-sm font-medium text-gray-700 mb-2" %>
+      <%= f.text_field :slug, class: "w-full rounded-md border-gray-300 focus:border-blue-500 focus:ring-blue-500" %>
+    </div>
+
+    <% if current_user.admin? %>
+      <!-- Owner Selection -->
+      <div>
+        <%= f.label :user_id, "Company Owner", class: "block text-sm font-medium text-gray-700 mb-2" %>
+        <%= f.collection_select :user_id, @users, :id, :email, 
+              { include_blank: "Select Owner (optional)" },
+              class: "w-full rounded-md border-gray-300 focus:border-blue-500 focus:ring-blue-500" %>
+      </div>
+    <% end %>
+  </div>
+
+  <!-- Description Field -->
+  <div>
+    <%= f.label :description, class: "block text-sm font-medium text-gray-700 mb-2" %>
+    <%= f.text_area :description, rows: 4, 
+          class: "w-full rounded-md border-gray-300 focus:border-blue-500 focus:ring-blue-500" %>
+  </div>
+
+  <div class="flex justify-end space-x-4 mt-8">
+    <%= link_to "Cancel", admin_companies_path, class: "px-4 py-2 border border-gray-300 rounded-md hover:bg-gray-50" %>
+    <%= f.submit "Save Company", class: "px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700" %>
   </div>
 <% end %> 
