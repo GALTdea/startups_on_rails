@@ -1,4 +1,27 @@
-<div>
-  <h1 class="font-bold text-4xl">Admin::Dashboard#index</h1>
-  <p>Find me in app/views/admin/dashboard/index.html.erb</p>
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+  <h1 class="text-2xl font-bold text-gray-900 mb-8">Admin Dashboard</h1>
+  
+  <!-- Stats Cards -->
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+    <%#= render 'admin/dashboard/stat_card', 
+         title: "Total Companies", 
+         value: @stats[:total_companies],
+         icon: :office_building %>
+         
+    <%#= render 'admin/dashboard/stat_card',
+         title: "Pending Approvals",
+         value: @stats[:pending_approvals],
+         icon: :clock %>
+         
+    <%#= render 'admin/dashboard/stat_card',
+         title: "Active Users",
+         value: @stats[:user_counts][:company_owners],
+         icon: :users %>
+  </div>
+
+  <!-- Recent Activity -->
+  <div class="bg-white rounded-lg shadow p-6">
+    <h2 class="text-lg font-semibold mb-4">Recent Companies</h2>
+    <%= render 'admin/companies/table', companies: Company.order(created_at: :desc).limit(5) %>
+  </div>
 </div>

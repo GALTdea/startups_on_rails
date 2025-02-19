@@ -2,7 +2,15 @@ class Admin::DashboardController < ApplicationController
   before_action :authenticate_admin!
 
   def index
-    # Admin dashboard logic
+    @stats = {
+      total_companies: Company.count,
+      recent_companies: Company.where("created_at >= ?", 1.week.ago).count,
+      pending_approvals: Company.where(published: false).count,
+      user_counts: {
+        admins: User.admin.count,
+        company_owners: User.company_owners.count
+      }
+    }
   end
 
   private
