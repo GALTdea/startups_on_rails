@@ -3,6 +3,7 @@ class Admin::CompaniesController < ApplicationController
   before_action :set_company, only: [ :show, :edit, :update, :destroy ]
 
   def index
+    @companies = Company.all.order(created_at: :desc)
   end
 
   def show
