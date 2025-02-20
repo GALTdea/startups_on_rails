@@ -75,5 +75,8 @@
   <div class="bg-white rounded-lg shadow p-6">
     <h2 class="text-lg font-semibold mb-4">Recent Companies</h2>
     <%= render 'admin/companies/table', companies: Company.order(created_at: :desc).limit(5), show_status: false %>
+    <div class="mt-4 text-right">
+      <%= link_to "View all companies →", admin_companies_path, class: "text-sm text-gray-600 hover:text-gray-800" %>
+    </div>
   </div>
 </div>
