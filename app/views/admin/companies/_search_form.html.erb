@@ -1,0 +1,53 @@
+<div class="mb-6 bg-white p-4 rounded-lg shadow-sm">
+  <%= form_with(url: admin_companies_path, 
+      method: :get, 
+      class: "space-y-4", 
+      data: { 
+        turbo_frame: "companies_table",
+        controller: "filter-form"
+      }) do |f| %>
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+      <!-- Search Input -->
+      <div>
+        <%= f.label :search, "Search", class: "block text-sm font-medium text-gray-700 mb-1" %>
+        <%= f.text_field :search, 
+            value: params[:search],
+            class: "w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500",
+            placeholder: "Search by name or description..." %>
+      </div>
+
+      <!-- Status Filter -->
+      <div>
+        <%= f.label :status, "Status", class: "block text-sm font-medium text-gray-700 mb-1" %>
+        <%= f.select :status,
+            options_for_select([
+              ['All', ''],
+              ['Published', 'published'],
+              ['Draft', 'draft']
+            ], params[:status]),
+            {},
+            class: "w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500" %>
+      </div>
+
+      <!-- Date Filter -->
+      <div>
+        <%= f.label :date, "Date Range", class: "block text-sm font-medium text-gray-700 mb-1" %>
+        <%= f.select :date,
+            options_for_select([
+              ['All Time', ''],
+              ['Today', 'today'],
+              ['This Week', 'week'],
+              ['This Month', 'month']
+            ], params[:date]),
+            {},
+            class: "w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500" %>
+      </div>
+
+      <!-- Submit Button -->
+      <div class="flex items-end">
+        <%= f.submit "Apply Filters",
+            class: "w-full px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700" %>
+      </div>
+    </div>
+  <% end %>
+</div>

@@ -5,7 +5,34 @@ class Admin::CompaniesController < ApplicationController
 
   def index
     @companies = Company.all.order(created_at: :desc)
-    @companies = @companies.where(published: false) if params[:pending]
+
+    # Apply search if present
+    if params[:search].present?
+      @companies = @companies.where("name ILIKE :search OR description ILIKE :search",
+                                  search: "%#{params[:search]}%")
+    end
+
+    # Apply status filter
+    @companies = case params[:status]
+    when "published"
+                   @companies.where(published: true)
+    when "draft"
+                   @companies.where(published: false)
+    else
+                   @companies
+    end
+
+    # Apply date filter
+    @companies = case params[:date]
+    when "today"
+                   @companies.where("created_at >= ?", Date.today)
+    when "week"
+                   @companies.where("created_at >= ?", 1.week.ago)
+    when "month"
+                   @companies.where("created_at >= ?", 1.month.ago)
+    else
+                   @companies
+    end
   end
 
   def show
