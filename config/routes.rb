@@ -1,4 +1,6 @@
 Rails.application.routes.draw do
+  get "companies/index"
+  get "companies/show"
   devise_for :users, controllers: {
     registrations: "users/registrations"
   }, path: "", path_names: { sign_up: "register" }
