@@ -1,6 +1,8 @@
 class Company < ApplicationRecord
   belongs_to :owner, class_name: "User", foreign_key: "user_id", optional: true
 
+  before_create :set_unpublished
+
   validates :name, :description, :website, presence: true
   # validates :slug, uniqueness: true
   validate :require_owner_unless_admin
@@ -11,6 +13,10 @@ class Company < ApplicationRecord
   attr_accessor :created_by
 
   private
+
+  def set_unpublished
+    self.published = false if published.nil?
+  end
 
   def require_owner_unless_admin
     Rails.logger.info "Validation check - Admin?: #{created_by_admin?}, User ID: #{user_id}"
