@@ -36,9 +36,17 @@ class Admin::CompaniesController < ApplicationController
   end
 
   def update
+    @company.created_by = current_user
+    if @company.update(company_params)
+      redirect_to admin_companies_path(pending: true), notice: "Company #{@company.published? ? 'approved' : 'updated'} successfully."
+    else
+      render :edit
+    end
   end
 
   def destroy
+    @company.destroy
+    redirect_to admin_companies_path(pending: true), notice: "Company rejected successfully."
   end
 
   private

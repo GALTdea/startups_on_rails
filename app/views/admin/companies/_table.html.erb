@@ -7,7 +7,7 @@
         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Website</th>
         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Created</th>
         <% if local_assigns[:show_status] %>
-          <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+          <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status/Actions</th>
         <% end %>
       </tr>
     </thead>
@@ -26,19 +26,30 @@
           <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
             <%= time_ago_in_words(company.created_at) %> ago
           </td>
-          <% if local_assigns[:show_status] %>
-            <td class="px-6 py-4 whitespace-nowrap">
+          <td class="px-6 py-4 whitespace-nowrap">
+            <% if local_assigns[:show_status] %>
               <% if company.published? %>
                 <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
                   Published
                 </span>
               <% else %>
-                <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-yellow-100 text-yellow-800">
-                  Pending
-                </span>
+                <div class="flex space-x-2">
+                  <%= form_with(model: [:admin, company], method: :patch) do |f| %>
+                    <%= f.hidden_field :published, value: true %>
+                    <%= f.submit "Approve", 
+                        class: "px-3 py-1 text-sm font-medium text-white bg-green-600 rounded-md hover:bg-green-700",
+                        data: { turbo: false } %>
+                  <% end %>
+                  
+                  <%= button_to "Reject", 
+                      admin_company_path(company), 
+                      method: :delete, 
+                      data: { turbo_confirm: "Are you sure you want to reject this company?" },
+                      class: "px-3 py-1 text-sm font-medium text-white bg-red-600 rounded-md hover:bg-red-700" %>
+                </div>
               <% end %>
-            </td>
-          <% end %>
+            <% end %>
+          </td>
         </tr>
       <% end %>
     </tbody>

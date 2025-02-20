@@ -4,5 +4,5 @@
     <%= link_to "New Company", new_admin_company_path, class: "px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700" %>
   </div>
   
-  <%= render 'table', companies: @companies %>
+  <%= render 'table', companies: @companies, show_status: true %>
 </div>
