@@ -1,7 +1,8 @@
 class Admin::DashboardController < ApplicationController
-  before_action :authenticate_admin!
+  after_action :verify_authorized
 
   def index
+    authorize :dashboard
     @stats = {
       total_companies: Company.count,
       recent_companies: Company.where("created_at >= ?", 1.week.ago).count,
@@ -11,13 +12,5 @@ class Admin::DashboardController < ApplicationController
         company_owners: User.company_owners.count
       }
     }
-  end
-
-  private
-
-  def authenticate_admin!
-    return if current_user.admin?
-
-    redirect_to root_path, alert: "Not authorized!"
   end
 end
