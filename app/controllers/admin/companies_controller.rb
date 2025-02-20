@@ -1,4 +1,5 @@
 class Admin::CompaniesController < ApplicationController
+  include ActionView::RecordIdentifier
   before_action :authenticate_admin!
   before_action :set_company, only: [ :show, :edit, :update, :destroy ]
 
@@ -38,7 +39,13 @@ class Admin::CompaniesController < ApplicationController
   def update
     @company.created_by = current_user
     if @company.update(company_params)
-      redirect_to admin_companies_path(pending: true), notice: "Company #{@company.published? ? 'approved' : 'updated'} successfully."
+      respond_to do |format|
+        format.html { redirect_to admin_companies_path, notice: "Company #{@company.published? ? 'published' : 'unpublished'} successfully." }
+        format.turbo_stream {
+          flash.now[:notice] = "Company #{@company.published? ? 'published' : 'unpublished'} successfully."
+          render turbo_stream: turbo_stream.replace("#{dom_id(@company)}_status", partial: "status", locals: { company: @company })
+        }
+      end
     else
       render :edit
     end
