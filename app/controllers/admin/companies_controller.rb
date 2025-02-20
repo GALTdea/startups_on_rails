@@ -4,6 +4,7 @@ class Admin::CompaniesController < ApplicationController
 
   def index
     @companies = Company.all.order(created_at: :desc)
+    @companies = @companies.where(published: false) if params[:pending]
   end
 
   def show
