@@ -17,3 +17,19 @@ two:
   location: MyString
   slug: MyString
   published: false
+
+company_one:
+  name: "Test Company One"
+  description: "A test company"
+  website: "https://example.com"
+  published: true
+  created_at: <%= Time.current %>
+  updated_at: <%= Time.current %>
+
+company_two:
+  name: "Test Company Two"
+  description: "Another test company"
+  website: "https://example2.com"
+  published: false
+  created_at: <%= Time.current %>
+  updated_at: <%= Time.current %>

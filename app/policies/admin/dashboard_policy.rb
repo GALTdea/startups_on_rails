@@ -6,19 +6,42 @@ class Admin::DashboardPolicy < ApplicationPolicy
   # https://gist.github.com/Burgestrand/4b4bc22f31c8a95c425fc0e30d7ef1f5
 
   class Scope < ApplicationPolicy::Scope
-    # NOTE: Be explicit about which records you allow access to!
-    # def resolve
-    #   scope.all
-    # end
-  end
-
-  attr_reader :user
-
-  def initialize(user, _record)
-    @user = user
+    def resolve
+      scope.all
+    end
   end
 
   def index?
+    admin?
+  end
+
+  def show?
+    admin?
+  end
+
+  def create?
+    admin?
+  end
+
+  def new?
+    create?
+  end
+
+  def update?
+    admin?
+  end
+
+  def edit?
+    update?
+  end
+
+  def destroy?
+    admin?
+  end
+
+  private
+
+  def admin?
     user.admin?
   end
 end

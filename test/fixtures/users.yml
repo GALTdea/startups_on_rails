@@ -12,10 +12,10 @@
 
 admin:
   email: admin@example.com
-  role: 2  # Integer value for admin enum
-  encrypted_password: <%= Devise::Encryptor.digest(User, 'password123') %>
+  encrypted_password: <%= Devise::Encryptor.digest(User, 'password') %>
+  role: admin
 
 regular_user:
   email: user@example.com
-  role: 0 # Integer value for member enum
-  encrypted_password: <%= Devise::Encryptor.digest(User, 'password123') %>
+  encrypted_password: <%= Devise::Encryptor.digest(User, 'password') %>
+  role: user
