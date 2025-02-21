@@ -21,6 +21,18 @@ class Company < ApplicationRecord
   validates :category_ids, presence: { message: "must have at least one category" },
                            length: { minimum: 1, maximum: 5 }
 
+  scope :by_category, ->(category_id) {
+    where(exists: CompanyCategory.select("1")
+      .where("company_id = companies.id")
+      .where(category_id: category_id)
+    ) if category_id.present? }
+
+  scope :by_tag, ->(tag_id) {
+    where(exists: CompanyTag.select("1")
+      .where("company_id = companies.id")
+      .where(tag_id: tag_id)
+    ) if tag_id.present? }
+
   private
 
   def set_unpublished
