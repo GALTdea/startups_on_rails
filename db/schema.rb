@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_02_21_171855) do
+ActiveRecord::Schema[8.0].define(version: 2025_02_21_190525) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -41,6 +41,8 @@ ActiveRecord::Schema[8.0].define(version: 2025_02_21_171855) do
   create_table "companies_tags", id: false, force: :cascade do |t|
     t.bigint "company_id", null: false
     t.bigint "tag_id", null: false
+    t.index ["company_id", "tag_id"], name: "index_companies_tags_on_company_id_and_tag_id", unique: true
+    t.index ["tag_id", "company_id"], name: "index_companies_tags_on_tag_id_and_company_id", unique: true
   end
 
   create_table "tags", force: :cascade do |t|
