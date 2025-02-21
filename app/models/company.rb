@@ -18,6 +18,9 @@ class Company < ApplicationRecord
   has_and_belongs_to_many :tags
   has_and_belongs_to_many :categories
 
+  validates :category_ids, presence: { message: "must have at least one category" },
+                           length: { minimum: 1, maximum: 5 }
+
   private
 
   def set_unpublished

@@ -51,14 +51,19 @@
     <!-- Category Selection -->
     <div>
       <%= f.label :category_ids, "Categories", class: "block text-sm font-medium text-gray-700 mb-2" %>
-      <%= f.collection_select :category_ids, 
-            Category.order(:name), 
-            :id, 
-            :name,
-            { include_blank: false },
-            { multiple: true, 
-              class: "w-full rounded-md border-gray-300 focus:border-blue-500 focus:ring-blue-500",
-              data: { controller: "tom-select" } } %>
+      <div class="flex items-center gap-2">
+        <%= f.collection_select :category_ids, 
+              Category.order(:name), 
+              :id, 
+              :name,
+              { include_blank: false },
+              { multiple: true, 
+                class: "w-full rounded-md border-gray-300 focus:border-blue-500 focus:ring-blue-500",
+                data: { controller: "tom-select" } } %>
+        <%= link_to "New Category", new_admin_category_path, 
+             class: "px-3 py-2 text-sm text-blue-600 hover:text-blue-800",
+             data: { turbo_frame: "modal" } %>
+      </div>
     </div>
   </div>
 
