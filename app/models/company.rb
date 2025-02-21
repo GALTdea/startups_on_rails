@@ -27,11 +27,13 @@ class Company < ApplicationRecord
       .where(category_id: category_id)
     ) if category_id.present? }
 
-  scope :by_tag, ->(tag_id) {
-    where(exists: CompanyTag.select("1")
-      .where("company_id = companies.id")
-      .where(tag_id: tag_id)
-    ) if tag_id.present? }
+  scope :by_tags, ->(tag_ids) {
+    tag_ids.present? ? where(
+      Tag.where(id: tag_ids)
+         .where("EXISTS (SELECT 1 FROM companies_tags WHERE companies_tags.tag_id = tags.id AND companies_tags.company_id = companies.id)")
+         .arel.exists
+    ) : all
+  }
 
   private
 

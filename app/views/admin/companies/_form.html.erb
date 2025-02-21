@@ -65,6 +65,24 @@
              data: { turbo_frame: "modal" } %>
       </div>
     </div>
+
+    <!-- Tag Selection -->
+    <div>
+      <%= f.label :tag_ids, "Technologies", class: "block text-sm font-medium text-gray-700 mb-2" %>
+      <div class="flex items-center gap-2">
+        <%= f.collection_select :tag_ids, 
+              Tag.order(:name), 
+              :id, 
+              :name,
+              { include_blank: false },
+              { multiple: true, 
+                class: "w-full rounded-md border-gray-300 focus:border-blue-500 focus:ring-blue-500",
+                data: { controller: "tom-select" } } %>
+        <%= link_to "New Tag", new_admin_tag_path, 
+             class: "px-3 py-2 text-sm text-blue-600 hover:text-blue-800",
+             data: { turbo_frame: "modal" } %>
+      </div>
+    </div>
   </div>
 
   <!-- Description Field -->

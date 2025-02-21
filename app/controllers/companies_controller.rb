@@ -6,7 +6,7 @@ class CompaniesController < ApplicationController
                          .includes(:tags, :categories)
                          .order(created_at: :desc)
                          .merge(Company.by_category(params[:category]))
-                         .merge(Company.by_tag(params[:tag]))
+                         .merge(Company.by_tags(params[:tags]))
                          .search(params[:search])
   end
 
