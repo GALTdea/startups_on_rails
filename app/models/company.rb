@@ -9,6 +9,9 @@ class Company < ApplicationRecord
   # validates :description, presence: true, length: { minimum: 20 }
 
   scope :published, -> { where(published: true) }
+  scope :search, ->(term) {
+    where("name ILIKE :term OR description ILIKE :term", term: "%#{term}%")
+  }
 
   attr_accessor :created_by
 
