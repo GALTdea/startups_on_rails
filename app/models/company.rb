@@ -42,10 +42,10 @@ class Company < ApplicationRecord
   end
 
   def require_owner_unless_admin
-    Rails.logger.info "Validation check - Admin?: #{created_by_admin?}, User ID: #{user_id}"
     return if user_id.present? || created_by_admin?
 
-    errors.add(:user_id, "must be present for non-admin created companies")
+    # Only add error if not being created by admin
+    errors.add(:base, "Owner must be present for non-admin created companies") unless created_by_admin?
   end
 
   def created_by_admin?

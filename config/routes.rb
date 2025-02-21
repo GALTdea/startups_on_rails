@@ -8,6 +8,7 @@ Rails.application.routes.draw do
   namespace :admin do
     resources :companies
     resources :categories
+    resources :tags, only: [ :new, :create ]
     get "dashboard", to: "dashboard#index"
     resources :users
     resources :companies

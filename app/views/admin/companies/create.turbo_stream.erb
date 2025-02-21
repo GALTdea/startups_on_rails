@@ -2,8 +2,4 @@
   <%= render "form", company: @company %>
 <% end %>
 
-<% if @company.persisted? %>
-  <%= turbo_stream.prepend "companies" do %>
-    <%= render @company %>
-  <% end %>
-<% end %>
+<%= turbo_stream.visit admin_companies_path %>

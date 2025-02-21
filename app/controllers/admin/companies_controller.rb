@@ -40,7 +40,7 @@ class Admin::CompaniesController < ApplicationController
 
   def new
     @company = Company.new
-    @users = User.company_owners if current_user.admin?
+    @users = User.company_owners
   end
 
   def edit
@@ -49,15 +49,15 @@ class Admin::CompaniesController < ApplicationController
   def create
     @company = Company.new(company_params)
     @company.created_by = current_user
-    @company.owner = current_user unless current_user.admin?
+    @company.published = true if current_user.admin? # Auto-publish if admin creates
 
     respond_to do |format|
       if @company.save
-        format.html { redirect_to admin_company_path(@company), notice: "Company was successfully created." }
-        format.turbo_stream { redirect_to admin_company_path(@company) }
+        format.html { redirect_to admin_companies_path, notice: "Company created successfully." }
+        format.turbo_stream { redirect_to admin_companies_path }
       else
         @users = User.company_owners if current_user.admin?
-        format.html { render :new }
+        format.html { render :new, status: :unprocessable_entity }
         format.turbo_stream { render turbo_stream: turbo_stream.replace("company_form", partial: "form", locals: { company: @company }) }
       end
     end

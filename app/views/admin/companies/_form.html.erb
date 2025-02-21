@@ -42,7 +42,9 @@
       <!-- Owner Selection -->
       <div>
         <%= f.label :user_id, "Company Owner", class: "block text-sm font-medium text-gray-700 mb-2" %>
-        <%= f.collection_select :user_id, @users, :id, :email, 
+        <%= f.collection_select :user_id, 
+              @users || [], # Handle nil case
+              :id, :email, 
               { include_blank: "Select Owner (optional)" },
               class: "w-full rounded-md border-gray-300 focus:border-blue-500 focus:ring-blue-500" %>
       </div>

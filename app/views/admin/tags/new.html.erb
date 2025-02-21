@@ -1,0 +1,19 @@
+<%= turbo_frame_tag "modal" do %>
+  <div class="p-6 bg-white rounded-lg shadow-sm">
+    <h2 class="text-lg font-semibold mb-4">New Technology Tag</h2>
+    <%= form_with model: [:admin, @tag] do |f| %>
+      <div class="space-y-4">
+        <div>
+          <%= f.label :name, "Tag Name", class: "block text-sm font-medium text-gray-700" %>
+          <%= f.text_field :name, class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500" %>
+        </div>
+        <div class="flex justify-end space-x-4">
+          <%= button_tag "Cancel", type: :button, 
+                class: "px-4 py-2 text-gray-600 hover:text-gray-800",
+                data: { action: "turbo:submit-end->modal#close" } %>
+          <%= f.submit "Create Tag", class: "px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700" %>
+        </div>
+      </div>
+    <% end %>
+  </div>
+<% end %> 
