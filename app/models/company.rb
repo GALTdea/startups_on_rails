@@ -10,7 +10,7 @@ class Company < ApplicationRecord
 
   scope :published, -> { where(published: true) }
   scope :search, ->(term) {
-    where("name ILIKE :term OR description ILIKE :term", term: "%#{term}%")
+    where("companies.name ILIKE :term OR companies.description ILIKE :term", term: "%#{term}%")
   }
 
   attr_accessor :created_by
@@ -21,18 +21,20 @@ class Company < ApplicationRecord
   validates :category_ids, presence: { message: "must have at least one category" },
                            length: { minimum: 1, maximum: 5 }
 
-  scope :by_category, ->(category_id) {
-    where(exists: CompanyCategory.select("1")
-      .where("company_id = companies.id")
-      .where(category_id: category_id)
-    ) if category_id.present? }
+  scope :by_category, ->(category_ids) {
+    return if category_ids.blank? || category_ids.reject(&:blank?).empty?
+
+    joins(:categories)
+      .where(categories: { id: category_ids.reject(&:blank?) })
+      .distinct
+  }
 
   scope :by_tags, ->(tag_ids) {
-    tag_ids.present? ? where(
-      Tag.where(id: tag_ids)
-         .where("EXISTS (SELECT 1 FROM companies_tags WHERE companies_tags.tag_id = tags.id AND companies_tags.company_id = companies.id)")
-         .arel.exists
-    ) : all
+    return if tag_ids.blank? || tag_ids.reject(&:blank?).empty?
+
+    joins(:tags)
+      .where(tags: { id: tag_ids.reject(&:blank?) })
+      .distinct
   }
 
   private
