@@ -2,7 +2,7 @@ class Admin::DashboardController < ApplicationController
   after_action :verify_authorized
 
   def index
-    authorize :dashboard
+    authorize :dashboard, policy_class: Admin::DashboardPolicy
     @stats = {
       total_companies: Company.count,
       recent_companies: Company.where("created_at >= ?", 1.week.ago).count,

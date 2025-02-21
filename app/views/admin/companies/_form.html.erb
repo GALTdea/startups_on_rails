@@ -47,6 +47,19 @@
               class: "w-full rounded-md border-gray-300 focus:border-blue-500 focus:ring-blue-500" %>
       </div>
     <% end %>
+
+    <!-- Category Selection -->
+    <div>
+      <%= f.label :category_ids, "Categories", class: "block text-sm font-medium text-gray-700 mb-2" %>
+      <%= f.collection_select :category_ids, 
+            Category.order(:name), 
+            :id, 
+            :name,
+            { include_blank: false },
+            { multiple: true, 
+              class: "w-full rounded-md border-gray-300 focus:border-blue-500 focus:ring-blue-500",
+              data: { controller: "tom-select" } } %>
+    </div>
   </div>
 
   <!-- Description Field -->

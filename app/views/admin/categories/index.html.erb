@@ -1,0 +1,35 @@
+<div class="max-w-4xl mx-auto px-4 py-8">
+  <div class="flex justify-between items-center mb-6">
+    <h1 class="text-2xl font-bold text-gray-900">Manage Categories</h1>
+  </div>
+
+  <%= form_with model: [:admin, @category], class: "mb-8" do |f| %>
+    <div class="flex gap-4">
+      <%= f.text_field :name, 
+            class: "flex-1 rounded-md border-gray-300 focus:border-blue-500 focus:ring-blue-500",
+            placeholder: "New category name" %>
+      <%= f.submit "Add Category", 
+            class: "px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700" %>
+    </div>
+  <% end %>
+
+  <div class="bg-white rounded-lg shadow overflow-hidden">
+    <table class="min-w-full divide-y divide-gray-200">
+      <tbody class="divide-y divide-gray-200">
+        <% @categories.each do |category| %>
+          <tr>
+            <td class="px-6 py-4 whitespace-nowrap"><%= category.name %></td>
+            <td class="px-6 py-4 whitespace-nowrap text-right space-x-2">
+              <%= link_to "Edit", edit_admin_category_path(category), 
+                    class: "text-indigo-600 hover:text-indigo-900" %>
+              <%= link_to "Delete", admin_category_path(category), 
+                    method: :delete,
+                    data: { confirm: "Are you sure?" },
+                    class: "text-red-600 hover:text-red-900" %>
+            </td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+</div> 

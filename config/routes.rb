@@ -7,6 +7,7 @@ Rails.application.routes.draw do
 
   namespace :admin do
     resources :companies
+    resources :categories
     get "dashboard", to: "dashboard#index"
     resources :users
     resources :companies
