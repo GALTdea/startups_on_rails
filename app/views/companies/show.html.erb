@@ -1,4 +1,41 @@
-<div>
-  <h1 class="font-bold text-4xl">Companies#show</h1>
-  <p>Find me in app/views/companies/show.html.erb</p>
+<div class="max-w-4xl mx-auto px-4 py-8">
+  <div class="bg-white p-8 rounded-lg shadow-sm">
+    <h1 class="text-3xl font-bold text-gray-900 mb-4"><%= @company.name %></h1>
+    
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+      <% if @company.website.present? %>
+        <div>
+          <dt class="text-sm font-medium text-gray-600">Website</dt>
+          <dd class="mt-1">
+            <%= link_to @company.website, @company.website, 
+              class: "text-blue-600 hover:text-blue-800", target: "_blank" %>
+          </dd>
+        </div>
+      <% end %>
+      
+      <% if @company.location.present? %>
+        <div>
+          <dt class="text-sm font-medium text-gray-600">Location</dt>
+          <dd class="mt-1 text-gray-900"><%= @company.location %></dd>
+        </div>
+      <% end %>
+    </div>
+    
+    <div class="prose max-w-none mb-8">
+      <%= simple_format(@company.description) %>
+    </div>
+    
+    <% if @company.tags.any? %>
+      <div class="mt-6 border-t pt-6">
+        <h3 class="text-sm font-medium text-gray-600 mb-4">Technologies Used</h3>
+        <div class="flex flex-wrap gap-2">
+          <% @company.tags.each do |tag| %>
+            <span class="px-3 py-1 bg-gray-100 text-gray-700 rounded-full text-sm">
+              <%= tag.name %>
+            </span>
+          <% end %>
+        </div>
+      </div>
+    <% end %>
+  </div>
 </div>
