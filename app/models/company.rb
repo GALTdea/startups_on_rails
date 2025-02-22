@@ -37,6 +37,8 @@ class Company < ApplicationRecord
       .distinct
   }
 
+  has_one_attached :logo
+
   private
 
   def set_unpublished
