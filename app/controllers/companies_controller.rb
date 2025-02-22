@@ -8,6 +8,7 @@ class CompaniesController < ApplicationController
                          .by_category(params[:categories])
                          .by_tags(params[:tags])
                          .search(params[:search])
+    @tags = Tag.all
   end
 
   def show
