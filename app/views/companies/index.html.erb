@@ -21,18 +21,6 @@
             placeholder: "Start typing..." %>
         </div>
 
-        <!-- Multiple select for categories -->
-        <div>
-          <%= f.label :categories, "Categories", class: "block text-sm font-medium text-blue-600 mb-1" %>
-          <%= f.collection_select :categories, 
-                Category.order(:name), 
-                :id, :name,
-                { selected: params[:categories], include_blank: false },
-                { multiple: true, 
-                  class: "tom-select",
-                  data: { controller: "tom-select" } } %>
-        </div>
-
         <!-- Multiple select for tags -->
         <div class="mb-4">
           <%= f.label :tags, "Filter by Technologies", class: "block text-sm font-medium text-blue-600 mb-2" %>
