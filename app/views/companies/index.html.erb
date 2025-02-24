@@ -126,50 +126,10 @@
     <% end %>
   </div>
 
-  <!-- Company Grid -->
-  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+  <!-- Company List (Single Column) -->
+  <div class="space-y-6">
     <% @companies.each do |company| %>
-      <div class="group bg-white rounded-xl shadow-sm hover:shadow-lg transition-all p-6 border-2 border-transparent hover:border-blue-50 relative">
-        <div class="absolute top-4 right-4 w-12 h-12 rounded-lg bg-gray-50 flex items-center justify-center overflow-hidden">
-          <% if company.logo.attached? %>
-            <%= image_tag company.logo, class: "w-8 h-8 object-contain" %>
-          <% else %>
-            <span class="text-2xl">🏢</span>
-          <% end %>
-        </div>
-        
-        <div class="mb-4">
-          <h3 class="text-xl font-bold text-gray-900">
-            <%= link_to company.name, company_path(company), 
-                  class: "hover:text-blue-600 hover:underline decoration-wavy decoration-blue-200" %>
-          </h3>
-          <% if company.location.present? %>
-            <p class="text-sm text-blue-500 mt-2 flex items-center">
-              <svg class="w-4 h-4 mr-1.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
-                <path fill-rule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clip-rule="evenodd"/>
-              </svg>
-              <%= company.location %>
-            </p>
-          <% end %>
-        </div>
-        
-        <p class="text-sm text-gray-500 mb-4 leading-relaxed"><%= truncate(company.description, length: 120) %></p>
-        
-        <% if company.website.present? %>
-          <%= link_to company.website, company.website, 
-            class: "text-blue-600 hover:text-blue-800 text-sm", target: "_blank" %>
-        <% end %>
-        
-        <% if company.tags.any? %>
-          <div class="mt-4 flex flex-wrap gap-2">
-            <% company.tags.each do |tag| %>
-              <span class="px-3 py-1 bg-gradient-to-br from-blue-50 to-purple-50 text-gray-600 rounded-full text-xs font-medium border border-blue-100">
-                #<%= tag.name %>
-              </span>
-            <% end %>
-          </div>
-        <% end %>
-      </div>
+      <%= render 'company_card', company: company %>
     <% end %>
   </div>
   
