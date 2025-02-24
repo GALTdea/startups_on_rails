@@ -17,6 +17,13 @@ export default class extends Controller {
   }
 
   submit() {
-    this.element.requestSubmit()
+    // Add a small delay to prevent multiple rapid submissions
+    if (this.submitTimeout) {
+      clearTimeout(this.submitTimeout)
+    }
+
+    this.submitTimeout = setTimeout(() => {
+      this.element.requestSubmit()
+    }, 100)
   }
 }
