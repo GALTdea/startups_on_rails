@@ -1,9 +1,9 @@
 import { Controller } from "@hotwired/stimulus"
-import TomSelect from "tom-select"
+import * as TomSelect from "tom-select"
 
 export default class extends Controller {
     connect() {
-        new TomSelect(this.element, {
+        new TomSelect.default(this.element, {
             plugins: ['remove_button', 'dropdown_input'],
             create: false,
             hideSelected: false,
