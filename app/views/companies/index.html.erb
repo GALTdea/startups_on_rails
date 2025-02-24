@@ -11,6 +11,7 @@
   <div class="mb-8 bg-white rounded-xl shadow-sm border border-gray-100 hover:shadow-md transition-all">
     <div class="flex flex-col items-center justify-between p-6 space-y-4 md:flex-row md:space-y-0 md:space-x-4">
       <%= form_with url: companies_path, method: :get, 
+           id: "company-search-form",
            data: { controller: "filter-form", turbo_frame: "companies" },
            class: "w-full" do |f| %>
         <div class="flex flex-col md:flex-row md:items-center md:space-x-4 w-full">
@@ -68,17 +69,18 @@
               </div>
             </div>
           </div>
-        </div>
-      <% end %>
 
-      <% if user_signed_in? && (current_user.admin? || current_user.company_owner?) %>
-        <%= link_to new_admin_company_path, 
-          class: "flex items-center px-6 py-3 text-sm font-medium text-white bg-gradient-to-r from-blue-600 to-blue-700 rounded-xl hover:from-blue-700 hover:to-blue-800 focus:ring-2 focus:ring-blue-300 transition-all shadow-sm hover:shadow" do %>
-          <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20">
-            <path d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" />
-          </svg>
-          Add Company
-        <% end %>
+          <!-- Search Button -->
+          <div class="md:ml-2">
+            <button type="submit"
+              class="flex items-center px-6 py-3 text-sm font-medium text-white bg-gradient-to-r from-blue-600 to-blue-700 rounded-xl hover:from-blue-700 hover:to-blue-800 focus:ring-2 focus:ring-blue-300 transition-all shadow-sm hover:shadow">
+              <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clip-rule="evenodd" />
+              </svg>
+              Search
+            </button>
+          </div>
+        </div>
       <% end %>
     </div>
   </div>
