@@ -19,3 +19,24 @@
 .dropdown-closed {
     @apply hidden;
 }
+
+/* Dropdown transitions */
+.dropdown-menu {
+    @apply transition-all duration-100 ease-out transform;
+}
+
+.opacity-0 {
+    opacity: 0;
+}
+
+.opacity-100 {
+    opacity: 1;
+}
+
+.scale-95 {
+    transform: scale(0.95);
+}
+
+.scale-100 {
+    transform: scale(1);
+}
