@@ -83,6 +83,47 @@
         </div>
       <% end %>
     </div>
+    
+    <!-- Active Filters Display -->
+    <% if params[:search].present? || params[:tags].present? %>
+      <div class="px-6 pb-4 border-t border-gray-100 pt-3">
+        <div class="flex flex-wrap items-center gap-2">
+          <span class="text-xs font-medium text-gray-500">Active filters:</span>
+          
+          <% if params[:search].present? %>
+            <div class="flex items-center bg-blue-50 text-blue-700 px-3 py-1 rounded-full text-xs font-medium">
+              <span>Search: <%= params[:search] %></span>
+              <%= link_to companies_path(tags: params[:tags]), class: "ml-2 text-blue-500 hover:text-blue-700" do %>
+                <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
+                  <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd" />
+                </svg>
+              <% end %>
+            </div>
+          <% end %>
+          
+          <% if params[:tags].present? %>
+            <% Tag.where(id: params[:tags]).each do |tag| %>
+              <div class="flex items-center bg-blue-50 text-blue-700 px-3 py-1 rounded-full text-xs font-medium">
+                <span>#<%= tag.name %></span>
+                <%= link_to companies_path(search: params[:search], tags: params[:tags] - [tag.id.to_s]), 
+                      class: "ml-2 text-blue-500 hover:text-blue-700",
+                      data: { turbo_action: "replace" } do %>
+                  <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd" />
+                  </svg>
+                <% end %>
+              </div>
+            <% end %>
+          <% end %>
+          
+          <% if params[:search].present? || params[:tags].present? %>
+            <%= link_to "Clear all filters", companies_path, 
+                  class: "text-xs text-gray-500 hover:text-gray-700 underline ml-2",
+                  data: { turbo_action: "replace" } %>
+          <% end %>
+        </div>
+      </div>
+    <% end %>
   </div>
 
   <!-- Company Grid -->
