@@ -7,16 +7,20 @@ eagerLoadControllersFrom("controllers", application)
 // Run that command whenever you add a new controller or create them with
 // ./bin/rails generate stimulus controllerName
 
+import AutoSubmitStatusController from "./auto_submit_status_controller"
+import DropdownController from "./dropdown_controller"
 import FilterFormController from "./filter_form_controller"
 import HelloController from "./hello_controller"
 import ModalController from "./modal_controller"
+import NavbarController from "./navbar_controller"
 import PasswordStrengthController from "./password_strength_controller"
 import TomSelectController from "./tom_select_controller"
-import AutoSubmitStatusController from "./auto_submit_status_controller"
 
+application.register("auto-submit-status", AutoSubmitStatusController)
+application.register("dropdown", DropdownController)
 application.register("filter-form", FilterFormController)
 application.register("hello", HelloController)
 application.register("modal", ModalController)
+application.register("navbar", NavbarController)
 application.register("password-strength", PasswordStrengthController)
 application.register("tom-select", TomSelectController)
-application.register("auto-submit-status", AutoSubmitStatusController)
