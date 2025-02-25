@@ -22,7 +22,7 @@
     <%= javascript_importmap_tags %>
   </head>
 
-  <body>
+  <body class="min-h-screen bg-gray-50">
     <nav class="bg-white shadow-sm">
       <div class="container mx-auto px-4 py-3 flex justify-between items-center">
         <%= link_to "StartupsOnRails", root_path, class: "text-xl font-bold" %>
@@ -45,8 +45,22 @@
       </div>
     </nav>
 
-    <p class="notice"><%= notice %></p>
-    <p class="alert"><%= alert %></p>
+    <% if notice %>
+      <div class="max-w-7xl mx-auto px-4 mt-4">
+        <div id="flash-notice" class="p-4 mb-4 text-sm text-green-800 rounded-lg bg-green-50" role="alert">
+          <%= notice %>
+        </div>
+      </div>
+    <% end %>
+    
+    <% if alert %>
+      <div class="max-w-7xl mx-auto px-4 mt-4">
+        <div id="flash-alert" class="p-4 mb-4 text-sm text-red-800 rounded-lg bg-red-50" role="alert">
+          <%= alert %>
+        </div>
+      </div>
+    <% end %>
+
     <main class="max-w-7xl mx-auto mt-8 px-5 w-full">
       <%= yield %>
     </main>
