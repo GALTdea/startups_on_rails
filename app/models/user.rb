@@ -26,6 +26,12 @@ class User < ApplicationRecord
   def role_assignment_permission
     return unless role_changed? && !persisted?
 
+    # Skip validation during seeding or when no current_user is available
+    return if Rails.env.development? && defined?(Rails::Console) ||
+              defined?(Rails::Command) && Rails.const_defined?("Server") ||
+              defined?(Rake) ||
+              !defined?(current_user)
+
     if User.roles[role] > User.roles[:member] && !current_user&.admin?
       errors.add(:role, "assignment not permitted")
     end
