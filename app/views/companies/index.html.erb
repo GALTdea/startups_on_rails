@@ -141,8 +141,8 @@
     <% end %>
   </div>
 
-  <!-- Company List (Single Column) -->
-  <div class="space-y-6">
+  <!-- Company List updated to grid layout -->
+  <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
     <% @companies.each do |company| %>
       <%= render 'company_card', company: company %>
     <% end %>
