@@ -27,4 +27,13 @@ Rails.application.routes.draw do
   # Defines the root path route ("/")
   resources :companies, only: [ :index, :show ]
   root to: "companies#index"
+
+  resources :technologies
+
+  resources :companies do
+    resource :company_technologies, only: [ :edit, :update ], path: "tech-stack"
+  end
+
+  # Tech stack search route
+  get "companies/search/tech-stack", to: "companies#search_by_tech_stack", as: :tech_stack_search
 end

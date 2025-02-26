@@ -1,0 +1,85 @@
+<div class="container mx-auto px-4 py-8">
+  <div class="mb-6">
+    <%= link_to "← Back to Technologies", technologies_path, class: "text-blue-600 hover:text-blue-800" %>
+  </div>
+
+  <div class="bg-white rounded-lg shadow-md overflow-hidden mb-8">
+    <div class="p-6">
+      <div class="flex items-center mb-4">
+        <% if @technology.logo_url.present? %>
+          <img src="<%= @technology.logo_url %>" alt="<%= @technology.name %>" class="w-16 h-16 mr-4">
+        <% else %>
+          <div class="w-16 h-16 bg-gray-200 rounded-full flex items-center justify-center mr-4">
+            <span class="text-gray-500 text-2xl font-bold"><%= @technology.name.first.upcase %></span>
+          </div>
+        <% end %>
+        
+        <div>
+          <h1 class="text-2xl font-bold"><%= @technology.name %></h1>
+          <p class="text-gray-600"><%= @technology.category %></p>
+        </div>
+      </div>
+      
+      <div class="flex justify-between items-center">
+        <p class="text-gray-700">
+          <span class="font-medium">Popularity:</span> <%= @technology.popularity %>
+        </p>
+        
+        <% if current_user&.admin? %>
+          <div class="flex space-x-2">
+            <%= link_to "Edit", edit_technology_path(@technology), class: "bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded" %>
+            <%= button_to "Delete", technology_path(@technology), method: :delete, 
+                class: "bg-red-600 hover:bg-red-700 text-white font-medium py-2 px-4 rounded",
+                form: { data: { turbo_confirm: "Are you sure? This will remove this technology from all companies." } } %>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  </div>
+
+  <h2 class="text-xl font-bold mb-4">Companies using <%= @technology.name %></h2>
+  
+  <% if @companies.any? %>
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <% @companies.each do |company| %>
+        <div class="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300">
+          <%= link_to company_path(company) do %>
+            <div class="p-6">
+              <div class="flex items-center mb-4">
+                <% if company.logo.present? %>
+                  <img src="<%= company.logo %>" alt="<%= company.name %>" class="w-12 h-12 mr-3">
+                <% else %>
+                  <div class="w-12 h-12 bg-gray-200 rounded-full flex items-center justify-center mr-3">
+                    <span class="text-gray-500 font-bold"><%= company.name.first.upcase %></span>
+                  </div>
+                <% end %>
+                
+                <h3 class="text-lg font-semibold"><%= company.name %></h3>
+              </div>
+              
+              <p class="text-gray-600 line-clamp-2 mb-4"><%= company.description %></p>
+              
+              <div class="flex flex-wrap gap-2">
+                <% company.technologies.first(3).each do |tech| %>
+                  <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                    <%= tech.name %>
+                  </span>
+                <% end %>
+                
+                <% if company.technologies.count > 3 %>
+                  <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
+                    +<%= company.technologies.count - 3 %> more
+                  </span>
+                <% end %>
+              </div>
+            </div>
+          <% end %>
+        </div>
+      <% end %>
+    </div>
+  <% else %>
+    <div class="bg-gray-50 rounded-lg p-6 text-center">
+      <p class="text-gray-600">No companies are currently using <%= @technology.name %>.</p>
+    </div>
+  <% end %>
+</div> 

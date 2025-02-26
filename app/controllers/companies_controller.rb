@@ -1,29 +1,51 @@
 class CompaniesController < ApplicationController
   before_action :set_company, only: [ :show ]
 
-def index
-  @companies = Company.published
-                     .includes(:tags, :categories)
-                     .order(created_at: :desc)
+  def index
+    @companies = Company.published
+                       .includes(:tags, :categories)
+                       .order(created_at: :desc)
 
-  # Filter by industry categories
-  if params[:industry_categories].present?
-    @companies = @companies.joins(:categories)
-                          .where(categories: { id: params[:industry_categories], category_type: "industry" })
+    # Filter by industry categories
+    if params[:industry_categories].present?
+      @companies = @companies.joins(:categories)
+                            .where(categories: { id: params[:industry_categories], category_type: "industry" })
+    end
+
+    # Filter by size categories
+    if params[:size_categories].present?
+      @companies = @companies.joins(:categories)
+                            .where(categories: { id: params[:size_categories], category_type: "size" })
+    end
+
+    # Continue with existing filters
+    @companies = @companies.by_tags(params[:tags])
+                           .search(params[:search])
   end
-
-  # Filter by size categories
-  if params[:size_categories].present?
-    @companies = @companies.joins(:categories)
-                          .where(categories: { id: params[:size_categories], category_type: "size" })
-  end
-
-  # Continue with existing filters
-  @companies = @companies.by_tags(params[:tags])
-                         .search(params[:search])
-end
 
   def show
+  end
+
+  def search_by_tech_stack
+    @technologies = Technology.by_category
+
+    if params[:technology_ids].present?
+      technology_ids = params[:technology_ids].reject(&:blank?)
+
+      if params[:match_type] == "all"
+        @companies = Company.published.with_all_technologies(technology_ids)
+      else
+        @companies = Company.published.with_any_technologies(technology_ids)
+      end
+    else
+      @companies = Company.none
+    end
+
+    # If it's an AJAX request, render partial
+    if request.xhr?
+      render partial: "companies/company_list", locals: { companies: @companies }
+    end
+    # Otherwise the default view will be rendered
   end
 
   private

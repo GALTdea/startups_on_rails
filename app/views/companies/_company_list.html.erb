@@ -1,0 +1,43 @@
+<% if companies.any? %>
+  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+    <% companies.each do |company| %>
+      <div class="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300">
+        <%= link_to company_path(company) do %>
+          <div class="p-6">
+            <div class="flex items-center mb-4">
+              <% if company.logo.attached? %>
+                <%= image_tag company.logo.variant(resize_to_limit: [48, 48]), class: "w-12 h-12 mr-3 object-contain" %>
+              <% else %>
+                <div class="w-12 h-12 bg-gray-200 rounded-full flex items-center justify-center mr-3">
+                  <span class="text-gray-500 font-bold"><%= company.name.first.upcase %></span>
+                </div>
+              <% end %>
+              
+              <h3 class="text-lg font-semibold"><%= company.name %></h3>
+            </div>
+            
+            <p class="text-gray-600 line-clamp-2 mb-4"><%= company.description %></p>
+            
+            <div class="flex flex-wrap gap-2">
+              <% company.technologies.first(3).each do |tech| %>
+                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                  <%= tech.name %>
+                </span>
+              <% end %>
+              
+              <% if company.technologies.count > 3 %>
+                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
+                  +<%= company.technologies.count - 3 %> more
+                </span>
+              <% end %>
+            </div>
+          </div>
+        <% end %>
+      </div>
+    <% end %>
+  </div>
+<% else %>
+  <div class="bg-gray-50 rounded-lg p-6 text-center">
+    <p class="text-gray-600">No companies found matching your criteria.</p>
+  </div>
+<% end %> 

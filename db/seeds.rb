@@ -13,6 +13,9 @@ require 'faker'
 # Set locale for Faker
 Faker::Config.locale = 'en'
 
+# Load technology seeds
+load Rails.root.join('db/seeds/technologies.rb')
+
 # Clear existing data
 puts "Cleaning database..."
 Company.destroy_all

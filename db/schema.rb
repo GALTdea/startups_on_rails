@@ -79,6 +79,18 @@ ActiveRecord::Schema[8.0].define(version: 2025_02_26_181515) do
     t.index ["tag_id", "company_id"], name: "index_companies_tags_on_tag_id_and_company_id", unique: true
   end
 
+  create_table "company_technologies", force: :cascade do |t|
+    t.bigint "company_id", null: false
+    t.bigint "technology_id", null: false
+    t.string "proficiency_level", default: "regular"
+    t.text "notes"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["company_id", "technology_id"], name: "index_company_technologies_on_company_id_and_technology_id", unique: true
+    t.index ["company_id"], name: "index_company_technologies_on_company_id"
+    t.index ["technology_id"], name: "index_company_technologies_on_technology_id"
+  end
+
   create_table "favorites", force: :cascade do |t|
     t.string "favoritable_type", null: false
     t.bigint "favoritable_id", null: false
@@ -103,6 +115,18 @@ ActiveRecord::Schema[8.0].define(version: 2025_02_26_181515) do
     t.datetime "updated_at", null: false
   end
 
+  create_table "technologies", force: :cascade do |t|
+    t.string "name", null: false
+    t.string "category", null: false
+    t.integer "popularity", default: 0
+    t.string "logo_url"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["category"], name: "index_technologies_on_category"
+    t.index ["name"], name: "index_technologies_on_name", unique: true
+    t.index ["popularity"], name: "index_technologies_on_popularity"
+  end
+
   create_table "users", force: :cascade do |t|
     t.string "email", default: "", null: false
     t.string "encrypted_password", default: "", null: false
@@ -119,4 +143,6 @@ ActiveRecord::Schema[8.0].define(version: 2025_02_26_181515) do
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
   add_foreign_key "companies", "users"
+  add_foreign_key "company_technologies", "companies"
+  add_foreign_key "company_technologies", "technologies"
 end

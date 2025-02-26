@@ -39,6 +39,25 @@ class Company < ApplicationRecord
 
   has_one_attached :logo
 
+  has_many :company_technologies, dependent: :destroy
+  has_many :technologies, through: :company_technologies
+
+  # Tech stack related scopes
+  scope :with_any_technologies, ->(technology_ids) {
+    joins(:company_technologies)
+      .where(company_technologies: { technology_id: technology_ids })
+      .distinct
+  }
+
+  scope :with_all_technologies, ->(technology_ids) {
+    companies = joins(:company_technologies)
+      .where(company_technologies: { technology_id: technology_ids })
+      .group("companies.id")
+      .having("COUNT(DISTINCT company_technologies.technology_id) = ?", technology_ids.size)
+
+    where(id: companies)
+  }
+
   private
 
   def set_unpublished
