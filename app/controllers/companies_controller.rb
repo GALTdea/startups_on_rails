@@ -1,15 +1,27 @@
 class CompaniesController < ApplicationController
   before_action :set_company, only: [ :show ]
 
-  def index
-    @companies = Company.published
-                         .includes(:tags, :categories)
-                         .order(created_at: :desc)
-                         .by_category(params[:categories])
-                         .by_tags(params[:tags])
-                         .search(params[:search])
-    @tags = Tag.all
+def index
+  @companies = Company.published
+                     .includes(:tags, :categories)
+                     .order(created_at: :desc)
+
+  # Filter by industry categories
+  if params[:industry_categories].present?
+    @companies = @companies.joins(:categories)
+                          .where(categories: { id: params[:industry_categories], category_type: "industry" })
   end
+
+  # Filter by size categories
+  if params[:size_categories].present?
+    @companies = @companies.joins(:categories)
+                          .where(categories: { id: params[:size_categories], category_type: "size" })
+  end
+
+  # Continue with existing filters
+  @companies = @companies.by_tags(params[:tags])
+                         .search(params[:search])
+end
 
   def show
   end
