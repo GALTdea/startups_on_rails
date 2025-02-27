@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_02_26_181515) do
+ActiveRecord::Schema[8.0].define(version: 2025_02_27_171944) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -69,6 +69,8 @@ ActiveRecord::Schema[8.0].define(version: 2025_02_26_181515) do
     t.string "funding_stage"
     t.integer "employee_count"
     t.integer "year_founded"
+    t.string "industry"
+    t.index ["industry"], name: "index_companies_on_industry"
     t.index ["user_id"], name: "index_companies_on_user_id"
   end
 

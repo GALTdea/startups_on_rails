@@ -10,8 +10,8 @@ class CompaniesController < ApplicationController
                                    "%#{params[:search]}%", "%#{params[:search]}%")
     end
 
-    # Filter by industry
-    if params[:industry].present?
+    # Filter by industry - check if column exists first
+    if params[:industry].present? && Company.column_names.include?("industry")
       @companies = @companies.where(industry: params[:industry])
     end
 
