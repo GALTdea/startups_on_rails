@@ -79,50 +79,12 @@ categories = [
   "Enterprise Software",
   "Sustainability"
 ].map do |name|
-  Category.create!(name: name)
+  Category.find_or_create_by!(name: name)
 end
 
-# Create tags
+# Create tags (both general and technology-related)
 puts "Creating tags..."
-tags = [
-  # Programming Languages
-  "Ruby on Rails",
-  "JavaScript",
-  "Python",
-  "Go",
-  "Rust",
-  "Java",
-  "C#",
-  "PHP",
-  "TypeScript",
-  "Swift",
-
-  # Frontend Frameworks
-  "React",
-  "Vue.js",
-  "Angular",
-  "Svelte",
-  "Next.js",
-
-  # Backend & Databases
-  "Node.js",
-  "Django",
-  "Laravel",
-  "PostgreSQL",
-  "MongoDB",
-  "MySQL",
-  "Redis",
-  "GraphQL",
-
-  # Cloud & DevOps
-  "AWS",
-  "Google Cloud",
-  "Azure",
-  "Docker",
-  "Kubernetes",
-  "CI/CD",
-  "Terraform",
-
+general_tags = [
   # Company Characteristics
   "Remote-friendly",
   "Venture-backed",
@@ -130,13 +92,57 @@ tags = [
   "B2B",
   "B2C",
   "Open Source",
-  "Enterprise",
   "Mobile-first",
   "AI-powered",
-  "Blockchain-based"
-].map do |name|
-  Tag.create!(name: name)
+  "Blockchain-based",
+  "Early-stage",
+  "Growth-stage",
+  "Profitable",
+  "International",
+  "Local",
+  "Subscription-based",
+  "Platform",
+  "API-first",
+  "Data-driven",
+  "Social Impact",
+  "Green Tech",
+  "Hardware",
+  "Consumer",
+  "SMB-focused",
+  "Freemium",
+  "White-label",
+  "On-premise",
+  "Cloud-native"
+]
+
+# Technology-related tags (matching some of our technologies)
+tech_tags = [
+  "Ruby on Rails",
+  "JavaScript",
+  "React",
+  "Python",
+  "PostgreSQL",
+  "AWS",
+  "Docker",
+  "Kubernetes",
+  "Node.js",
+  "TypeScript",
+  "GraphQL",
+  "MongoDB",
+  "Redis",
+  "Vue.js",
+  "Angular"
+]
+
+# Create all tags
+all_tags = []
+(general_tags + tech_tags).uniq.each do |name|
+  all_tags << Tag.find_or_create_by!(name: name)
 end
+
+# Separate the tags for easier access
+general_tags = all_tags.select { |tag| general_tags.include?(tag.name) }
+tech_tags = all_tags.select { |tag| tech_tags.include?(tag.name) }
 
 # Create companies
 puts "Creating companies..."
@@ -290,13 +296,28 @@ company_data = company_names.map.with_index do |name, index|
   }
 end
 
+# Get all technologies for assigning to companies
+all_technologies = Technology.all.to_a
+
+# Create a mapping between technology names and Technology objects
+tech_name_to_object = {}
+all_technologies.each do |tech|
+  tech_name_to_object[tech.name] = tech
+end
+
 # Create companies with associations
 company_data.each_with_index do |data, index|
   owner = company_owners[index % company_owners.size]
 
-  # Select categories and tags
+  # Select categories and general tags
   selected_categories = random_sample(categories, 1, 3)
-  selected_tags = random_sample(tags, 3, 8)
+  selected_general_tags = random_sample(general_tags, 2, 5)
+
+  # Select some technology tags (these will also be added as company_technologies)
+  selected_tech_tags = random_sample(tech_tags, 2, 5)
+
+  # Combine all tags
+  selected_tags = selected_general_tags + selected_tech_tags
 
   company = Company.new(
     data.merge(
@@ -312,10 +333,46 @@ company_data.each_with_index do |data, index|
 
   company.save!
   puts "Created company: #{company.name}"
+
+  # Assign technologies to the company (including those from tech tags)
+  tech_count = rand(3..8)
+  additional_techs = all_technologies.sample(tech_count)
+
+  # First, add technologies that match the tech tags
+  selected_tech_tags.each do |tag|
+    tech = tech_name_to_object[tag.name]
+    if tech
+      # Only create if it doesn't exist yet
+      unless company.company_technologies.exists?(technology_id: tech.id)
+        company.company_technologies.create!(
+          technology: tech,
+          proficiency_level: "core" # Make tagged technologies core
+        )
+      end
+    end
+  end
+
+  # Then add some additional random technologies
+  additional_techs.each do |tech|
+    # Skip if already added from tags
+    next if company.technologies.include?(tech)
+
+    # Randomly assign proficiency levels
+    proficiency = [ "core", "regular", "occasional" ].sample
+
+    company.company_technologies.create!(
+      technology: tech,
+      proficiency_level: proficiency
+    )
+  end
+
+  puts "  Added #{company.technologies.count} technologies to #{company.name}"
 end
 
 puts "Seed data created successfully!"
 puts "Created #{User.count} users (#{User.admin.count} admins, #{User.company_owner.count} company owners, #{User.member.count} members)"
 puts "Created #{Category.count} categories"
-puts "Created #{Tag.count} tags"
+puts "Created #{Tag.count} tags (#{general_tags.count} general, #{tech_tags.count} technology-related)"
+puts "Created #{Technology.count} technologies"
 puts "Created #{Company.count} companies (#{Company.published.count} published, #{Company.count - Company.published.count} unpublished)"
+puts "Created #{CompanyTechnology.count} company technology associations"

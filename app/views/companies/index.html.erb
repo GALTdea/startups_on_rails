@@ -29,9 +29,9 @@
            id: "company-search-form",
            data: { controller: "filter-form", turbo_frame: "companies" },
            class: "w-full" do |f| %>
-        <div class="flex flex-col md:flex-row md:items-center md:space-x-4 w-full">
+        <div class="flex flex-col md:flex-row md:items-center w-full">
           <!-- Search Input -->
-          <div class="w-full md:w-1/2">
+          <div class="w-full md:w-3/5 md:mr-auto">
             <div class="relative group">
               <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
                 <svg class="w-5 h-5 text-gray-400 group-hover:text-blue-500 transition-colors" fill="currentColor" viewBox="0 0 20 20">
@@ -39,56 +39,128 @@
                 </svg>
               </div>
               <%= f.text_field :search, value: params[:search],
-                class: "w-full pl-10 pr-4 py-3 text-sm text-gray-900 border border-gray-200 rounded-xl bg-gray-50 focus:bg-white focus:ring-2 focus:ring-blue-300 focus:border-blue-300 transition-all",
-                placeholder: "Search companies..." %>
+                id: "company-search-input",
+                class: "w-full pl-10 pr-4 py-3.5 text-sm text-gray-900 border border-gray-200 rounded-xl bg-gray-50 focus:bg-white focus:ring-2 focus:ring-blue-300 focus:border-blue-300 transition-all",
+                placeholder: "Search by name, description, or location...",
+                autocomplete: "off" %>
+              
+              <% if params[:search].present? %>
+                <button type="button" 
+                  onclick="document.getElementById('company-search-input').value = ''; this.closest('form').requestSubmit();"
+                  class="absolute inset-y-0 right-0 flex items-center pr-3 text-gray-400 hover:text-gray-600">
+                  <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd" />
+                  </svg>
+                </button>
+              <% end %>
+            </div>
+            
+            <!-- Quick Tech Stack Tags -->
+            <div class="mt-2 flex flex-wrap gap-2">
+              <span class="text-xs text-gray-500 flex items-center mr-1">
+                <svg class="w-3.5 h-3.5 mr-1 text-blue-500" fill="currentColor" viewBox="0 0 20 20">
+                  <path fill-rule="evenodd" d="M12.316 3.051a1 1 0 01.633 1.265l-4 12a1 1 0 11-1.898-.632l4-12a1 1 0 011.265-.633zM5.707 6.293a1 1 0 010 1.414L3.414 10l2.293 2.293a1 1 0 11-1.414 1.414l-3-3a1 1 0 010-1.414l3-3a1 1 0 011.414 0zm8.586 0a1 1 0 011.414 0l3 3a1 1 0 010 1.414l-3 3a1 1 0 11-1.414-1.414L16.586 10l-2.293-2.293a1 1 0 010-1.414z" clip-rule="evenodd" />
+                </svg>
+                Tech:
+              </span>
+              
+              <% tech_stacks = ["React", "Ruby on Rails", "Python", "Node.js", "AWS", "Vue.js"] %>
+              <% tech_stacks.each do |tech| %>
+                <%= link_to tech, companies_path(search: tech, industry: params[:industry], tags: params[:tags]), 
+                      class: "text-xs px-2.5 py-1 rounded-full #{params[:search] == tech ? 'bg-blue-100 text-blue-700 border border-blue-200' : 'bg-gray-100 text-gray-700 border border-gray-200 hover:bg-blue-50 hover:text-blue-600 hover:border-blue-100'} transition-colors",
+                      data: { turbo_frame: "_top" } %>
+              <% end %>
             </div>
           </div>
 
-          <!-- Filter Button and Modal -->
-          <div class="relative inline-block text-left" data-controller="modal">
-            <div>
-              <button type="button" 
-                data-action="modal#toggle"
-                class="flex items-center justify-center px-4 py-3 text-sm font-medium text-gray-700 bg-gray-50 border border-gray-200 rounded-xl hover:bg-white hover:border-blue-300 focus:ring-2 focus:ring-blue-300 transition-all">
-                <svg class="w-4 h-4 mr-2 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
-                  <path fill-rule="evenodd" d="M3 3a1 1 0 011-1h12a1 1 0 011 1v3a1 1 0 01-.293.707L12 11.414V15a1 1 0 01-.293.707l-2 2A1 1 0 018 17v-5.586L3.293 6.707A1 1 0 013 6V3z" clip-rule="evenodd" />
+          <!-- Filter Controls (Right-aligned) -->
+          <div class="flex flex-col md:flex-row space-y-3 md:space-y-0 md:space-x-3 w-full md:w-auto mt-4 md:mt-0">
+            <!-- Industry Filter -->
+            <div class="w-full md:w-auto relative">
+              <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+                <svg class="w-4 h-4 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
+                  <path fill-rule="evenodd" d="M4 4a2 2 0 012-2h8a2 2 0 012 2v12a1 1 0 01-1.581.814l-4.419-3.535-4.419 3.535A1 1 0 014 16V4zm5 0a1 1 0 00-1 1v6.5a.5.5 0 00.5.5H15V5a1 1 0 00-1-1H9z" clip-rule="evenodd" />
                 </svg>
-                Filter
-                <span class="ml-2 bg-blue-100 text-blue-600 px-2 py-0.5 rounded-full text-xs">
-                  <%= params[:tags]&.size || 0 %>
-                </span>
-              </button>
+              </div>
+              <%= f.select :industry, 
+                  [["All Industries", ""], ["Tech", "tech"], ["Healthcare", "healthcare"], ["Finance", "finance"], ["Education", "education"], ["Retail", "retail"]], 
+                  { selected: params[:industry] },
+                  { class: "w-full md:w-auto pl-9 pr-10 py-3.5 text-sm text-gray-700 border border-gray-200 rounded-xl bg-gray-50 focus:bg-white focus:ring-2 focus:ring-blue-300 focus:border-blue-300 transition-all appearance-none",
+                    data: { action: "change->filter-form#submit" } } %>
+              <div class="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none">
+                <svg class="w-5 h-5 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
+                  <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
+                </svg>
+              </div>
             </div>
 
-            <div data-modal-target="dropdown"
-                 class="hidden absolute right-0 z-10 mt-2 w-80 origin-top-right transform opacity-0 scale-95 transition-all duration-100 ease-out rounded-xl bg-white ring-1 shadow-lg ring-black/5 focus:outline-none"
-                 role="menu">
-              <div class="p-4 space-y-4">
-                <div class="flex items-center justify-between border-b pb-3">
-                  <h3 class="text-sm font-semibold text-gray-900">Filter by Tags</h3>
-                  <%= link_to "Clear All", companies_path, 
-                        class: "text-sm text-gray-500 hover:text-gray-700",
-                        data: { turbo_action: "replace" } %>
-                </div>
-                
-                <div class="grid grid-cols-2 gap-3">
-                  <% Tag.all.each do |tag| %>
-                    <label class="flex items-center space-x-3 p-2.5 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors cursor-pointer">
-                      <%= check_box_tag "tags[]", tag.id, Array(params[:tags]).include?(tag.id.to_s),
-                            class: "h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500",
-                            data: { action: "change->filter-form#submit" } %>
-                      <span class="text-sm font-medium text-gray-700"><%= tag.name %></span>
-                    </label>
+            <!-- Tag Filter Button -->
+            <div class="relative inline-block text-left" data-controller="modal">
+              <div>
+                <button type="button" 
+                  data-action="modal#toggle"
+                  class="flex items-center justify-center px-4 py-3.5 text-sm font-medium text-gray-700 bg-gray-50 border border-gray-200 rounded-xl hover:bg-white hover:border-blue-300 focus:ring-2 focus:ring-blue-300 transition-all">
+                  <svg class="w-4 h-4 mr-2 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M17.707 9.293a1 1 0 010 1.414l-7 7a1 1 0 01-1.414 0l-7-7A.997.997 0 012 10V5a3 3 0 013-3h5c.256 0 .512.098.707.293l7 7zM5 6a1 1 0 100-2 1 1 0 000 2z" clip-rule="evenodd" />
+                  </svg>
+                  Tags
+                  <% if params[:tags].present? %>
+                    <span class="ml-2 bg-blue-100 text-blue-600 px-2 py-0.5 rounded-full text-xs">
+                      <%= params[:tags]&.size || 0 %>
+                    </span>
                   <% end %>
+                </button>
+              </div>
+
+              <div data-modal-target="dropdown"
+                   class="hidden absolute right-0 z-10 mt-2 w-80 origin-top-right transform opacity-0 scale-95 transition-all duration-100 ease-out rounded-xl bg-white ring-1 shadow-lg ring-black/5 focus:outline-none"
+                   role="menu">
+                <div class="p-4 space-y-4">
+                  <div class="flex items-center justify-between border-b pb-3">
+                    <h3 class="text-sm font-semibold text-gray-900">Filter by Tags</h3>
+                    <%= link_to "Clear All", companies_path(search: params[:search], industry: params[:industry]), 
+                          class: "text-sm text-gray-500 hover:text-gray-700",
+                          data: { turbo_action: "replace" } %>
+                  </div>
+                  
+                  <!-- Tech Stack Tags Section -->
+                  <div class="border-b pb-3">
+                    <h4 class="text-xs font-medium text-gray-500 mb-2">Tech Stacks</h4>
+                    <div class="flex flex-wrap gap-2">
+                      <% tech_tags = ["React", "Angular", "Vue.js", "Ruby on Rails", "Django", "Node.js", "PHP", "AWS", "Docker", "Kubernetes"] %>
+                      <% tech_tags.each do |tech| %>
+                        <% is_selected = Array(params[:tags]).include?(tech) %>
+                        <%= link_to tech, 
+                              is_selected ? 
+                                companies_path(search: params[:search], tags: Array(params[:tags]) - [tech], industry: params[:industry]) : 
+                                companies_path(search: params[:search], tags: Array(params[:tags]) + [tech], industry: params[:industry]),
+                              class: "text-xs px-2.5 py-1 rounded-full #{is_selected ? 'bg-blue-100 text-blue-700 border border-blue-200' : 'bg-gray-100 text-gray-700 border border-gray-200 hover:bg-blue-50 hover:text-blue-600 hover:border-blue-100'} transition-colors",
+                              data: { turbo_action: "replace" } %>
+                      <% end %>
+                    </div>
+                  </div>
+                  
+                  <!-- All Tags Section -->
+                  <div>
+                    <h4 class="text-xs font-medium text-gray-500 mb-2">All Tags</h4>
+                    <div class="grid grid-cols-2 gap-3 max-h-64 overflow-y-auto">
+                      <% Tag.all.each do |tag| %>
+                        <label class="flex items-center space-x-3 p-2.5 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors cursor-pointer">
+                          <%= check_box_tag "tags[]", tag.id, Array(params[:tags]).include?(tag.id.to_s),
+                                class: "h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500",
+                                data: { action: "change->filter-form#submit" } %>
+                          <span class="text-sm font-medium text-gray-700"><%= tag.name %></span>
+                        </label>
+                      <% end %>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
 
-          <!-- Search Button -->
-          <div class="md:ml-2">
+            <!-- Search Button -->
             <button type="submit"
-              class="flex items-center px-6 py-3 text-sm font-medium text-white bg-gradient-to-r from-blue-600 to-blue-700 rounded-xl hover:from-blue-700 hover:to-blue-800 focus:ring-2 focus:ring-blue-300 transition-all shadow-sm hover:shadow">
+              class="flex items-center px-6 py-3.5 text-sm font-medium text-white bg-gradient-to-r from-blue-600 to-blue-700 rounded-xl hover:from-blue-700 hover:to-blue-800 focus:ring-2 focus:ring-blue-300 transition-all shadow-sm hover:shadow">
               <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20">
                 <path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clip-rule="evenodd" />
               </svg>
@@ -100,15 +172,35 @@
     </div>
     
     <!-- Active Filters Display -->
-    <% if params[:search].present? || params[:tags].present? %>
+    <% if params[:search].present? || params[:tags].present? || params[:industry].present? %>
       <div class="px-6 pb-4 border-t border-gray-100 pt-3">
         <div class="flex flex-wrap items-center gap-2">
-          <span class="text-xs font-medium text-gray-500">Active filters:</span>
+          <span class="text-xs font-medium text-gray-500 flex items-center">
+            <svg class="w-3.5 h-3.5 mr-1 text-blue-500" fill="currentColor" viewBox="0 0 20 20">
+              <path fill-rule="evenodd" d="M3 3a1 1 0 011-1h12a1 1 0 011 1v3a1 1 0 01-.293.707L12 11.414V15a1 1 0 01-.293.707l-2 2A1 1 0 018 17v-5.586L3.293 6.707A1 1 0 013 6V3z" clip-rule="evenodd" />
+            </svg>
+            Active filters:
+          </span>
           
           <% if params[:search].present? %>
-            <div class="flex items-center bg-blue-50 text-blue-700 px-3 py-1 rounded-full text-xs font-medium">
+            <div class="flex items-center bg-blue-50 text-blue-700 px-3 py-1 rounded-full text-xs font-medium group hover:bg-blue-100 transition-colors">
               <span>Search: <%= params[:search] %></span>
-              <%= link_to companies_path(tags: params[:tags]), class: "ml-2 text-blue-500 hover:text-blue-700" do %>
+              <%= link_to companies_path(tags: params[:tags], industry: params[:industry]), 
+                    class: "ml-2 text-blue-500 group-hover:text-blue-700 transition-colors",
+                    data: { turbo_action: "replace" } do %>
+                <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
+                  <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd" />
+                </svg>
+              <% end %>
+            </div>
+          <% end %>
+          
+          <% if params[:industry].present? %>
+            <div class="flex items-center bg-blue-50 text-blue-700 px-3 py-1 rounded-full text-xs font-medium group hover:bg-blue-100 transition-colors">
+              <span>Industry: <%= params[:industry].titleize %></span>
+              <%= link_to companies_path(search: params[:search], tags: params[:tags]), 
+                    class: "ml-2 text-blue-500 group-hover:text-blue-700 transition-colors",
+                    data: { turbo_action: "replace" } do %>
                 <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
                   <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd" />
                 </svg>
@@ -118,10 +210,10 @@
           
           <% if params[:tags].present? %>
             <% Tag.where(id: params[:tags]).each do |tag| %>
-              <div class="flex items-center bg-blue-50 text-blue-700 px-3 py-1 rounded-full text-xs font-medium">
+              <div class="flex items-center bg-blue-50 text-blue-700 px-3 py-1 rounded-full text-xs font-medium group hover:bg-blue-100 transition-colors">
                 <span>#<%= tag.name %></span>
-                <%= link_to companies_path(search: params[:search], tags: params[:tags] - [tag.id.to_s]), 
-                      class: "ml-2 text-blue-500 hover:text-blue-700",
+                <%= link_to companies_path(search: params[:search], tags: params[:tags] - [tag.id.to_s], industry: params[:industry]), 
+                      class: "ml-2 text-blue-500 group-hover:text-blue-700 transition-colors",
                       data: { turbo_action: "replace" } do %>
                   <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
                     <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd" />
@@ -131,10 +223,15 @@
             <% end %>
           <% end %>
           
-          <% if params[:search].present? || params[:tags].present? %>
-            <%= link_to "Clear all filters", companies_path, 
-                  class: "text-xs text-gray-500 hover:text-gray-700 underline ml-2",
-                  data: { turbo_action: "replace" } %>
+          <% if params[:search].present? || params[:tags].present? || params[:industry].present? %>
+            <%= link_to companies_path, 
+                  class: "text-xs text-gray-500 hover:text-gray-700 hover:underline ml-2 flex items-center",
+                  data: { turbo_action: "replace" } do %>
+              <svg class="w-3.5 h-3.5 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd" />
+              </svg>
+              Clear all filters
+            <% end %>
           <% end %>
         </div>
       </div>
