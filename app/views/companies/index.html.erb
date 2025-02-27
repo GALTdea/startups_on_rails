@@ -29,6 +29,14 @@
            id: "company-search-form",
            data: { controller: "filter-form", turbo_frame: "companies" },
            class: "w-full" do |f| %>
+        
+        <!-- Hidden fields for tech stacks -->
+        <% if params[:tech_stacks].present? %>
+          <% Array(params[:tech_stacks]).each do |tech| %>
+            <%= f.hidden_field "tech_stacks[]", value: tech %>
+          <% end %>
+        <% end %>
+        
         <div class="flex flex-col md:flex-row md:items-center w-full">
           <!-- Search Input -->
           <div class="w-full md:w-3/5 md:mr-auto">
@@ -104,9 +112,10 @@
                     <path fill-rule="evenodd" d="M17.707 9.293a1 1 0 010 1.414l-7 7a1 1 0 01-1.414 0l-7-7A.997.997 0 012 10V5a3 3 0 013-3h5c.256 0 .512.098.707.293l7 7zM5 6a1 1 0 100-2 1 1 0 000 2z" clip-rule="evenodd" />
                   </svg>
                   Tags
-                  <% if params[:tags].present? %>
+                  <% filter_count = (params[:tags]&.size || 0) + (params[:tech_stacks]&.size || 0) %>
+                  <% if filter_count > 0 %>
                     <span class="ml-2 bg-blue-100 text-blue-600 px-2 py-0.5 rounded-full text-xs">
-                      <%= params[:tags]&.size || 0 %>
+                      <%= filter_count %>
                     </span>
                   <% end %>
                 </button>
@@ -118,7 +127,7 @@
                 <div class="p-4 space-y-4">
                   <div class="flex items-center justify-between border-b pb-3">
                     <h3 class="text-sm font-semibold text-gray-900">Filter by Tags</h3>
-                    <%= link_to "Clear All", companies_path(search: params[:search], industry: params[:industry]), 
+                    <%= link_to "Clear All", companies_path(search: params[:search], industry: params[:industry], tech_stacks: params[:tech_stacks]), 
                           class: "text-sm text-gray-500 hover:text-gray-700",
                           data: { turbo_action: "replace" } %>
                   </div>
@@ -127,15 +136,15 @@
                   <div class="border-b pb-3">
                     <h4 class="text-xs font-medium text-gray-500 mb-2">Tech Stacks</h4>
                     <div class="flex flex-wrap gap-2">
-                      <% tech_tags = ["React", "Angular", "Vue.js", "Ruby on Rails", "Django", "Node.js", "PHP", "AWS", "Docker", "Kubernetes"] %>
-                      <% tech_tags.each do |tech| %>
-                        <% is_selected = Array(params[:tags]).include?(tech) %>
+                      <% tech_stacks = ["React", "Angular", "Vue.js", "Ruby on Rails", "Django", "Node.js", "PHP", "AWS", "Docker", "Kubernetes"] %>
+                      <% tech_stacks.each do |tech| %>
+                        <% is_selected = Array(params[:tech_stacks]).include?(tech) %>
                         <%= link_to tech, 
                               is_selected ? 
-                                companies_path(search: params[:search], tags: Array(params[:tags]) - [tech], industry: params[:industry]) : 
-                                companies_path(search: params[:search], tags: Array(params[:tags]) + [tech], industry: params[:industry]),
+                                companies_path(search: params[:search], tech_stacks: Array(params[:tech_stacks]) - [tech], industry: params[:industry], tags: params[:tags]) : 
+                                companies_path(search: params[:search], tech_stacks: Array(params[:tech_stacks]) + [tech], industry: params[:industry], tags: params[:tags]),
                               class: "text-xs px-2.5 py-1 rounded-full #{is_selected ? 'bg-blue-100 text-blue-700 border border-blue-200' : 'bg-gray-100 text-gray-700 border border-gray-200 hover:bg-blue-50 hover:text-blue-600 hover:border-blue-100'} transition-colors",
-                              data: { turbo_action: "replace" } %>
+                              data: { turbo_frame: "_top" } %>
                       <% end %>
                     </div>
                   </div>
@@ -172,7 +181,7 @@
     </div>
     
     <!-- Active Filters Display -->
-    <% if params[:search].present? || params[:tags].present? || params[:industry].present? %>
+    <% if params[:search].present? || params[:tags].present? || params[:industry].present? || params[:tech_stacks].present? %>
       <div class="px-6 pb-4 border-t border-gray-100 pt-3">
         <div class="flex flex-wrap items-center gap-2">
           <span class="text-xs font-medium text-gray-500 flex items-center">
@@ -185,7 +194,7 @@
           <% if params[:search].present? %>
             <div class="flex items-center bg-blue-50 text-blue-700 px-3 py-1 rounded-full text-xs font-medium group hover:bg-blue-100 transition-colors">
               <span>Search: <%= params[:search] %></span>
-              <%= link_to companies_path(tags: params[:tags], industry: params[:industry]), 
+              <%= link_to companies_path(tags: params[:tags], industry: params[:industry], tech_stacks: params[:tech_stacks]), 
                     class: "ml-2 text-blue-500 group-hover:text-blue-700 transition-colors",
                     data: { turbo_action: "replace" } do %>
                 <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
@@ -198,7 +207,7 @@
           <% if params[:industry].present? %>
             <div class="flex items-center bg-blue-50 text-blue-700 px-3 py-1 rounded-full text-xs font-medium group hover:bg-blue-100 transition-colors">
               <span>Industry: <%= params[:industry].titleize %></span>
-              <%= link_to companies_path(search: params[:search], tags: params[:tags]), 
+              <%= link_to companies_path(search: params[:search], tags: params[:tags], tech_stacks: params[:tech_stacks]), 
                     class: "ml-2 text-blue-500 group-hover:text-blue-700 transition-colors",
                     data: { turbo_action: "replace" } do %>
                 <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
@@ -208,11 +217,13 @@
             </div>
           <% end %>
           
-          <% if params[:tags].present? %>
-            <% Tag.where(id: params[:tags]).each do |tag| %>
+          <% if params[:tech_stacks].present? %>
+            <% Array(params[:tech_stacks]).each do |tech| %>
               <div class="flex items-center bg-blue-50 text-blue-700 px-3 py-1 rounded-full text-xs font-medium group hover:bg-blue-100 transition-colors">
-                <span>#<%= tag.name %></span>
-                <%= link_to companies_path(search: params[:search], tags: params[:tags] - [tag.id.to_s], industry: params[:industry]), 
+                <span><svg class="w-3 h-3 mr-1 inline" fill="currentColor" viewBox="0 0 20 20">
+                  <path fill-rule="evenodd" d="M12.316 3.051a1 1 0 01.633 1.265l-4 12a1 1 0 11-1.898-.632l4-12a1 1 0 011.265-.633zM5.707 6.293a1 1 0 010 1.414L3.414 10l2.293 2.293a1 1 0 11-1.414 1.414l-3-3a1 1 0 010-1.414l3-3a1 1 0 011.414 0zm8.586 0a1 1 0 011.414 0l3 3a1 1 0 010 1.414l-3 3a1 1 0 11-1.414-1.414L16.586 10l-2.293-2.293a1 1 0 010-1.414z" clip-rule="evenodd" />
+                </svg><%= tech %></span>
+                <%= link_to companies_path(search: params[:search], tech_stacks: Array(params[:tech_stacks]) - [tech], tags: params[:tags], industry: params[:industry]), 
                       class: "ml-2 text-blue-500 group-hover:text-blue-700 transition-colors",
                       data: { turbo_action: "replace" } do %>
                   <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
@@ -223,7 +234,22 @@
             <% end %>
           <% end %>
           
-          <% if params[:search].present? || params[:tags].present? || params[:industry].present? %>
+          <% if params[:tags].present? %>
+            <% Tag.where(id: params[:tags]).each do |tag| %>
+              <div class="flex items-center bg-blue-50 text-blue-700 px-3 py-1 rounded-full text-xs font-medium group hover:bg-blue-100 transition-colors">
+                <span>#<%= tag.name %></span>
+                <%= link_to companies_path(search: params[:search], tags: params[:tags] - [tag.id.to_s], industry: params[:industry], tech_stacks: params[:tech_stacks]), 
+                      class: "ml-2 text-blue-500 group-hover:text-blue-700 transition-colors",
+                      data: { turbo_action: "replace" } do %>
+                  <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd" />
+                  </svg>
+                <% end %>
+              </div>
+            <% end %>
+          <% end %>
+          
+          <% if params[:search].present? || params[:tags].present? || params[:industry].present? || params[:tech_stacks].present? %>
             <%= link_to companies_path, 
                   class: "text-xs text-gray-500 hover:text-gray-700 hover:underline ml-2 flex items-center",
                   data: { turbo_action: "replace" } do %>
@@ -236,6 +262,21 @@
         </div>
       </div>
     <% end %>
+  </div>
+
+  <!-- Company Count and List Header -->
+  <div class="flex justify-between items-center mb-6">
+    <div class="text-sm text-gray-600">
+      <span class="font-medium text-gray-900"><%= @companies.size %></span> 
+      <%= 'company'.pluralize(@companies.size) %> found
+      <% if params[:search].present? || params[:tags].present? || params[:industry].present? || params[:tech_stacks].present? %>
+        <span class="text-gray-500">with applied filters</span>
+      <% end %>
+    </div>
+    
+    <div class="text-sm text-gray-500">
+      <!-- Optional: Add sorting controls here -->
+    </div>
   </div>
 
   <!-- Company List updated to grid layout -->

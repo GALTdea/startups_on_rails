@@ -2,25 +2,34 @@ class CompaniesController < ApplicationController
   before_action :set_company, only: [ :show ]
 
   def index
-    @companies = Company.published
-                       .includes(:tags, :categories)
-                       .order(created_at: :desc)
+    @companies = Company.where(published: true)
 
-    # Filter by industry categories
-    if params[:industry_categories].present?
-      @companies = @companies.joins(:categories)
-                            .where(categories: { id: params[:industry_categories], category_type: "industry" })
+    # Filter by search term
+    if params[:search].present?
+      @companies = @companies.where("companies.name ILIKE ? OR companies.description ILIKE ?",
+                                   "%#{params[:search]}%", "%#{params[:search]}%")
     end
 
-    # Filter by size categories
-    if params[:size_categories].present?
-      @companies = @companies.joins(:categories)
-                            .where(categories: { id: params[:size_categories], category_type: "size" })
+    # Filter by industry
+    if params[:industry].present?
+      @companies = @companies.where(industry: params[:industry])
     end
 
-    # Continue with existing filters
-    @companies = @companies.by_tags(params[:tags])
-                           .search(params[:search])
+    # Filter by tags
+    if params[:tags].present?
+      @companies = @companies.joins(:tags).where(tags: { id: params[:tags] }).distinct
+    end
+
+    # Filter by tech stacks
+    if params[:tech_stacks].present? && params[:tech_stacks].any?
+      # Join with company_technologies and technologies tables
+      @companies = @companies.joins(:technologies)
+                            .where("technologies.name IN (?)", params[:tech_stacks])
+                            .distinct
+    end
+
+    # Order by created_at
+    @companies = @companies.order(created_at: :desc)
   end
 
   def show
