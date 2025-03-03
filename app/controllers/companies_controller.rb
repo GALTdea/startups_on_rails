@@ -2,29 +2,21 @@ class CompaniesController < ApplicationController
   before_action :set_company, only: [ :show ]
 
   def index
-    @companies = Company.where(published: true)
+    @companies = Company.all
 
     # Filter by search term
-    if params[:search].present?
-      @companies = @companies.where("companies.name ILIKE ? OR companies.description ILIKE ?",
-                                   "%#{params[:search]}%", "%#{params[:search]}%")
-    end
+    @companies = @companies.search(params[:search]) if params[:search].present?
 
-    # Filter by industry - check if column exists first
-    if params[:industry].present? && Company.column_names.include?("industry")
-      @companies = @companies.where(industry: params[:industry])
-    end
+    # Filter by industry
+    @companies = @companies.where(industry: params[:industry]) if params[:industry].present?
 
     # Filter by tags
-    if params[:tags].present?
-      @companies = @companies.joins(:tags).where(tags: { id: params[:tags] }).distinct
-    end
+    @companies = @companies.joins(:tags).where(tags: { id: params[:tags] }).distinct if params[:tags].present?
 
     # Filter by tech stacks
-    if params[:tech_stacks].present? && params[:tech_stacks].any?
-      # Join with company_technologies and technologies tables
+    if params[:tech_stacks].present?
       @companies = @companies.joins(:technologies)
-                            .where("technologies.name IN (?)", params[:tech_stacks])
+                            .where(technologies: { name: params[:tech_stacks] })
                             .distinct
     end
 
