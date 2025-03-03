@@ -4,48 +4,30 @@ export default class extends Controller {
     static targets = ["dropdown"]
 
     connect() {
-        // Close dropdown when clicking outside
-        document.addEventListener('click', this.handleClickOutside.bind(this))
+        // Optional: Close on click outside
+        document.addEventListener("click", this.closeOnClickOutside.bind(this))
 
         // Listen for form submissions
         document.addEventListener('turbo:submit-start', this.handleFormSubmit.bind(this))
     }
 
     disconnect() {
-        document.removeEventListener('click', this.handleClickOutside.bind(this))
+        document.removeEventListener("click", this.closeOnClickOutside.bind(this))
         document.removeEventListener('turbo:submit-start', this.handleFormSubmit.bind(this))
     }
 
     toggle(event) {
         event.stopPropagation()
-
-        // Add transition classes
-        if (this.dropdownTarget.classList.contains('hidden')) {
-            this.dropdownTarget.classList.remove('hidden')
-            this.dropdownTarget.classList.add('opacity-0', 'scale-95')
-
-            // Force reflow
-            this.dropdownTarget.offsetHeight
-
-            this.dropdownTarget.classList.remove('opacity-0', 'scale-95')
-            this.dropdownTarget.classList.add('opacity-100', 'scale-100')
-        } else {
-            this.closeDropdown()
-        }
+        this.dropdownTarget.classList.toggle("hidden")
+        this.dropdownTarget.classList.toggle("opacity-0")
+        this.dropdownTarget.classList.toggle("scale-95")
     }
 
-    closeDropdown() {
-        this.dropdownTarget.classList.remove('opacity-100', 'scale-100')
-        this.dropdownTarget.classList.add('opacity-0', 'scale-95')
-
-        setTimeout(() => {
-            this.dropdownTarget.classList.add('hidden')
-        }, 100)
-    }
-
-    handleClickOutside(event) {
+    closeOnClickOutside(event) {
         if (!this.element.contains(event.target)) {
-            this.closeDropdown()
+            this.dropdownTarget.classList.add("hidden")
+            this.dropdownTarget.classList.add("opacity-0")
+            this.dropdownTarget.classList.add("scale-95")
         }
     }
 
@@ -54,6 +36,8 @@ export default class extends Controller {
         if (!this.element.contains(event.target)) return
 
         // Close dropdown after form submission
-        this.closeDropdown()
+        this.dropdownTarget.classList.add("hidden")
+        this.dropdownTarget.classList.add("opacity-0")
+        this.dropdownTarget.classList.add("scale-95")
     }
 } 
