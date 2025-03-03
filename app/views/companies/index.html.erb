@@ -139,12 +139,11 @@
                       <% tech_stacks = ["React", "Angular", "Vue.js", "Ruby on Rails", "Django", "Node.js", "PHP", "AWS", "Docker", "Kubernetes"] %>
                       <% tech_stacks.each do |tech| %>
                         <% is_selected = Array(params[:tech_stacks]).include?(tech) %>
-                        <%= link_to tech, 
-                              is_selected ? 
-                                companies_path(search: params[:search], tech_stacks: Array(params[:tech_stacks]) - [tech], industry: params[:industry], tags: params[:tags]) : 
-                                companies_path(search: params[:search], tech_stacks: Array(params[:tech_stacks]) + [tech], industry: params[:industry], tags: params[:tags]),
-                              class: "text-xs px-2.5 py-1 rounded-full #{is_selected ? 'bg-blue-100 text-blue-700 border border-blue-200' : 'bg-gray-100 text-gray-700 border border-gray-200 hover:bg-blue-50 hover:text-blue-600 hover:border-blue-100'} transition-colors",
-                              data: { turbo_frame: "_top" } %>
+                        <label class="flex items-center space-x-2 px-3 py-1.5 rounded-lg <%= is_selected ? 'bg-blue-50 border border-blue-200' : 'bg-gray-50 border border-gray-200 hover:bg-blue-50 hover:border-blue-200' %> transition-colors cursor-pointer">
+                          <%= check_box_tag "tech_stacks[]", tech, is_selected, 
+                              class: "h-3.5 w-3.5 text-blue-600 border-gray-300 rounded focus:ring-blue-500" %>
+                          <span class="text-xs font-medium <%= is_selected ? 'text-blue-700' : 'text-gray-700' %>"><%= tech %></span>
+                        </label>
                       <% end %>
                     </div>
                   </div>
@@ -156,12 +155,28 @@
                       <% Tag.all.each do |tag| %>
                         <label class="flex items-center space-x-3 p-2.5 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors cursor-pointer">
                           <%= check_box_tag "tags[]", tag.id, Array(params[:tags]).include?(tag.id.to_s),
-                                class: "h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500",
-                                data: { action: "change->filter-form#submit" } %>
+                                class: "h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500" %>
                           <span class="text-sm font-medium text-gray-700"><%= tag.name %></span>
                         </label>
                       <% end %>
                     </div>
+                  </div>
+                  
+                  <!-- Filter Action Buttons -->
+                  <div class="flex items-center justify-between pt-3 border-t border-gray-100">
+                    <button type="button" 
+                            data-action="modal#toggle" 
+                            class="text-sm text-gray-500 hover:text-gray-700 flex items-center">
+                      <svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"></path>
+                      </svg>
+                      Close Filter
+                    </button>
+                    
+                    <button type="submit" 
+                            class="text-sm text-white bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded-lg transition-colors">
+                      Apply Filters
+                    </button>
                   </div>
                 </div>
               </div>
@@ -215,7 +230,7 @@
                 </svg>
               <% end %>
             </div>
-          <% end %>
+          <% end %>T
           
           <% if params[:tech_stacks].present? %>
             <% Array(params[:tech_stacks]).each do |tech| %>
