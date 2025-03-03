@@ -58,6 +58,11 @@ class Company < ApplicationRecord
     where(id: companies)
   }
 
+  # Optional: Add a scope for filtering by tech stack
+  scope :with_tech_stacks, ->(tech_stacks) {
+    joins(:technologies).where(technologies: { name: tech_stacks }).distinct
+  }
+
   private
 
   def set_unpublished
