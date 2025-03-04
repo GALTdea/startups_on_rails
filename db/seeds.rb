@@ -35,7 +35,7 @@ admin = User.create!(
 # Create company owners
 puts "Creating company owners..."
 company_owners = []
-15.times do |i|
+30.times do |i|
   company_owners << User.create!(
     email: "owner#{i+1}@example.com",
     password: 'password',
@@ -120,17 +120,25 @@ tech_tags = [
   "Ruby on Rails",
   "JavaScript",
   "React",
+  "Next.js",
+  "Svelte",
+  "Node.js",
+  "Vue.js",
+  "Django",
+  "Laravel",
+  "ASP.NET",
+  "Flask",
+  "WordPress",
+  "Shopify",
   "Python",
   "PostgreSQL",
   "AWS",
   "Docker",
   "Kubernetes",
-  "Node.js",
   "TypeScript",
   "GraphQL",
   "MongoDB",
   "Redis",
-  "Vue.js",
   "Angular"
 ]
 
@@ -223,9 +231,33 @@ def generate_company_description(company_name, category)
   "#{intro_phrases.sample} #{middle_phrases.sample} #{terms.sample(3).join(', ')}, and #{terms.sample(2).join(' and ')}, #{benefit_phrases.sample}"
 end
 
+# Add some predefined companies to ensure quality
+predefined_companies = [
+  "RailsForge",
+  "HealthTrack",
+  "FinFlow",
+  "EduSpark",
+  "DevOpsHub",
+  "ShopSmart",
+  "DataViz",
+  "BlockChain Solutions",
+  "IoT Connect",
+  "AIAssist",
+  "NextWave",
+  "SvelteStack",
+  "NodeNest",
+  "DjangoMaster",
+  "LaravelHub",
+  "DotNetDev",
+  "FlaskFusion",
+  "WPExpert",
+  "ShopifyPlus",
+  "TechInnovate"
+]
+
 # Generate company names
 company_names = []
-50.times do
+100.times do
   name = ""
   loop do
     name_type = rand(4)
@@ -252,23 +284,9 @@ company_names = []
   company_names << name
 end
 
-# Add some predefined companies to ensure quality
-predefined_companies = [
-  "RailsForge",
-  "HealthTrack",
-  "FinFlow",
-  "EduSpark",
-  "DevOpsHub",
-  "ShopSmart",
-  "DataViz",
-  "BlockChain Solutions",
-  "IoT Connect",
-  "AIAssist"
-]
+company_names = (predefined_companies + company_names).uniq.first(100)
 
-company_names = (predefined_companies + company_names).uniq.first(50)
-
-# Create 50 companies
+# Create 100 companies
 company_data = company_names.map.with_index do |name, index|
   # Select a primary category for this company
   primary_category = categories.sample

@@ -29,11 +29,15 @@ frameworks = [
   { name: "React", popularity: 90, logo_url: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/react/react-original.svg" },
   { name: "Angular", popularity: 75, logo_url: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/angularjs/angularjs-original.svg" },
   { name: "Vue.js", popularity: 80, logo_url: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/vuejs/vuejs-original.svg" },
+  { name: "Next.js", popularity: 85, logo_url: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/nextjs/nextjs-original.svg" },
+  { name: "Svelte", popularity: 70, logo_url: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/svelte/svelte-original.svg" },
+  { name: "Node.js", popularity: 85, logo_url: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/nodejs/nodejs-original.svg" },
   { name: "Django", popularity: 70, logo_url: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/django/django-plain.svg" },
   { name: "Laravel", popularity: 65, logo_url: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/laravel/laravel-plain.svg" },
+  { name: "ASP.NET", popularity: 65, logo_url: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/dotnetcore/dotnetcore-original.svg" },
+  { name: "Flask", popularity: 65, logo_url: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/flask/flask-original.svg" },
   { name: "Express.js", popularity: 85, logo_url: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/express/express-original.svg" },
   { name: "Spring Boot", popularity: 70, logo_url: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/spring/spring-original.svg" },
-  { name: "ASP.NET Core", popularity: 65, logo_url: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/dotnetcore/dotnetcore-original.svg" },
   { name: "Flutter", popularity: 60, logo_url: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/flutter/flutter-original.svg" }
 ]
 
@@ -73,8 +77,6 @@ frontend = [
   { name: "Bootstrap", popularity: 80, logo_url: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/bootstrap/bootstrap-original.svg" },
   { name: "Sass", popularity: 75, logo_url: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/sass/sass-original.svg" },
   { name: "jQuery", popularity: 70, logo_url: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/jquery/jquery-original.svg" },
-  { name: "Next.js", popularity: 80, logo_url: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/nextjs/nextjs-original.svg" },
-  { name: "Svelte", popularity: 60, logo_url: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/svelte/svelte-original.svg" },
   { name: "Hotwire", popularity: 65, logo_url: "https://hotwired.dev/assets/images/social/hotwire-social-card-1280x640-fc1e760d.png" }
 ]
 
@@ -103,6 +105,23 @@ devops.each do |ops|
     tech.category = "DevOps"
     tech.popularity = ops[:popularity]
     tech.logo_url = ops[:logo_url]
+  end
+end
+
+# CMS & E-commerce
+cms_ecommerce = [
+  { name: "WordPress", popularity: 85, logo_url: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/wordpress/wordpress-original.svg" },
+  { name: "Shopify", popularity: 80, logo_url: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/shopify/shopify-original.svg" },
+  { name: "Magento", popularity: 70, logo_url: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/magento/magento-original.svg" },
+  { name: "Drupal", popularity: 65, logo_url: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/drupal/drupal-original.svg" },
+  { name: "WooCommerce", popularity: 75, logo_url: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/woocommerce/woocommerce-original.svg" }
+]
+
+cms_ecommerce.each do |cms|
+  Technology.find_or_create_by(name: cms[:name]) do |tech|
+    tech.category = "CMS & E-commerce"
+    tech.popularity = cms[:popularity]
+    tech.logo_url = cms[:logo_url]
   end
 end
 
