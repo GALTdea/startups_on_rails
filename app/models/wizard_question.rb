@@ -1,0 +1,2 @@
+class WizardQuestion < ApplicationRecord
+end
