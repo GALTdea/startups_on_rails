@@ -6,5 +6,7 @@ class CreateSolutionCategoriesSolutions < ActiveRecord::Migration[8.0]
 
       t.timestamps
     end
+
+    add_index :solution_categories_solutions, [ :solution_category_id, :solution_id ], unique: true, name: 'index_solution_categories_solutions_unique'
   end
 end
