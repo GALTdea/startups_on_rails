@@ -22,6 +22,9 @@ class CompaniesController < ApplicationController
 
     # Order by created_at
     @companies = @companies.order(created_at: :desc)
+
+    # Add pagination
+    @pagy, @companies = pagy(@companies)
   end
 
   def show

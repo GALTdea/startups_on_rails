@@ -287,8 +287,8 @@
   <!-- Company Count and List Header -->
   <div class="flex justify-between items-center mb-6">
     <div class="text-sm text-gray-600">
-      <span class="font-medium text-gray-900"><%= @companies.size %></span> 
-      <%= 'company'.pluralize(@companies.size) %> found
+      <span class="font-medium text-gray-900"><%= @pagy.count %></span> 
+      <%= 'company'.pluralize(@pagy.count) %> found
       <% if params[:search].present? || params[:tags].present? || params[:industry].present? || params[:tech_stacks].present? %>
         <span class="text-gray-500">with applied filters</span>
       <% end %>
@@ -311,5 +311,8 @@
       <div class="text-6xl mb-4">😕</div>
       <p class="text-gray-500 text-lg font-medium">No companies found<br><span class="text-sm font-normal">Try adjusting your filters</span></p>
     </div>
+  <% else %>
+    <!-- Pagination -->
+    <%= tailwind_pagy_nav(@pagy) %>
   <% end %>
 </div>
