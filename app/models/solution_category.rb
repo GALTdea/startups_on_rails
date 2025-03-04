@@ -1,0 +1,2 @@
+class SolutionCategory < ApplicationRecord
+end
