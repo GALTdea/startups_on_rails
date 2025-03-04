@@ -1,4 +1,11 @@
 Rails.application.routes.draw do
+  get "solutions/index"
+  get "solutions/show"
+  get "solutions/new"
+  get "solutions/create"
+  get "solutions/edit"
+  get "solutions/update"
+  get "solutions/destroy"
   get "companies/index"
   get "companies/show"
   devise_for :users, controllers: {
@@ -25,7 +32,9 @@ Rails.application.routes.draw do
   # get "service-worker" => "rails/pwa#service_worker", as: :pwa_service_worker
 
   # Defines the root path route ("/")
-  resources :companies, only: [ :index, :show ]
+  resources :companies, only: [ :index, :show ] do
+    resources :solutions
+  end
   root to: "companies#index"
 
   resources :technologies
