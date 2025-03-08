@@ -1,7 +1,5 @@
 class Solution < ApplicationRecord
   has_and_belongs_to_many :solution_categories
-  has_many :wizard_recommendations, dependent: :destroy
-  has_many :wizard_sessions, through: :wizard_recommendations
 
   has_one_attached :logo
 
