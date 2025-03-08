@@ -1,2 +1,0 @@
-class WizardQuestion < ApplicationRecord
-end
