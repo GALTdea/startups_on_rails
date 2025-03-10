@@ -390,7 +390,10 @@ end
 puts "Seed data created successfully!"
 puts "Created #{User.count} users (#{User.admin.count} admins, #{User.company_owner.count} company owners, #{User.member.count} members)"
 puts "Created #{Category.count} categories"
-puts "Created #{Tag.count} tags (#{general_tags.count} general, #{tech_tags.count} technology-related)"
+puts "Created #{Tag.count} tags (#{Tag.count - tech_tags.count} general, #{tech_tags.count} technology-related)"
 puts "Created #{Technology.count} technologies"
 puts "Created #{Company.count} companies (#{Company.published.count} published, #{Company.count - Company.published.count} unpublished)"
 puts "Created #{CompanyTechnology.count} company technology associations"
+
+# Load solutions seed
+load Rails.root.join('db/seeds/solutions.rb')

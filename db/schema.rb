@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_03_04_224124) do
+ActiveRecord::Schema[8.0].define(version: 2025_03_10_200218) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -77,6 +77,17 @@ ActiveRecord::Schema[8.0].define(version: 2025_03_04_224124) do
     t.index ["tag_id", "company_id"], name: "index_companies_tags_on_tag_id_and_company_id", unique: true
   end
 
+  create_table "company_technologies", force: :cascade do |t|
+    t.bigint "company_id", null: false
+    t.bigint "technology_id", null: false
+    t.string "proficiency_level"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["company_id", "technology_id"], name: "index_company_technologies_on_company_id_and_technology_id", unique: true
+    t.index ["company_id"], name: "index_company_technologies_on_company_id"
+    t.index ["technology_id"], name: "index_company_technologies_on_technology_id"
+  end
+
   create_table "solution_categories", force: :cascade do |t|
     t.string "name"
     t.text "description"
@@ -106,6 +117,8 @@ ActiveRecord::Schema[8.0].define(version: 2025_03_04_224124) do
     t.boolean "published", default: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.bigint "company_id"
+    t.index ["company_id"], name: "index_solutions_on_company_id"
     t.index ["deployment_type"], name: "index_solutions_on_deployment_type"
     t.index ["name"], name: "index_solutions_on_name"
     t.index ["popularity"], name: "index_solutions_on_popularity"
@@ -116,6 +129,16 @@ ActiveRecord::Schema[8.0].define(version: 2025_03_04_224124) do
     t.string "name"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+  end
+
+  create_table "technologies", force: :cascade do |t|
+    t.string "name"
+    t.string "category"
+    t.integer "popularity"
+    t.string "logo_url"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["name"], name: "index_technologies_on_name", unique: true
   end
 
   create_table "users", force: :cascade do |t|
@@ -134,6 +157,9 @@ ActiveRecord::Schema[8.0].define(version: 2025_03_04_224124) do
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
   add_foreign_key "companies", "users"
+  add_foreign_key "company_technologies", "companies"
+  add_foreign_key "company_technologies", "technologies"
   add_foreign_key "solution_categories_solutions", "solution_categories"
   add_foreign_key "solution_categories_solutions", "solutions"
+  add_foreign_key "solutions", "companies"
 end

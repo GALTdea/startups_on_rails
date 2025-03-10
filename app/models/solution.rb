@@ -1,4 +1,6 @@
 class Solution < ApplicationRecord
+  belongs_to :company, optional: true
+
   has_one_attached :logo
 
   validates :name, presence: true, uniqueness: true
@@ -11,6 +13,7 @@ class Solution < ApplicationRecord
   scope :popular, -> { order(popularity: :desc) }
   scope :by_type, ->(type) { where(solution_type: type) if type.present? }
   scope :by_deployment, ->(deployment) { where(deployment_type: deployment) if deployment.present? }
+  scope :by_company, ->(company_id) { where(company_id: company_id) if company_id.present? }
 
   scope :search, ->(term) {
     where("solutions.name ILIKE :term OR solutions.description ILIKE :term", term: "%#{term}%")
