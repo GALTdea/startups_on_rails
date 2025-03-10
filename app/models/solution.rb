@@ -1,6 +1,4 @@
 class Solution < ApplicationRecord
-  has_and_belongs_to_many :solution_categories
-
   has_one_attached :logo
 
   validates :name, presence: true, uniqueness: true
@@ -13,14 +11,6 @@ class Solution < ApplicationRecord
   scope :popular, -> { order(popularity: :desc) }
   scope :by_type, ->(type) { where(solution_type: type) if type.present? }
   scope :by_deployment, ->(deployment) { where(deployment_type: deployment) if deployment.present? }
-
-  scope :by_solution_category, ->(category_ids) {
-    return if category_ids.blank? || category_ids.reject(&:blank?).empty?
-
-    joins(:solution_categories)
-      .where(solution_categories: { id: category_ids.reject(&:blank?) })
-      .distinct
-  }
 
   scope :search, ->(term) {
     where("solutions.name ILIKE :term OR solutions.description ILIKE :term", term: "%#{term}%")

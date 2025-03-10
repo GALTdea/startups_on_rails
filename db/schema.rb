@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_03_08_012203) do
+ActiveRecord::Schema[8.0].define(version: 2025_03_04_224124) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -65,10 +65,6 @@ ActiveRecord::Schema[8.0].define(version: 2025_03_08_012203) do
     t.boolean "published", default: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.string "company_size"
-    t.string "funding_stage"
-    t.integer "employee_count"
-    t.integer "year_founded"
     t.string "industry"
     t.index ["industry"], name: "index_companies_on_industry"
     t.index ["user_id"], name: "index_companies_on_user_id"
@@ -81,52 +77,45 @@ ActiveRecord::Schema[8.0].define(version: 2025_03_08_012203) do
     t.index ["tag_id", "company_id"], name: "index_companies_tags_on_tag_id_and_company_id", unique: true
   end
 
-  create_table "company_technologies", force: :cascade do |t|
-    t.bigint "company_id", null: false
-    t.bigint "technology_id", null: false
-    t.string "proficiency_level", default: "regular"
-    t.text "notes"
+  create_table "solution_categories", force: :cascade do |t|
+    t.string "name"
+    t.text "description"
+    t.integer "position"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["company_id", "technology_id"], name: "index_company_technologies_on_company_id_and_technology_id", unique: true
-    t.index ["company_id"], name: "index_company_technologies_on_company_id"
-    t.index ["technology_id"], name: "index_company_technologies_on_technology_id"
   end
 
-  create_table "favorites", force: :cascade do |t|
-    t.string "favoritable_type", null: false
-    t.bigint "favoritable_id", null: false
-    t.string "favoritor_type", null: false
-    t.bigint "favoritor_id", null: false
-    t.string "scope", default: "favorite", null: false
-    t.boolean "blocked", default: false, null: false
+  create_table "solution_categories_solutions", force: :cascade do |t|
+    t.bigint "solution_category_id", null: false
+    t.bigint "solution_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["blocked"], name: "index_favorites_on_blocked"
-    t.index ["favoritable_id", "favoritable_type"], name: "fk_favoritables"
-    t.index ["favoritable_type", "favoritable_id", "favoritor_type", "favoritor_id", "scope"], name: "uniq_favorites__and_favoritables", unique: true
-    t.index ["favoritable_type", "favoritable_id"], name: "index_favorites_on_favoritable"
-    t.index ["favoritor_id", "favoritor_type"], name: "fk_favorites"
-    t.index ["favoritor_type", "favoritor_id"], name: "index_favorites_on_favoritor"
-    t.index ["scope"], name: "index_favorites_on_scope"
+    t.index ["solution_category_id", "solution_id"], name: "index_solution_categories_solutions_unique", unique: true
+    t.index ["solution_category_id"], name: "index_solution_categories_solutions_on_solution_category_id"
+    t.index ["solution_id"], name: "index_solution_categories_solutions_on_solution_id"
+  end
+
+  create_table "solutions", force: :cascade do |t|
+    t.string "name"
+    t.text "description"
+    t.string "website"
+    t.string "pricing"
+    t.string "deployment_type"
+    t.integer "popularity", default: 0
+    t.string "solution_type"
+    t.boolean "published", default: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["deployment_type"], name: "index_solutions_on_deployment_type"
+    t.index ["name"], name: "index_solutions_on_name"
+    t.index ["popularity"], name: "index_solutions_on_popularity"
+    t.index ["solution_type"], name: "index_solutions_on_solution_type"
   end
 
   create_table "tags", force: :cascade do |t|
     t.string "name"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-  end
-
-  create_table "technologies", force: :cascade do |t|
-    t.string "name", null: false
-    t.string "category", null: false
-    t.integer "popularity", default: 0
-    t.string "logo_url"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.index ["category"], name: "index_technologies_on_category"
-    t.index ["name"], name: "index_technologies_on_name", unique: true
-    t.index ["popularity"], name: "index_technologies_on_popularity"
   end
 
   create_table "users", force: :cascade do |t|
@@ -145,6 +134,6 @@ ActiveRecord::Schema[8.0].define(version: 2025_03_08_012203) do
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
   add_foreign_key "companies", "users"
-  add_foreign_key "company_technologies", "companies"
-  add_foreign_key "company_technologies", "technologies"
+  add_foreign_key "solution_categories_solutions", "solution_categories"
+  add_foreign_key "solution_categories_solutions", "solutions"
 end
