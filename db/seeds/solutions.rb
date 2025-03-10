@@ -47,9 +47,10 @@ end
 Solution.destroy_all
 puts "Cleared existing solutions"
 
-# Create 2-4 solutions for each published company
+# Create 1-2 solutions for each published company
 Company.published.each do |company|
-  solution_count = rand(2..4)
+  # Randomly decide whether to create 1 or 2 solutions
+  solution_count = [ 1, 2 ].sample
 
   solution_count.times do
     # Randomly select a solution type
