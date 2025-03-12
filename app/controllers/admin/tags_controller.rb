@@ -1,6 +1,4 @@
-class Admin::TagsController < ApplicationController
-  before_action :authenticate_admin!
-
+class Admin::TagsController < Admin::BaseController
   def new
     @tag = Tag.new
   end

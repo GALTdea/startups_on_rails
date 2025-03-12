@@ -153,8 +153,14 @@
     <% end %>
 
     <!-- Main Content -->
-    <main class="max-w-7xl mx-auto px-4 sm:px-6 py-8 w-full flex-grow">
-      <%= yield %>
+    <main class="w-full flex-grow">
+      <% if content_for?(:content) %>
+        <%= yield :content %>
+      <% else %>
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 py-8">
+          <%= yield %>
+        </div>
+      <% end %>
     </main>
 
     <!-- Footer -->

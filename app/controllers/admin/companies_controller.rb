@@ -1,6 +1,5 @@
-class Admin::CompaniesController < ApplicationController
+class Admin::CompaniesController < Admin::BaseController
   include ActionView::RecordIdentifier
-  before_action :authenticate_admin!
   before_action :set_company, only: [ :show, :edit, :update, :destroy ]
 
   def index
@@ -91,12 +90,6 @@ class Admin::CompaniesController < ApplicationController
       :slug, :published, :user_id, # Allow admin to set owner
       tag_ids: [], category_ids: []
     )
-  end
-
-  def authenticate_admin!
-    return if current_user.admin? || current_user.company_owner?
-
-    redirect_to root_path, alert: "Not authorized!"
   end
 
   def set_company
