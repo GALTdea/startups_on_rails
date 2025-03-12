@@ -57,30 +57,74 @@ end
 
 # Create categories
 puts "Creating categories..."
-categories = [
-  "SaaS",
-  "Fintech",
-  "Healthtech",
-  "E-commerce",
-  "Edtech",
-  "AI/ML",
-  "Mobile Apps",
-  "Developer Tools",
-  "Blockchain",
-  "IoT",
-  "Cybersecurity",
-  "Cloud Services",
-  "Data Analytics",
-  "AR/VR",
-  "Gaming",
-  "Social Media",
-  "Marketplace",
-  "Productivity",
-  "Enterprise Software",
-  "Sustainability"
-].map do |name|
-  Category.find_or_create_by!(name: name)
+
+# Industry categories
+industry_categories = {
+  "Technology" => [ "SaaS", "Cloud Services", "Enterprise Software", "Developer Tools" ],
+  "Finance" => [ "Fintech", "Banking", "Insurance", "Investment" ],
+  "Healthcare" => [ "Healthtech", "Medical Devices", "Telemedicine", "Wellness" ],
+  "Education" => [ "Edtech", "E-learning", "Training", "Educational Content" ],
+  "Retail" => [ "E-commerce", "Marketplace", "Consumer Goods", "Retail Tech" ],
+  "Media" => [ "Social Media", "Content Creation", "Entertainment", "Gaming" ]
+}
+
+# Technology categories
+technology_categories = {
+  "Artificial Intelligence" => [ "Machine Learning", "Natural Language Processing", "Computer Vision", "Predictive Analytics" ],
+  "Blockchain" => [ "Cryptocurrency", "Smart Contracts", "Decentralized Finance", "NFTs" ],
+  "Mobile" => [ "iOS Development", "Android Development", "Cross-platform", "Mobile UX" ],
+  "Web Development" => [ "Frontend", "Backend", "Full Stack", "Web Design" ],
+  "Data" => [ "Big Data", "Data Analytics", "Data Visualization", "Data Engineering" ],
+  "Infrastructure" => [ "Cloud Infrastructure", "DevOps", "Serverless", "Containers" ]
+}
+
+# Problem domain categories
+problem_domain_categories = {
+  "Customer Experience" => [ "Customer Service", "User Experience", "Customer Engagement", "Loyalty" ],
+  "Marketing" => [ "Digital Marketing", "Content Marketing", "SEO", "Social Media Marketing" ],
+  "Operations" => [ "Supply Chain", "Logistics", "Inventory Management", "Process Automation" ],
+  "Security" => [ "Cybersecurity", "Data Privacy", "Compliance", "Identity Management" ],
+  "Productivity" => [ "Collaboration", "Project Management", "Time Management", "Workflow Automation" ],
+  "Sustainability" => [ "Green Tech", "Renewable Energy", "Carbon Footprint", "Circular Economy" ]
+}
+
+# Job function categories
+job_function_categories = {
+  "Engineering" => [ "Software Development", "QA", "DevOps", "System Architecture" ],
+  "Design" => [ "UX Design", "UI Design", "Product Design", "Graphic Design" ],
+  "Product" => [ "Product Management", "Product Marketing", "Product Strategy", "User Research" ],
+  "Sales" => [ "Sales Development", "Account Management", "Business Development", "Sales Operations" ],
+  "Marketing" => [ "Growth Marketing", "Brand Marketing", "Marketing Operations", "Content Creation" ],
+  "Operations" => [ "Customer Success", "Support", "HR", "Finance" ]
+}
+
+# Create hierarchical categories
+def create_hierarchical_categories(categories_hash, category_type)
+  categories_hash.each do |parent_name, children|
+    parent = Category.find_or_create_by!(name: parent_name) do |cat|
+      cat.category_type = category_type
+      cat.slug = parent_name.parameterize
+    end
+
+    # Update the category_type if it's an existing category
+    unless parent.category_type == category_type
+      parent.update(category_type: category_type)
+    end
+
+    children.each do |child_name|
+      child = Category.find_or_initialize_by(name: child_name)
+      child.category_type = category_type
+      child.parent = parent
+      child.slug = "#{parent_name.parameterize}-#{child_name.parameterize}"
+      child.save!
+    end
+  end
 end
+
+create_hierarchical_categories(industry_categories, 'industry')
+create_hierarchical_categories(technology_categories, 'technology')
+create_hierarchical_categories(problem_domain_categories, 'problem_domain')
+create_hierarchical_categories(job_function_categories, 'job_function')
 
 # Create tags (both general and technology-related)
 puts "Creating tags..."
@@ -289,7 +333,7 @@ company_names = (predefined_companies + company_names).uniq.first(100)
 # Create 100 companies
 company_data = company_names.map.with_index do |name, index|
   # Select a primary category for this company
-  primary_category = categories.sample
+  primary_category = Category.where(category_type: 'industry').sample
 
   # Generate a realistic website URL
   domain_suffix = [ ".com", ".io", ".co", ".tech", ".app" ].sample
@@ -327,8 +371,15 @@ end
 company_data.each_with_index do |data, index|
   owner = company_owners[index % company_owners.size]
 
-  # Select categories and general tags
-  selected_categories = random_sample(categories, 1, 3)
+  # Select categories from different types
+  industry_cats = random_sample(Category.where(category_type: 'industry'), 1, 2)
+  tech_cats = random_sample(Category.where(category_type: 'technology'), 1, 2)
+  problem_cats = random_sample(Category.where(category_type: 'problem_domain'), 0, 2)
+
+  # Combine all categories for legacy association
+  selected_categories = industry_cats + tech_cats + problem_cats
+
+  # Select general tags
   selected_general_tags = random_sample(general_tags, 2, 5)
 
   # Select some technology tags (these will also be added as company_technologies)
@@ -352,6 +403,16 @@ company_data.each_with_index do |data, index|
   company.save!
   puts "Created company: #{company.name}"
 
+  # Add categories using the polymorphic association
+  selected_categories.each do |category|
+    company.add_category(category)
+  end
+
+  # Add tags using the polymorphic association
+  selected_tags.each do |tag|
+    company.add_tag(tag)
+  end
+
   # Assign technologies to the company (including those from tech tags)
   tech_count = rand(3..8)
   additional_techs = all_technologies.sample(tech_count)
@@ -361,27 +422,18 @@ company_data.each_with_index do |data, index|
     tech = tech_name_to_object[tag.name]
     if tech
       # Only create if it doesn't exist yet
-      unless company.company_technologies.exists?(technology_id: tech.id)
-        company.company_technologies.create!(
-          technology: tech,
-          proficiency_level: "core" # Make tagged technologies core
-        )
+      unless company.technologies.include?(tech)
+        company.technologies << tech
       end
     end
   end
 
-  # Then add some additional random technologies
+  # Then add additional technologies
   additional_techs.each do |tech|
-    # Skip if already added from tags
-    next if company.technologies.include?(tech)
-
-    # Randomly assign proficiency levels
-    proficiency = [ "core", "regular", "occasional" ].sample
-
-    company.company_technologies.create!(
-      technology: tech,
-      proficiency_level: proficiency
-    )
+    # Only create if it doesn't exist yet
+    unless company.technologies.include?(tech)
+      company.technologies << tech
+    end
   end
 
   puts "  Added #{company.technologies.count} technologies to #{company.name}"

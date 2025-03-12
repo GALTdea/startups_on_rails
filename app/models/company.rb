@@ -1,6 +1,9 @@
 class Company < ApplicationRecord
   belongs_to :owner, class_name: "User", foreign_key: "user_id", optional: true
 
+  # Active Storage attachment
+  has_one_attached :logo
+
   before_create :set_unpublished
 
   validates :name, :description, :website, presence: true
@@ -15,13 +18,26 @@ class Company < ApplicationRecord
 
   attr_accessor :created_by
 
+  # Legacy tag association - will be deprecated
   has_and_belongs_to_many :tags
+
+  # New polymorphic tagging
+  has_many :taggables, as: :taggable, dependent: :destroy
+  has_many :polymorphic_tags, through: :taggables, source: :tag
+
+  # Legacy categories association - will be deprecated
   has_and_belongs_to_many :categories
+
+  # New polymorphic categorization
+  has_many :categorizables, as: :categorizable, dependent: :destroy
+  has_many :polymorphic_categories, through: :categorizables, source: :category
+
   has_many :solutions, dependent: :nullify
 
-  validates :category_ids, presence: { message: "must have at least one category" },
-                           length: { minimum: 1, maximum: 5 }
+  # Legacy validation - will be updated to use polymorphic categories
+  validates :category_ids, presence: { message: "must have at least one category" }
 
+  # Scopes for filtering by category
   scope :by_category, ->(category_ids) {
     return if category_ids.blank? || category_ids.reject(&:blank?).empty?
 
@@ -30,31 +46,58 @@ class Company < ApplicationRecord
       .distinct
   }
 
-  scope :by_tags, ->(tag_ids) {
-    return if tag_ids.blank? || tag_ids.reject(&:blank?).empty?
+  # New scope for filtering by polymorphic categories
+  scope :by_polymorphic_category, ->(category_ids) {
+    return if category_ids.blank? || category_ids.reject(&:blank?).empty?
 
-    joins(:tags)
-      .where(tags: { id: tag_ids.reject(&:blank?) })
+    joins(:categorizables)
+      .where(categorizables: { category_id: category_ids.reject(&:blank?) })
       .distinct
   }
 
-  has_one_attached :logo
+  # New scope for filtering by category type
+  scope :by_category_type, ->(category_type) {
+    return if category_type.blank?
 
-  has_many :company_technologies, dependent: :destroy
-  has_many :technologies, through: :company_technologies
+    joins(categorizables: :category)
+      .where(categories: { category_type: category_type })
+      .distinct
+  }
+
+  # Method to add a category using the polymorphic association
+  def add_category(category)
+    categorizables.find_or_create_by(category: category)
+  end
+
+  # Method to remove a category using the polymorphic association
+  def remove_category(category)
+    categorizables.where(category: category).destroy_all
+  end
+
+  # Method to check if a company has a specific category
+  def has_category?(category)
+    categorizables.exists?(category: category)
+  end
+
+  # Method to get all categories of a specific type
+  def categories_by_type(type)
+    polymorphic_categories.where(category_type: type)
+  end
+
+  has_and_belongs_to_many :technologies
 
   # Tech stack related scopes
   scope :with_any_technologies, ->(technology_ids) {
-    joins(:company_technologies)
-      .where(company_technologies: { technology_id: technology_ids })
+    joins(:technologies)
+      .where(technologies: { id: technology_ids })
       .distinct
   }
 
   scope :with_all_technologies, ->(technology_ids) {
-    companies = joins(:company_technologies)
-      .where(company_technologies: { technology_id: technology_ids })
+    companies = joins(:technologies)
+      .where(technologies: { id: technology_ids })
       .group("companies.id")
-      .having("COUNT(DISTINCT company_technologies.technology_id) = ?", technology_ids.size)
+      .having("COUNT(DISTINCT technologies.id) = ?", technology_ids.size)
 
     where(id: companies)
   }
@@ -63,6 +106,21 @@ class Company < ApplicationRecord
   scope :with_tech_stacks, ->(tech_stacks) {
     joins(:technologies).where(technologies: { name: tech_stacks }).distinct
   }
+
+  # Method to add a tag using the polymorphic association
+  def add_tag(tag)
+    taggables.find_or_create_by(tag: tag)
+  end
+
+  # Method to remove a tag using the polymorphic association
+  def remove_tag(tag)
+    taggables.where(tag: tag).destroy_all
+  end
+
+  # Method to check if a company has a specific tag
+  def has_tag?(tag)
+    taggables.exists?(tag: tag)
+  end
 
   private
 

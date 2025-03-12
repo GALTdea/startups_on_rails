@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_03_10_200218) do
+ActiveRecord::Schema[8.0].define(version: 2025_03_12_194849) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -47,12 +47,28 @@ ActiveRecord::Schema[8.0].define(version: 2025_03_10_200218) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.string "category_type"
+    t.integer "parent_id"
+    t.string "slug"
+    t.text "description"
     t.index ["category_type"], name: "index_categories_on_category_type"
+    t.index ["parent_id"], name: "index_categories_on_parent_id"
+    t.index ["slug"], name: "index_categories_on_slug", unique: true
   end
 
   create_table "categories_companies", id: false, force: :cascade do |t|
     t.bigint "company_id", null: false
     t.bigint "category_id", null: false
+  end
+
+  create_table "categorizables", force: :cascade do |t|
+    t.integer "categorizable_id", null: false
+    t.string "categorizable_type", null: false
+    t.integer "category_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["categorizable_id", "categorizable_type", "category_id"], name: "index_categorizables_uniqueness", unique: true
+    t.index ["categorizable_id", "categorizable_type"], name: "idx_on_categorizable_id_categorizable_type_9d4ee3164d"
+    t.index ["category_id"], name: "index_categorizables_on_category_id"
   end
 
   create_table "companies", force: :cascade do |t|
@@ -75,6 +91,13 @@ ActiveRecord::Schema[8.0].define(version: 2025_03_10_200218) do
     t.bigint "tag_id", null: false
     t.index ["company_id", "tag_id"], name: "index_companies_tags_on_company_id_and_tag_id", unique: true
     t.index ["tag_id", "company_id"], name: "index_companies_tags_on_tag_id_and_company_id", unique: true
+  end
+
+  create_table "companies_technologies", id: false, force: :cascade do |t|
+    t.bigint "company_id", null: false
+    t.bigint "technology_id", null: false
+    t.index ["company_id", "technology_id"], name: "index_companies_technologies_on_company_id_and_technology_id", unique: true
+    t.index ["technology_id", "company_id"], name: "index_companies_technologies_on_technology_id_and_company_id"
   end
 
   create_table "company_technologies", force: :cascade do |t|
@@ -117,12 +140,23 @@ ActiveRecord::Schema[8.0].define(version: 2025_03_10_200218) do
     t.boolean "published", default: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.bigint "company_id", null: false
+    t.bigint "company_id"
     t.index ["company_id"], name: "index_solutions_on_company_id"
     t.index ["deployment_type"], name: "index_solutions_on_deployment_type"
     t.index ["name"], name: "index_solutions_on_name"
     t.index ["popularity"], name: "index_solutions_on_popularity"
     t.index ["solution_type"], name: "index_solutions_on_solution_type"
+  end
+
+  create_table "taggables", force: :cascade do |t|
+    t.integer "taggable_id", null: false
+    t.string "taggable_type", null: false
+    t.integer "tag_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["tag_id"], name: "index_taggables_on_tag_id"
+    t.index ["taggable_id", "taggable_type", "tag_id"], name: "index_taggables_uniqueness", unique: true
+    t.index ["taggable_id", "taggable_type"], name: "index_taggables_on_taggable_id_and_taggable_type"
   end
 
   create_table "tags", force: :cascade do |t|
@@ -156,10 +190,13 @@ ActiveRecord::Schema[8.0].define(version: 2025_03_10_200218) do
 
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
+  add_foreign_key "categories", "categories", column: "parent_id"
+  add_foreign_key "categorizables", "categories"
   add_foreign_key "companies", "users"
   add_foreign_key "company_technologies", "companies"
   add_foreign_key "company_technologies", "technologies"
   add_foreign_key "solution_categories_solutions", "solution_categories"
   add_foreign_key "solution_categories_solutions", "solutions"
   add_foreign_key "solutions", "companies"
+  add_foreign_key "taggables", "tags"
 end

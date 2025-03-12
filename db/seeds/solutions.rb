@@ -86,6 +86,36 @@ Company.published.each do |company|
       company: company
     )
 
+    # Add categories from different types
+    # Inherit some categories from the company
+    company_categories = company.categories.to_a
+
+    # Add 1-2 industry categories (inherit from company if possible)
+    industry_cats = company_categories.select { |c| c.category_type == 'industry' }.sample(rand(1..2))
+    if industry_cats.empty?
+      industry_cats = Category.where(category_type: 'industry').sample(rand(1..2))
+    end
+
+    # Add 1-2 technology categories (inherit from company if possible)
+    tech_cats = company_categories.select { |c| c.category_type == 'technology' }.sample(rand(1..2))
+    if tech_cats.empty?
+      tech_cats = Category.where(category_type: 'technology').sample(rand(1..2))
+    end
+
+    # Add 0-2 problem domain categories
+    problem_cats = Category.where(category_type: 'problem_domain').sample(rand(0..2))
+
+    # Add all categories using the polymorphic association
+    (industry_cats + tech_cats + problem_cats).each do |category|
+      solution.add_category(category)
+    end
+
+    # Add 2-5 tags
+    tags = Tag.all.sample(rand(2..5))
+    tags.each do |tag|
+      solution.add_tag(tag)
+    end
+
     puts "Created solution: #{solution.name} for #{company.name}"
   end
 end
