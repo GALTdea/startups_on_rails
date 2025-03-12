@@ -1,0 +1,83 @@
+{
+    "ruby_on_rails": {
+        "enabled": true,
+        "rules": [
+            {
+                "description": "Rails MVC Code Organization",
+                "pattern": {
+                    "models": "app/models/**/*.rb",
+                    "views": "app/views/**/*.{erb,html.erb,haml}",
+                    "controllers": "app/controllers/**/*.rb",
+                    "helpers": "app/helpers/**/*.rb",
+                    "stimulus_controllers": "app/javascript/controllers/**/*.js"
+                }
+            },
+            {
+                "description": "Database Files",
+                "pattern": {
+                    "migrations": "db/migrate/**/*.rb",
+                    "schema": "db/schema.rb",
+                    "seeds": "db/seeds.rb"
+                }
+            },
+            {
+                "description": "Configuration Files",
+                "pattern": {
+                    "routes": "config/routes.rb",
+                    "environment": "config/environment*.rb",
+                    "application": "config/application.rb",
+                    "tailwind": "config/tailwind.config.js"
+                }
+            },
+            {
+                "description": "Asset Files",
+                "pattern": {
+                    "javascript": "app/javascript/**/*.js",
+                    "stylesheets": "app/assets/stylesheets/**/*.{css,scss}"
+                }
+            },
+            {
+                "description": "Test Files",
+                "pattern": {
+                    "model_tests": "test/models/**/*_test.rb",
+                    "controller_tests": "test/controllers/**/*_test.rb",
+                    "system_tests": "test/system/**/*_test.rb"
+                }
+            },
+            {
+                "description": "Model Relationships",
+                "when": "app/models/**/*.rb",
+                "suggests": [
+                    {
+                        "pattern": "belongs_to :(\\w+)",
+                        "files": "app/models/$1.rb"
+                    },
+                    {
+                        "pattern": "has_many :(\\w+)",
+                        "files": "app/models/$1.rb"
+                    }
+                ]
+            },
+            {
+                "description": "Controller-View Relationships",
+                "when": "app/controllers/**/*_controller.rb",
+                "suggests": [
+                    {
+                        "pattern": "class (\\w+)Controller",
+                        "files": "app/views/$1/**/*.erb"
+                    }
+                ]
+            },
+            {
+                "description": "Stimulus Controller Relationships",
+                "when": "app/javascript/controllers/**/*_controller.js",
+                "suggests": [
+                    {
+                        "pattern": "controllers/(\\w+)_controller.js",
+                        "files": "app/views/**/*data-controller=\"$1\"*"
+                    }
+                ]
+            }
+        ]
+    }
+}
