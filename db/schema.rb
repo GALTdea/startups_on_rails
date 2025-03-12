@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_03_04_231829) do
+ActiveRecord::Schema[8.0].define(version: 2025_03_10_200218) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -65,10 +65,6 @@ ActiveRecord::Schema[8.0].define(version: 2025_03_04_231829) do
     t.boolean "published", default: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.string "company_size"
-    t.string "funding_stage"
-    t.integer "employee_count"
-    t.integer "year_founded"
     t.string "industry"
     t.index ["industry"], name: "index_companies_on_industry"
     t.index ["user_id"], name: "index_companies_on_user_id"
@@ -84,31 +80,12 @@ ActiveRecord::Schema[8.0].define(version: 2025_03_04_231829) do
   create_table "company_technologies", force: :cascade do |t|
     t.bigint "company_id", null: false
     t.bigint "technology_id", null: false
-    t.string "proficiency_level", default: "regular"
-    t.text "notes"
+    t.string "proficiency_level"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["company_id", "technology_id"], name: "index_company_technologies_on_company_id_and_technology_id", unique: true
     t.index ["company_id"], name: "index_company_technologies_on_company_id"
     t.index ["technology_id"], name: "index_company_technologies_on_technology_id"
-  end
-
-  create_table "favorites", force: :cascade do |t|
-    t.string "favoritable_type", null: false
-    t.bigint "favoritable_id", null: false
-    t.string "favoritor_type", null: false
-    t.bigint "favoritor_id", null: false
-    t.string "scope", default: "favorite", null: false
-    t.boolean "blocked", default: false, null: false
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.index ["blocked"], name: "index_favorites_on_blocked"
-    t.index ["favoritable_id", "favoritable_type"], name: "fk_favoritables"
-    t.index ["favoritable_type", "favoritable_id", "favoritor_type", "favoritor_id", "scope"], name: "uniq_favorites__and_favoritables", unique: true
-    t.index ["favoritable_type", "favoritable_id"], name: "index_favorites_on_favoritable"
-    t.index ["favoritor_id", "favoritor_type"], name: "fk_favorites"
-    t.index ["favoritor_type", "favoritor_id"], name: "index_favorites_on_favoritor"
-    t.index ["scope"], name: "index_favorites_on_scope"
   end
 
   create_table "solution_categories", force: :cascade do |t|
@@ -155,15 +132,13 @@ ActiveRecord::Schema[8.0].define(version: 2025_03_04_231829) do
   end
 
   create_table "technologies", force: :cascade do |t|
-    t.string "name", null: false
-    t.string "category", null: false
-    t.integer "popularity", default: 0
+    t.string "name"
+    t.string "category"
+    t.integer "popularity"
     t.string "logo_url"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["category"], name: "index_technologies_on_category"
     t.index ["name"], name: "index_technologies_on_name", unique: true
-    t.index ["popularity"], name: "index_technologies_on_popularity"
   end
 
   create_table "users", force: :cascade do |t|
@@ -179,63 +154,6 @@ ActiveRecord::Schema[8.0].define(version: 2025_03_04_231829) do
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
   end
 
-  create_table "wizard_options", force: :cascade do |t|
-    t.bigint "wizard_question_id", null: false
-    t.string "text"
-    t.string "value"
-    t.integer "position"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.index ["wizard_question_id"], name: "index_wizard_options_on_wizard_question_id"
-  end
-
-  create_table "wizard_questions", force: :cascade do |t|
-    t.string "text", null: false
-    t.text "help_text"
-    t.string "question_type", null: false
-    t.integer "position", default: 0
-    t.boolean "required", default: true
-    t.integer "parent_id"
-    t.string "dependent_value"
-    t.string "identifier", null: false
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.index ["identifier"], name: "index_wizard_questions_on_identifier", unique: true
-    t.index ["parent_id"], name: "index_wizard_questions_on_parent_id"
-    t.index ["position"], name: "index_wizard_questions_on_position"
-  end
-
-  create_table "wizard_recommendations", force: :cascade do |t|
-    t.bigint "wizard_session_id", null: false
-    t.bigint "solution_id", null: false
-    t.decimal "score"
-    t.text "reasoning"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.index ["solution_id"], name: "index_wizard_recommendations_on_solution_id"
-    t.index ["wizard_session_id"], name: "index_wizard_recommendations_on_wizard_session_id"
-  end
-
-  create_table "wizard_responses", force: :cascade do |t|
-    t.bigint "wizard_session_id", null: false
-    t.bigint "wizard_question_id", null: false
-    t.text "response_value"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.index ["wizard_question_id"], name: "index_wizard_responses_on_wizard_question_id"
-    t.index ["wizard_session_id"], name: "index_wizard_responses_on_wizard_session_id"
-  end
-
-  create_table "wizard_sessions", force: :cascade do |t|
-    t.bigint "user_id", null: false
-    t.string "session_identifier"
-    t.boolean "completed"
-    t.datetime "completed_at"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.index ["user_id"], name: "index_wizard_sessions_on_user_id"
-  end
-
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
   add_foreign_key "companies", "users"
@@ -244,10 +162,4 @@ ActiveRecord::Schema[8.0].define(version: 2025_03_04_231829) do
   add_foreign_key "solution_categories_solutions", "solution_categories"
   add_foreign_key "solution_categories_solutions", "solutions"
   add_foreign_key "solutions", "companies"
-  add_foreign_key "wizard_options", "wizard_questions"
-  add_foreign_key "wizard_recommendations", "solutions"
-  add_foreign_key "wizard_recommendations", "wizard_sessions"
-  add_foreign_key "wizard_responses", "wizard_questions"
-  add_foreign_key "wizard_responses", "wizard_sessions"
-  add_foreign_key "wizard_sessions", "users"
 end

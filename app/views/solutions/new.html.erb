@@ -1,18 +1,32 @@
-<div class="container mx-auto px-4 py-8">
-  <div class="max-w-2xl mx-auto">
-    <div class="bg-white rounded-lg shadow-lg overflow-hidden">
-      <div class="p-6">
-        <div class="flex items-center justify-between mb-6">
-          <h1 class="text-2xl font-bold text-gray-900">New Solution for <%= @company.name %></h1>
-          <%= link_to company_solutions_path(@company), class: "text-gray-400 hover:text-gray-500" do %>
-            <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
-            </svg>
-          <% end %>
-        </div>
-
-        <%= render "form" %>
-      </div>
+<%# Breadcrumbs %>
+<% content_for :breadcrumbs do %>
+  <li>
+    <div class="flex items-center">
+      <svg class="w-6 h-6 text-gray-400" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+        <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"></path>
+      </svg>
+      <%= link_to "Solutions", solutions_path, class: "ml-1 text-sm font-medium text-gray-500 hover:text-blue-600 md:ml-2" %>
     </div>
+  </li>
+  <li>
+    <div class="flex items-center">
+      <svg class="w-6 h-6 text-gray-400" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+        <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"></path>
+      </svg>
+      <span class="ml-1 text-sm font-medium text-gray-500 md:ml-2">New Solution</span>
+    </div>
+  </li>
+<% end %>
+
+<%# Page Title %>
+<% content_for :title, "New Solution | StartupsOnRails" %>
+
+<div class="max-w-4xl mx-auto px-4 py-8">
+  <div class="bg-white p-8 rounded-lg shadow-sm">
+    <div class="flex justify-between items-center mb-6">
+      <h1 class="text-2xl font-bold text-gray-900">New Solution</h1>
+    </div>
+
+    <%= render "form", solution: @solution %>
   </div>
 </div>

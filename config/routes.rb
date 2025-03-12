@@ -1,11 +1,5 @@
 Rails.application.routes.draw do
-  get "solutions/index"
-  get "solutions/show"
-  get "solutions/new"
-  get "solutions/create"
-  get "solutions/edit"
-  get "solutions/update"
-  get "solutions/destroy"
+  resources :solutions
   get "companies/index"
   get "companies/show"
   devise_for :users, controllers: {

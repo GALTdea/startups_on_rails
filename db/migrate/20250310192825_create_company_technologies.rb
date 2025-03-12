@@ -1,10 +1,9 @@
-class CreateCompanyTechnologies < ActiveRecord::Migration[7.1]
+class CreateCompanyTechnologies < ActiveRecord::Migration[8.0]
   def change
     create_table :company_technologies do |t|
       t.references :company, null: false, foreign_key: true
       t.references :technology, null: false, foreign_key: true
-      t.string :proficiency_level, default: 'regular'
-      t.text :notes
+      t.string :proficiency_level
 
       t.timestamps
     end
