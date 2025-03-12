@@ -1,9 +1,11 @@
 {
     "ruby_on_rails": {
+        "comment": "Top-level configuration for Ruby on Rails projects. The 'enabled' flag determines whether these rules are active.",
         "enabled": true,
         "rules": [
             {
                 "description": "Rails MVC Code Organization",
+                "comment": "This section maps the fundamental Model-View-Controller (MVC) pattern in Rails, plus helpers and stimulus controllers. Use @models, @views, etc. in command palette to quickly filter by category.",
                 "pattern": {
                     "models": "app/models/**/*.rb",
                     "views": "app/views/**/*.{erb,html.erb,haml}",
@@ -14,6 +16,7 @@
             },
             {
                 "description": "Database Files",
+                "comment": "Maps Rails database-related files. Use @migrations, @schema, or @seeds to quickly access database files from the command palette.",
                 "pattern": {
                     "migrations": "db/migrate/**/*.rb",
                     "schema": "db/schema.rb",
@@ -22,6 +25,7 @@
             },
             {
                 "description": "Configuration Files",
+                "comment": "Groups key Rails configuration files. Use @routes, @environment, etc. in the command palette to quickly navigate to these files.",
                 "pattern": {
                     "routes": "config/routes.rb",
                     "environment": "config/environment*.rb",
@@ -31,6 +35,7 @@
             },
             {
                 "description": "Asset Files",
+                "comment": "Maps JavaScript and stylesheet files. Use @javascript or @stylesheets in the command palette to find asset files.",
                 "pattern": {
                     "javascript": "app/javascript/**/*.js",
                     "stylesheets": "app/assets/stylesheets/**/*.{css,scss}"
@@ -38,6 +43,7 @@
             },
             {
                 "description": "Test Files",
+                "comment": "Groups test files by type. Use @model_tests, @controller_tests, or @system_tests to find specific test categories.",
                 "pattern": {
                     "model_tests": "test/models/**/*_test.rb",
                     "controller_tests": "test/controllers/**/*_test.rb",
@@ -46,13 +52,16 @@
             },
             {
                 "description": "Model Relationships",
+                "comment": "This rule creates smart navigation between related model files. When you're in a model file that has relationships, Cursor will suggest the related model files based on associations.",
                 "when": "app/models/**/*.rb",
                 "suggests": [
                     {
+                        "comment": "Links models with 'belongs_to' relationships. Regex captures the model name after 'belongs_to :' and suggests that file.",
                         "pattern": "belongs_to :(\\w+)",
                         "files": "app/models/$1.rb"
                     },
                     {
+                        "comment": "Links models with 'has_many' relationships. Regex captures the model name after 'has_many :' and suggests that file.",
                         "pattern": "has_many :(\\w+)",
                         "files": "app/models/$1.rb"
                     }
@@ -60,9 +69,11 @@
             },
             {
                 "description": "Controller-View Relationships",
+                "comment": "Creates navigation between controllers and their corresponding views. When in a controller file, Cursor will suggest related view files.",
                 "when": "app/controllers/**/*_controller.rb",
                 "suggests": [
                     {
+                        "comment": "Captures the controller name and suggests related view templates. For example, in 'UsersController', suggests files in app/views/users/.",
                         "pattern": "class (\\w+)Controller",
                         "files": "app/views/$1/**/*.erb"
                     }
@@ -70,9 +81,11 @@
             },
             {
                 "description": "Stimulus Controller Relationships",
+                "comment": "Links Stimulus JavaScript controllers with views that use them. When in a Stimulus controller file, Cursor suggests related view files that use this controller.",
                 "when": "app/javascript/controllers/**/*_controller.js",
                 "suggests": [
                     {
+                        "comment": "Captures the Stimulus controller name and suggests views that use it via data-controller attributes.",
                         "pattern": "controllers/(\\w+)_controller.js",
                         "files": "app/views/**/*data-controller=\"$1\"*"
                     }
