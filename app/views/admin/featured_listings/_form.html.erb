@@ -1,0 +1,66 @@
+<%= form_with(model: [:admin, featured_listing], class: "space-y-6") do |form| %>
+  <% if featured_listing.errors.any? %>
+    <div class="bg-red-50 border-l-4 border-red-500 p-4 mb-4">
+      <div class="flex">
+        <div class="flex-shrink-0">
+          <svg class="h-5 w-5 text-red-400" viewBox="0 0 20 20" fill="currentColor">
+            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd" />
+          </svg>
+        </div>
+        <div class="ml-3">
+          <h3 class="text-sm font-medium text-red-800">
+            <%= pluralize(featured_listing.errors.count, "error") %> prohibited this featured listing from being saved:
+          </h3>
+          <div class="mt-2 text-sm text-red-700">
+            <ul class="list-disc pl-5 space-y-1">
+              <% featured_listing.errors.full_messages.each do |message| %>
+                <li><%= message %></li>
+              <% end %>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  <% end %>
+
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+    <div>
+      <%= form.label :title, class: "block text-sm font-medium text-gray-700 mb-1" %>
+      <%= form.text_field :title, class: "w-full rounded-md border-gray-300 focus:border-blue-500 focus:ring-blue-500", placeholder: "Featured listing title" %>
+    </div>
+
+    <div>
+      <%= form.label :category_id, "Category", class: "block text-sm font-medium text-gray-700 mb-1" %>
+      <%= form.collection_select :category_id, @categories, :id, :name, 
+            { prompt: "Select a category" }, 
+            { class: "w-full rounded-md border-gray-300 focus:border-blue-500 focus:ring-blue-500" } %>
+    </div>
+
+    <div class="md:col-span-2">
+      <%= form.label :description, class: "block text-sm font-medium text-gray-700 mb-1" %>
+      <%= form.text_area :description, rows: 3, class: "w-full rounded-md border-gray-300 focus:border-blue-500 focus:ring-blue-500", placeholder: "Description (optional)" %>
+    </div>
+
+    <div>
+      <%= form.label :position, class: "block text-sm font-medium text-gray-700 mb-1" %>
+      <%= form.number_field :position, min: 0, class: "w-full rounded-md border-gray-300 focus:border-blue-500 focus:ring-blue-500" %>
+      <p class="text-xs text-gray-500 mt-1">Lower numbers appear first</p>
+    </div>
+
+    <div>
+      <%= form.label :featured_until, class: "block text-sm font-medium text-gray-700 mb-1" %>
+      <%= form.date_field :featured_until, class: "w-full rounded-md border-gray-300 focus:border-blue-500 focus:ring-blue-500" %>
+      <p class="text-xs text-gray-500 mt-1">Leave blank for no end date</p>
+    </div>
+  </div>
+
+  <div class="flex items-center">
+    <%= form.check_box :active, class: "h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded" %>
+    <%= form.label :active, "Active", class: "ml-2 block text-sm text-gray-900" %>
+  </div>
+
+  <div class="flex justify-between">
+    <%= form.submit class: "px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700" %>
+    <%= link_to "Cancel", admin_featured_listings_path, class: "px-4 py-2 bg-gray-200 text-gray-700 rounded-md hover:bg-gray-300" %>
+  </div>
+<% end %> 

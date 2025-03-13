@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_03_12_194849) do
+ActiveRecord::Schema[8.0].define(version: 2025_03_13_000126) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -111,6 +111,20 @@ ActiveRecord::Schema[8.0].define(version: 2025_03_12_194849) do
     t.index ["technology_id"], name: "index_company_technologies_on_technology_id"
   end
 
+  create_table "featured_listings", force: :cascade do |t|
+    t.string "title", null: false
+    t.text "description"
+    t.bigint "category_id", null: false
+    t.integer "position", default: 0
+    t.boolean "active", default: true
+    t.datetime "featured_until"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["active"], name: "index_featured_listings_on_active"
+    t.index ["category_id"], name: "index_featured_listings_on_category_id"
+    t.index ["position"], name: "index_featured_listings_on_position"
+  end
+
   create_table "solution_categories", force: :cascade do |t|
     t.string "name"
     t.text "description"
@@ -195,6 +209,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_03_12_194849) do
   add_foreign_key "companies", "users"
   add_foreign_key "company_technologies", "companies"
   add_foreign_key "company_technologies", "technologies"
+  add_foreign_key "featured_listings", "categories"
   add_foreign_key "solution_categories_solutions", "solution_categories"
   add_foreign_key "solution_categories_solutions", "solutions"
   add_foreign_key "solutions", "companies"

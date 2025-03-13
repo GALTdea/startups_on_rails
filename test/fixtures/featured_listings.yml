@@ -1,0 +1,17 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  title: MyString
+  description: MyText
+  category: one
+  position: 1
+  active: false
+  featured_until: 2025-03-12 17:01:26
+
+two:
+  title: MyString
+  description: MyText
+  category: two
+  position: 1
+  active: false
+  featured_until: 2025-03-12 17:01:26

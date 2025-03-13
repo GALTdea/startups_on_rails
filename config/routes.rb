@@ -7,6 +7,7 @@ Rails.application.routes.draw do
   }, path: "", path_names: { sign_up: "register" }
 
   namespace :admin do
+    resources :featured_listings
     resources :companies
     resources :categories
     resources :tags, only: [ :new, :create ]
@@ -29,7 +30,7 @@ Rails.application.routes.draw do
   resources :companies, only: [ :index, :show ] do
     resources :solutions
   end
-  root to: "companies#index"
+  root to: "pages#index"
 
   resources :technologies
 

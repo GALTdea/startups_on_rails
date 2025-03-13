@@ -6,6 +6,9 @@ class Category < ApplicationRecord
   # Polymorphic association for categorizable resources
   has_many :categorizables, dependent: :destroy
 
+  # Featured listings association
+  has_many :featured_listings, dependent: :destroy
+
   # Legacy association - will be deprecated in favor of polymorphic association
   has_and_belongs_to_many :companies
 

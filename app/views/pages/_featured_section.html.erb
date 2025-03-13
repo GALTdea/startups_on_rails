@@ -1,0 +1,41 @@
+<% if featured_listings.any? %>
+  <section class="mb-16">
+    <div class="flex items-center justify-between mb-6">
+      <h2 class="text-2xl font-bold text-gray-900"><%= title %></h2>
+      <% if defined?(view_all_path) && view_all_path.present? %>
+        <%= link_to "View all #{title.downcase}", view_all_path, class: "text-blue-600 hover:text-blue-800" %>
+      <% end %>
+    </div>
+    
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <% featured_listings.each do |featured| %>
+        <div class="bg-white rounded-lg shadow-md overflow-hidden border border-gray-200 hover:shadow-lg transition-shadow duration-300">
+          <div class="p-6">
+            <h3 class="text-lg font-bold text-gray-900 mb-2"><%= featured.title %></h3>
+            <% if featured.description.present? %>
+              <p class="text-gray-600 mb-4"><%= featured.description %></p>
+            <% end %>
+            <% 
+              # Determine the appropriate link based on category type
+              case featured.category.category_type
+              when 'industry'
+                link_path = companies_path(category: featured.category.id)
+                link_text = "View companies in #{featured.category.name}"
+              when 'technology'
+                link_path = technologies_path
+                link_text = "Explore #{featured.category.name} technology"
+              when 'solution'
+                link_path = solutions_path
+                link_text = "Discover #{featured.category.name} solutions"
+              else
+                link_path = '#'
+                link_text = "Learn more about #{featured.category.name}"
+              end
+            %>
+            <%= link_to link_text, link_path, class: "text-blue-600 hover:text-blue-800 font-medium" %>
+          </div>
+        </div>
+      <% end %>
+    </div>
+  </section>
+<% end %> 
