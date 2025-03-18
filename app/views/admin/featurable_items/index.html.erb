@@ -1,39 +1,40 @@
-<div class="p-4">
-  <div class="mb-6">
-    <div class="flex items-center justify-between">
-      <div>
-        <h2 class="text-2xl font-bold dark:text-white">Select Item to Feature</h2>
-        <p class="text-gray-500 dark:text-gray-400">Choose an item to feature in <%= @featured_listing.title %></p>
-      </div>
-      <%= link_to admin_featured_listings_path,
-          class: "inline-flex items-center px-3 py-2 text-sm font-medium text-center text-white bg-gray-700 rounded-lg hover:bg-gray-800 focus:ring-4 focus:outline-none focus:ring-gray-300 dark:bg-gray-600 dark:hover:bg-gray-700 dark:focus:ring-gray-800" do %>
-        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
-        </svg>
-        Back to Listings
-      <% end %>
-    </div>
-  </div>
-
-  <div class="mb-6">
-    <div class="flex flex-col md:flex-row gap-4">
-      <div class="flex-1">
-        <%= form_with url: admin_featured_listing_featurable_items_path(@featured_listing), method: :get, class: "flex gap-2", data: { turbo_frame: "featurable_items", turbo_action: "advance" } do |f| %>
-          <%= f.text_field :query, value: @query, placeholder: "Search items...", class: "bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" %>
-          <%= f.hidden_field :type, value: @type %>
-          <%= f.submit "Search", class: "px-4 py-2 text-sm font-medium text-white bg-blue-700 rounded-lg hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800" %>
+<%= turbo_frame_tag "featured_listing_#{@featured_listing.id}" do %>
+  <div class="p-4">
+    <div class="mb-6">
+      <div class="flex items-center justify-between">
+        <div>
+          <h2 class="text-2xl font-bold dark:text-white">Select Item to Feature</h2>
+          <p class="text-gray-500 dark:text-gray-400">Choose an item to feature in <%= @featured_listing.title %></p>
+        </div>
+        <%= link_to admin_featured_listings_path,
+            class: "inline-flex items-center px-3 py-2 text-sm font-medium text-center text-white bg-gray-700 rounded-lg hover:bg-gray-800 focus:ring-4 focus:outline-none focus:ring-gray-300 dark:bg-gray-600 dark:hover:bg-gray-700 dark:focus:ring-gray-800",
+            data: { turbo_frame: "_top" } do %>
+          <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
+          </svg>
+          Back to Listings
         <% end %>
       </div>
-      <div class="flex gap-2">
-        <%= link_to "Companies", admin_featured_listing_featurable_items_path(@featured_listing, type: "Company", query: @query),
-            class: "px-4 py-2 text-sm font-medium rounded-lg #{@type == 'Company' ? 'bg-blue-700 text-white' : 'bg-gray-200 text-gray-700 hover:bg-gray-300 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600'}" %>
-        <%= link_to "Solutions", admin_featured_listing_featurable_items_path(@featured_listing, type: "Solution", query: @query),
-            class: "px-4 py-2 text-sm font-medium rounded-lg #{@type == 'Solution' ? 'bg-blue-700 text-white' : 'bg-gray-200 text-gray-700 hover:bg-gray-300 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600'}" %>
+    </div>
+
+    <div class="mb-6">
+      <div class="flex flex-col md:flex-row gap-4">
+        <div class="flex-1">
+          <%= form_with url: admin_featured_listing_featurable_items_path(@featured_listing), method: :get, class: "flex gap-2" do |f| %>
+            <%= f.text_field :query, value: @query, placeholder: "Search items...", class: "bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" %>
+            <%= f.hidden_field :type, value: @type %>
+            <%= f.submit "Search", class: "px-4 py-2 text-sm font-medium text-white bg-blue-700 rounded-lg hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800" %>
+          <% end %>
+        </div>
+        <div class="flex gap-2">
+          <%= link_to "Companies", admin_featured_listing_featurable_items_path(@featured_listing, type: "Company", query: @query),
+              class: "px-4 py-2 text-sm font-medium rounded-lg #{@type == 'Company' ? 'bg-blue-700 text-white' : 'bg-gray-200 text-gray-700 hover:bg-gray-300 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600'}" %>
+          <%= link_to "Solutions", admin_featured_listing_featurable_items_path(@featured_listing, type: "Solution", query: @query),
+              class: "px-4 py-2 text-sm font-medium rounded-lg #{@type == 'Solution' ? 'bg-blue-700 text-white' : 'bg-gray-200 text-gray-700 hover:bg-gray-300 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600'}" %>
+        </div>
       </div>
     </div>
-  </div>
 
-  <%= turbo_frame_tag "featurable_items" do %>
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
       <% @featurable_items.each do |item| %>
         <div class="p-4 bg-white rounded-lg shadow dark:bg-gray-800">
@@ -73,5 +74,5 @@
         <p class="text-gray-500 dark:text-gray-400">No items available to feature</p>
       </div>
     <% end %>
-  <% end %>
-</div> 
+  </div>
+<% end %> 

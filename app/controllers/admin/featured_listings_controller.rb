@@ -15,6 +15,7 @@ class Admin::FeaturedListingsController < Admin::BaseController
 
   def create
     @featured_listing = FeaturedListing.new(featured_listing_params)
+    @featured_listing.position = FeaturedListing.maximum(:position).to_i + 1
 
     if @featured_listing.save
       redirect_to admin_featured_listings_path, notice: "Featured listing was successfully created."
@@ -40,6 +41,16 @@ class Admin::FeaturedListingsController < Admin::BaseController
   def destroy
     @featured_listing.destroy
     redirect_to admin_featured_listings_path, notice: "Featured listing was successfully deleted."
+  end
+
+  def update_positions
+    positions = params[:positions]
+
+    positions.each do |position|
+      FeaturedListing.find(position[:id]).update(position: position[:position])
+    end
+
+    head :ok
   end
 
   private

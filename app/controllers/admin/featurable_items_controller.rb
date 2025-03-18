@@ -1,5 +1,4 @@
-class Admin::FeaturableItemsController < ApplicationController
-  before_action :authenticate_user!
+class Admin::FeaturableItemsController < Admin::BaseController
   before_action :set_featured_listing
   before_action :set_featurable_item, only: [ :create, :destroy ]
 
@@ -7,16 +6,35 @@ class Admin::FeaturableItemsController < ApplicationController
     @type = params[:type] || "Company"
     @query = params[:query]
 
-    @featurable_items = case @type
+    base_query = case @type
     when "Company"
-                         Company.not_featured.where(category: @featured_listing.category)
+                   Company.published
+                         .joins(:categorizables)
+                         .where(categorizables: { category_id: @featured_listing.category_id })
+                         .where.not(id: FeaturedListing.where(featurable_type: "Company").select(:featurable_id))
     when "Solution"
-                         Solution.not_featured.where(category: @featured_listing.category)
+                   Solution.published
+                          .joins(:categorizables)
+                          .where(categorizables: { category_id: @featured_listing.category_id })
+                          .where.not(id: FeaturedListing.where(featurable_type: "Solution").select(:featurable_id))
     else
-                         Company.not_featured.where(category: @featured_listing.category)
+                   Company.published
+                         .joins(:categorizables)
+                         .where(categorizables: { category_id: @featured_listing.category_id })
+                         .where.not(id: FeaturedListing.where(featurable_type: "Company").select(:featurable_id))
     end
 
-    @featurable_items = @featurable_items.search(@query) if @query.present?
+    @featurable_items = if @query.present?
+      base_query.class.search(@query)
+    else
+      base_query
+    end
+
+    # Debug information
+    Rails.logger.debug "Featured Listing Category ID: #{@featured_listing.category_id}"
+    Rails.logger.debug "Type: #{@type}"
+    Rails.logger.debug "Query: #{@query}"
+    Rails.logger.debug "Items Count: #{@featurable_items.count}"
   end
 
   def create

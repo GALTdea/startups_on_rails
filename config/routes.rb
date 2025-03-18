@@ -8,6 +8,9 @@ Rails.application.routes.draw do
 
   namespace :admin do
     resources :featured_listings do
+      collection do
+        patch :update_positions
+      end
       resources :featurable_items, only: [ :index, :create, :destroy ]
     end
     resources :companies

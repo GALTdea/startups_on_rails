@@ -1,12 +1,12 @@
 class FeaturedListing < ApplicationRecord
   belongs_to :category
-  belongs_to :featurable, polymorphic: true
+  belongs_to :featurable, polymorphic: true, optional: true
 
   # Validations
   validates :title, presence: true
   validates :position, numericality: { only_integer: true, greater_than_or_equal_to: 0 }
   validates :featurable_id, uniqueness: { scope: :featurable_type,
-    message: "has already been featured" }
+    message: "has already been featured" }, allow_nil: true
   validate :featurable_category_matches
 
   # Scopes
