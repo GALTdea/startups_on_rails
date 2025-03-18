@@ -1,9 +1,13 @@
 class FeaturedListing < ApplicationRecord
   belongs_to :category
+  belongs_to :featurable, polymorphic: true
 
   # Validations
   validates :title, presence: true
   validates :position, numericality: { only_integer: true, greater_than_or_equal_to: 0 }
+  validates :featurable_id, uniqueness: { scope: :featurable_type,
+    message: "has already been featured" }
+  validate :featurable_category_matches
 
   # Scopes
   scope :active, -> { where(active: true) }
@@ -31,5 +35,15 @@ class FeaturedListing < ApplicationRecord
     return 0 if expired?
 
     ((featured_until - Time.current) / 1.day).ceil
+  end
+
+  private
+
+  def featurable_category_matches
+    return unless featurable.respond_to?(:category_id) && category_id.present?
+
+    unless featurable.category_id == category_id
+      errors.add(:base, "Featured item must belong to the same category")
+    end
   end
 end

@@ -1,4 +1,5 @@
 class Company < ApplicationRecord
+  include Featurable
   belongs_to :owner, class_name: "User", foreign_key: "user_id", optional: true
 
   # Active Storage attachment

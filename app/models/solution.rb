@@ -1,4 +1,5 @@
 class Solution < ApplicationRecord
+  include Featurable
   belongs_to :company, optional: true
 
   has_one_attached :logo
