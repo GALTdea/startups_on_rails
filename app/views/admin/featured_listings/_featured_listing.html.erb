@@ -1,0 +1,49 @@
+<%= turbo_frame_tag "featured_listing_#{featured_listing.id}" do %>
+  <div class="p-4 bg-white rounded-lg shadow dark:bg-gray-800">
+    <div class="flex items-center justify-between mb-4">
+      <h5 class="text-xl font-bold leading-none text-gray-900 dark:text-white">
+        <%= featured_listing.title %>
+      </h5>
+      <div class="flex items-center space-x-2">
+        <% if featured_listing.featurable.present? %>
+          <%= button_to admin_featured_listing_featurable_item_path(featured_listing, type: featured_listing.featurable_type, id: featured_listing.featurable_id),
+              method: :delete,
+              class: "text-red-600 hover:text-red-900 dark:text-red-400 dark:hover:text-red-300",
+              form: { data: { turbo_confirm: "Are you sure you want to remove this item?" } } do %>
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+            </svg>
+          <% end %>
+        <% end %>
+      </div>
+    </div>
+
+    <div class="flow-root">
+      <% if featured_listing.featurable.present? %>
+        <div class="flex items-center space-x-4">
+          <div class="flex-1">
+            <p class="text-sm font-medium text-gray-900 dark:text-white truncate">
+              <%= featured_listing.featurable.name %>
+            </p>
+            <p class="text-sm text-gray-500 dark:text-gray-400">
+              <%= featured_listing.featurable_type %>
+            </p>
+          </div>
+        </div>
+      <% else %>
+        <div class="text-center py-4">
+          <p class="text-sm text-gray-500 dark:text-gray-400">No item featured</p>
+          <%= link_to "Select Item", admin_featured_listing_featurable_items_path(featured_listing),
+              class: "mt-2 inline-flex items-center px-3 py-2 text-sm font-medium text-center text-white bg-blue-700 rounded-lg hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800" %>
+        </div>
+      <% end %>
+    </div>
+
+    <div class="mt-4 flex items-center justify-between text-sm text-gray-500 dark:text-gray-400">
+      <span>Position: <%= featured_listing.position %></span>
+      <% if featured_listing.featured_until.present? %>
+        <span>Expires: <%= featured_listing.featured_until.strftime("%B %d, %Y") %></span>
+      <% end %>
+    </div>
+  </div>
+<% end %> 

@@ -7,7 +7,9 @@ Rails.application.routes.draw do
   }, path: "", path_names: { sign_up: "register" }
 
   namespace :admin do
-    resources :featured_listings
+    resources :featured_listings do
+      resources :featurable_items, only: [ :index, :create, :destroy ]
+    end
     resources :companies
     resources :categories
     resources :tags, only: [ :new, :create ]

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_03_13_000126) do
+ActiveRecord::Schema[8.0].define(version: 2025_03_18_023649) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -120,8 +120,14 @@ ActiveRecord::Schema[8.0].define(version: 2025_03_13_000126) do
     t.datetime "featured_until"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "featured_item_type"
+    t.integer "featured_item_id"
+    t.string "featurable_type", null: false
+    t.bigint "featurable_id", null: false
     t.index ["active"], name: "index_featured_listings_on_active"
     t.index ["category_id"], name: "index_featured_listings_on_category_id"
+    t.index ["featurable_type", "featurable_id"], name: "index_featured_listings_on_featurable"
+    t.index ["featured_item_type", "featured_item_id"], name: "index_featured_listings_on_featured_item"
     t.index ["position"], name: "index_featured_listings_on_position"
   end
 
