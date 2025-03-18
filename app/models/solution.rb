@@ -97,4 +97,8 @@ class Solution < ApplicationRecord
   def has_tag?(tag)
     taggables.exists?(tag: tag)
   end
+
+  def self.search(query)
+    where("name ILIKE ? OR description ILIKE ?", "%#{query}%", "%#{query}%")
+  end
 end

@@ -4,7 +4,10 @@ class Admin::FeaturableItemsController < ApplicationController
   before_action :set_featurable_item, only: [ :create, :destroy ]
 
   def index
-    @featurable_items = case params[:type]
+    @type = params[:type] || "Company"
+    @query = params[:query]
+
+    @featurable_items = case @type
     when "Company"
                          Company.not_featured.where(category: @featured_listing.category)
     when "Solution"
@@ -12,6 +15,8 @@ class Admin::FeaturableItemsController < ApplicationController
     else
                          Company.not_featured.where(category: @featured_listing.category)
     end
+
+    @featurable_items = @featurable_items.search(@query) if @query.present?
   end
 
   def create

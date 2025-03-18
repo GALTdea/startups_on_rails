@@ -123,6 +123,10 @@ class Company < ApplicationRecord
     taggables.exists?(tag: tag)
   end
 
+  def self.search(query)
+    where("name ILIKE ? OR description ILIKE ?", "%#{query}%", "%#{query}%")
+  end
+
   private
 
   def set_unpublished
