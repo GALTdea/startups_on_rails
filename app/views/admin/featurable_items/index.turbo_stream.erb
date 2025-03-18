@@ -1,0 +1,3 @@
+<%= turbo_stream.update "featured_listing_#{@featured_listing.id}" do %>
+  <%= render template: "admin/featurable_items/index" %>
+<% end %>
