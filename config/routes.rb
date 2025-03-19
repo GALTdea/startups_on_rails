@@ -11,6 +11,9 @@ Rails.application.routes.draw do
       collection do
         patch :update_positions
       end
+      member do
+        patch :update_item_positions
+      end
       resources :featurable_items, only: [ :index, :create, :destroy ]
     end
     resources :companies

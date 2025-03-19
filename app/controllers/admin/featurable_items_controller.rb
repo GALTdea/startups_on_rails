@@ -10,24 +10,14 @@ class Admin::FeaturableItemsController < Admin::BaseController
     # Start with the base class
     klass = @type.constantize
 
-    # Log initial parameters
-    Rails.logger.debug "Search Parameters:"
-    Rails.logger.debug "Type: #{@type}"
-    Rails.logger.debug "Search Term: #{@search}"
-    Rails.logger.debug "Category ID: #{@featured_listing.category_id}"
-
     # Build query in steps for debugging
     @items = klass.published
     Rails.logger.debug "After published scope: #{@items.to_sql}"
 
-    # Add category conditions - only show items that belong to the featured listing's category
-    @items = @items.left_joins(:categories, :categorizables)
-                   .where("categories.id = :category_id OR categorizables.category_id = :category_id",
-                         category_id: @featured_listing.category_id)
-    Rails.logger.debug "After category conditions: #{@items.to_sql}"
-
     # Exclude already featured items
-    already_featured = FeaturedListing.where(featurable_type: @type).pluck(:featurable_id)
+    already_featured = @featured_listing.featured_listing_items
+                                      .where(featurable_type: @type)
+                                      .pluck(:featurable_id)
     @items = @items.where.not(id: already_featured) if already_featured.any?
     Rails.logger.debug "After excluding featured: #{@items.to_sql}"
 
@@ -42,14 +32,6 @@ class Admin::FeaturableItemsController < Admin::BaseController
 
     @items = @items.distinct
 
-    # For each item, check if it belongs to the correct category
-    @items = @items.map do |item|
-      item_categories = item.categories.pluck(:id) + item.categorizables.pluck(:category_id)
-      item.instance_variable_set(:@category_matches, item_categories.include?(@featured_listing.category_id))
-      item.define_singleton_method(:category_matches?) { @category_matches }
-      item
-    end
-
     # Log final count
     Rails.logger.debug "Final item count: #{@items.count}"
 
@@ -60,7 +42,7 @@ class Admin::FeaturableItemsController < Admin::BaseController
   end
 
   def create
-    @featured_listing.update(featurable: @featurable_item)
+    @featured_listing.add_item(@featurable_item)
 
     respond_to do |format|
       format.turbo_stream {
@@ -70,12 +52,12 @@ class Admin::FeaturableItemsController < Admin::BaseController
           locals: { featured_listing: @featured_listing }
         )
       }
-      format.html { redirect_to admin_featured_listings_path, notice: "Item was successfully featured." }
+      format.html { redirect_to admin_featured_listings_path, notice: "Item was successfully added to the listing." }
     end
   end
 
   def destroy
-    @featured_listing.update(featurable: nil)
+    @featured_listing.remove_item(@featurable_item)
 
     respond_to do |format|
       format.turbo_stream {
@@ -85,7 +67,7 @@ class Admin::FeaturableItemsController < Admin::BaseController
           locals: { featured_listing: @featured_listing }
         )
       }
-      format.html { redirect_to admin_featured_listings_path, notice: "Item was successfully unfeatured." }
+      format.html { redirect_to admin_featured_listings_path, notice: "Item was successfully removed from the listing." }
     end
   end
 

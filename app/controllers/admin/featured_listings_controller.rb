@@ -1,5 +1,5 @@
 class Admin::FeaturedListingsController < Admin::BaseController
-  before_action :set_featured_listing, only: [ :show, :edit, :update, :destroy ]
+  before_action :set_featured_listing, only: [ :show, :edit, :update, :destroy, :update_item_positions ]
 
   def index
     @featured_listings = FeaturedListing.includes(:category).order(position: :asc)
@@ -48,6 +48,18 @@ class Admin::FeaturedListingsController < Admin::BaseController
 
     positions.each do |position|
       FeaturedListing.find(position[:id]).update(position: position[:position])
+    end
+
+    head :ok
+  end
+
+  def update_item_positions
+    positions = params[:positions]
+
+    positions.each do |position|
+      @featured_listing.featured_listing_items
+                      .find_by(featurable_id: position[:id])
+                      &.update(position: position[:position])
     end
 
     head :ok

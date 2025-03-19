@@ -1,13 +1,13 @@
 class FeaturedListing < ApplicationRecord
   belongs_to :category
-  belongs_to :featurable, polymorphic: true, optional: true
+
+  has_many :featured_listing_items, dependent: :destroy
+  has_many :featurables, through: :featured_listing_items, source: :featurable, source_type: "Company"
+  has_many :featured_solutions, through: :featured_listing_items, source: :featurable, source_type: "Solution"
 
   # Validations
   validates :title, presence: true
   validates :position, numericality: { only_integer: true, greater_than_or_equal_to: 0 }
-  validates :featurable_id, uniqueness: { scope: :featurable_type,
-    message: "has already been featured" }, allow_nil: true
-  validate :featurable_category_matches
 
   # Scopes
   scope :active, -> { where(active: true) }
@@ -37,13 +37,17 @@ class FeaturedListing < ApplicationRecord
     ((featured_until - Time.current) / 1.day).ceil
   end
 
-  private
+  def add_item(item)
+    featured_listing_items.create!(featurable: item)
+  end
 
-  def featurable_category_matches
-    return unless featurable.respond_to?(:category_id) && category_id.present?
+  def remove_item(item)
+    featured_listing_items.find_by(featurable: item)&.destroy
+  end
 
-    unless featurable.category_id == category_id
-      errors.add(:base, "Featured item must belong to the same category")
+  def reorder_items(item_ids)
+    item_ids.each_with_index do |id, index|
+      featured_listing_items.find_by(featurable_id: id)&.update!(position: index + 1)
     end
   end
 end

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_03_18_181732) do
+ActiveRecord::Schema[8.0].define(version: 2025_03_19_195356) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -109,6 +109,19 @@ ActiveRecord::Schema[8.0].define(version: 2025_03_18_181732) do
     t.index ["company_id", "technology_id"], name: "index_company_technologies_on_company_id_and_technology_id", unique: true
     t.index ["company_id"], name: "index_company_technologies_on_company_id"
     t.index ["technology_id"], name: "index_company_technologies_on_technology_id"
+  end
+
+  create_table "featured_listing_items", force: :cascade do |t|
+    t.bigint "featured_listing_id", null: false
+    t.string "featurable_type", null: false
+    t.bigint "featurable_id", null: false
+    t.integer "position", default: 0, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["featurable_type", "featurable_id"], name: "index_featured_listing_items_on_featurable"
+    t.index ["featured_listing_id", "featurable_type", "featurable_id"], name: "index_featured_listing_items_on_featured_listing_and_featurable", unique: true
+    t.index ["featured_listing_id", "position"], name: "idx_on_featured_listing_id_position_3ca29dfe9c"
+    t.index ["featured_listing_id"], name: "index_featured_listing_items_on_featured_listing_id"
   end
 
   create_table "featured_listings", force: :cascade do |t|
@@ -215,6 +228,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_03_18_181732) do
   add_foreign_key "companies", "users"
   add_foreign_key "company_technologies", "companies"
   add_foreign_key "company_technologies", "technologies"
+  add_foreign_key "featured_listing_items", "featured_listings"
   add_foreign_key "featured_listings", "categories"
   add_foreign_key "solution_categories_solutions", "solution_categories"
   add_foreign_key "solution_categories_solutions", "solutions"
