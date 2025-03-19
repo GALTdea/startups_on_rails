@@ -1,10 +1,20 @@
 <%= turbo_frame_tag "featured_listing_#{featured_listing.id}" do %>
   <div class="p-4 bg-white rounded-lg shadow dark:bg-gray-800">
     <div class="flex items-center justify-between mb-4">
-      <h5 class="text-xl font-bold leading-none text-gray-900 dark:text-white">
-        <%= featured_listing.title %>
-      </h5>
-      <%= link_to "Manage Items", admin_featured_listing_path(featured_listing),
+      <div>
+        <h5 class="text-xl font-bold leading-none text-gray-900 dark:text-white">
+          <%= featured_listing.title %>
+        </h5>
+        <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">
+          Manage items in this featured listing
+        </p>
+      </div>
+      <%= link_to "Back to Listings", admin_featured_listings_path,
+          class: "inline-flex items-center px-3 py-2 text-sm font-medium text-center text-white bg-gray-700 rounded-lg hover:bg-gray-800 focus:ring-4 focus:outline-none focus:ring-gray-300 dark:bg-gray-600 dark:hover:bg-gray-700 dark:focus:ring-gray-800" %>
+    </div>
+
+    <div class="mb-6">
+      <%= link_to "Add Item", admin_featured_listing_featurable_items_path(featured_listing),
           class: "inline-flex items-center px-3 py-2 text-sm font-medium text-center text-white bg-blue-700 rounded-lg hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800" %>
     </div>
 
