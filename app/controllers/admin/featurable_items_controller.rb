@@ -20,6 +20,12 @@ class Admin::FeaturableItemsController < Admin::BaseController
     @items = klass.published
     Rails.logger.debug "After published scope: #{@items.to_sql}"
 
+    # Add category conditions - only show items that belong to the featured listing's category
+    @items = @items.left_joins(:categories, :categorizables)
+                   .where("categories.id = :category_id OR categorizables.category_id = :category_id",
+                         category_id: @featured_listing.category_id)
+    Rails.logger.debug "After category conditions: #{@items.to_sql}"
+
     # Exclude already featured items
     already_featured = FeaturedListing.where(featurable_type: @type).pluck(:featurable_id)
     @items = @items.where.not(id: already_featured) if already_featured.any?
