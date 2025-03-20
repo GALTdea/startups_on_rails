@@ -6,7 +6,6 @@ class Admin::FeaturedListingsController < Admin::BaseController
       :category,
       featured_listing_items: [ :featurable ]
     ).order(position: :asc)
-    debugger
   end
 
   def show
