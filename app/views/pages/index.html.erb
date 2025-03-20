@@ -7,18 +7,28 @@
       Discover innovative companies, technologies, and solutions built with Ruby on Rails
     </p>
   </div>
-  <%= render 'featured_section', 
-      featured_listings: @featured_companies, 
-      title: 'Industries', 
+  <%= render "featured_section", 
+      title: "Featured Companies",
+      items: @featured_companies,
       view_all_path: companies_path %>
 
-  <%= render 'featured_section', 
-      featured_listings: @featured_technologies, 
-      title: 'Technologies', 
+  <%= render "featured_section", 
+      title: "Featured Technologies",
+      items: @featured_technologies,
       view_all_path: technologies_path %>
 
-  <%= render 'featured_section', 
-      featured_listings: @featured_solutions, 
-      title: 'Solutions', 
+  <%= render "featured_section", 
+      title: "Featured Solutions", 
+      items: @featured_solutions,
       view_all_path: solutions_path %>
+</div>
+
+<div class="container mx-auto px-4 py-8">
+  <h1 class="text-3xl font-bold text-gray-900 mb-8">Curated Collections</h1>
+
+  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+    <% @featured_listings.each do |listing| %>
+      <%= render "shared/featured_listing_card", listing: listing %>
+    <% end %>
+  </div>
 </div>

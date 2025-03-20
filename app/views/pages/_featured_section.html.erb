@@ -1,4 +1,4 @@
-<% if featured_listings.any? %>
+<% if items.any? %>
   <section class="mb-16">
     <div class="flex items-center justify-between mb-6">
       <h2 class="text-2xl font-bold text-gray-900"><%= title %></h2>
@@ -8,31 +8,44 @@
     </div>
     
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-      <% featured_listings.each do |featured| %>
+      <% items.each do |item| %>
         <div class="bg-white rounded-lg shadow-md overflow-hidden border border-gray-200 hover:shadow-lg transition-shadow duration-300">
           <div class="p-6">
-            <h3 class="text-lg font-bold text-gray-900 mb-2"><%= featured.title %></h3>
-            <% if featured.description.present? %>
-              <p class="text-gray-600 mb-4"><%= featured.description %></p>
+            <h3 class="text-lg font-bold text-gray-900 mb-2"><%= item.title %></h3>
+            <% if item.description.present? %>
+              <p class="text-gray-600 mb-4"><%= item.description %></p>
             <% end %>
+            
+            <div class="space-y-2">
+              <% item.featured_listing_items.first(10).each do |listing_item| %>
+                <div class="flex items-center space-x-2">
+                  <% if listing_item.featurable %>
+                    <span class="text-sm text-gray-600">
+                      <%= listing_item.featurable.name %>
+                    </span>
+                  <% end %>
+                </div>
+              <% end %>
+            </div>
+            
             <% 
               # Determine the appropriate link based on category type
-              case featured.category.category_type
+              case item.category.category_type
               when 'industry'
-                link_path = companies_path(category: featured.category.id)
-                link_text = "View companies in #{featured.category.name}"
+                link_path = companies_path(category: item.category.id)
+                link_text = "View companies in #{item.category.name}"
               when 'technology'
                 link_path = technologies_path
-                link_text = "Explore #{featured.category.name} technology"
+                link_text = "Explore #{item.category.name} technology"
               when 'solution'
                 link_path = solutions_path
-                link_text = "Discover #{featured.category.name} solutions"
+                link_text = "Discover #{item.category.name} solutions"
               else
                 link_path = '#'
-                link_text = "Learn more about #{featured.category.name}"
+                link_text = "Learn more about #{item.category.name}"
               end
             %>
-            <%= link_to link_text, link_path, class: "text-blue-600 hover:text-blue-800 font-medium" %>
+            <%= link_to link_text, link_path, class: "mt-4 inline-block text-blue-600 hover:text-blue-800 font-medium" %>
           </div>
         </div>
       <% end %>

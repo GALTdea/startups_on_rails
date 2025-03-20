@@ -50,4 +50,17 @@ class FeaturedListing < ApplicationRecord
       featured_listing_items.find_by(featurable_id: id)&.update!(position: index + 1)
     end
   end
+
+  # Overrides the has_many :featured_listing_items association to use manually loaded items when available
+  def featured_listing_items_with_manual_loading
+    items = instance_variable_get(:@featured_listing_items)
+    return items if items
+
+    # Fall back to the regular association
+    featured_listing_items_without_manual_loading
+  end
+
+  # Create method aliases to override the association method
+  alias_method :featured_listing_items_without_manual_loading, :featured_listing_items
+  alias_method :featured_listing_items, :featured_listing_items_with_manual_loading
 end

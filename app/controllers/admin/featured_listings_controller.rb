@@ -2,7 +2,11 @@ class Admin::FeaturedListingsController < Admin::BaseController
   before_action :set_featured_listing, only: [ :show, :edit, :update, :destroy, :update_item_positions ]
 
   def index
-    @featured_listings = FeaturedListing.includes(:category).order(position: :asc)
+    @featured_listings = FeaturedListing.includes(
+      :category,
+      featured_listing_items: [ :featurable ]
+    ).order(position: :asc)
+    debugger
   end
 
   def show
