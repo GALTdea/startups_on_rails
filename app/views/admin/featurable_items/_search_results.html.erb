@@ -1,0 +1,27 @@
+<% if @featurable_items.any? %>
+  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+    <% @featurable_items.each do |item| %>
+      <div class="bg-white p-4 rounded-lg shadow">
+        <div class="flex items-start space-x-4">
+          <div class="flex-shrink-0">
+            <%= check_box_tag "item_ids[]", "#{item['item_type']},#{item['id']}", false, 
+                class: "h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded" %>
+          </div>
+          <div class="flex-1">
+            <h3 class="text-lg font-medium text-gray-900"><%= item['name'] %></h3>
+            <% if item['description'].present? %>
+              <p class="mt-1 text-sm text-gray-500"><%= item['description'] %></p>
+            <% end %>
+            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
+              <%= item['item_type'] %>
+            </span>
+          </div>
+        </div>
+      </div>
+    <% end %>
+  </div>
+<% else %>
+  <div class="text-center py-12">
+    <p class="text-gray-500">No items available to add.</p>
+  </div>
+<% end %> 

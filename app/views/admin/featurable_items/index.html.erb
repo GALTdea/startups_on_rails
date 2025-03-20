@@ -1,80 +1,43 @@
-<%= turbo_frame_tag "featured_listing_#{@featured_listing.id}" do %>
-  <div class="p-4">
-    <div class="mb-6">
-      <div class="flex items-center justify-between">
-        <div>
-          <h2 class="text-2xl font-bold dark:text-white">Select Item to Feature</h2>
-          <p class="text-gray-500 dark:text-gray-400">Choose an item to feature in <%= @featured_listing.title %></p>
-        </div>
-        <%= link_to admin_featured_listings_path,
-            class: "inline-flex items-center px-3 py-2 text-sm font-medium text-center text-white bg-gray-700 rounded-lg hover:bg-gray-800 focus:ring-4 focus:outline-none focus:ring-gray-300 dark:bg-gray-600 dark:hover:bg-gray-700 dark:focus:ring-gray-800",
-            data: { turbo_frame: "_top" } do %>
-          <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
-          </svg>
-          Back to Listings
-        <% end %>
-      </div>
+<%= turbo_frame_tag dom_id(@featured_listing) do %>
+  <div class="container mx-auto px-4 py-8">
+    <div class="flex justify-between items-center mb-6">
+      <h1 class="text-2xl font-bold text-gray-900">Add Items to <%= @featured_listing.title %></h1>
+      <%= link_to "Back to Featured Listing", admin_featured_listing_path(@featured_listing), 
+          class: "text-blue-600 hover:text-blue-800" %>
     </div>
 
-    <div class="mb-6">
-      <div class="flex flex-col md:flex-row gap-4">
-        <div class="flex-1">
-          <%= form_with url: admin_featured_listing_featurable_items_path(@featured_listing), method: :get, class: "flex gap-2" do |f| %>
-            <%= f.text_field :search, value: @search, placeholder: "Search items...", class: "bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" %>
-            <%= f.hidden_field :type, value: @type %>
-            <%= f.submit "Search", class: "px-4 py-2 text-sm font-medium text-white bg-blue-700 rounded-lg hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800" %>
-          <% end %>
-        </div>
-        <div class="flex gap-2">
-          <%= link_to "Companies", admin_featured_listing_featurable_items_path(@featured_listing, type: "Company", search: @search),
-              class: "px-4 py-2 text-sm font-medium rounded-lg #{@type == 'Company' ? 'bg-blue-700 text-white' : 'bg-gray-200 text-gray-700 hover:bg-gray-300 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600'}" %>
-          <%= link_to "Solutions", admin_featured_listing_featurable_items_path(@featured_listing, type: "Solution", search: @search),
-              class: "px-4 py-2 text-sm font-medium rounded-lg #{@type == 'Solution' ? 'bg-blue-700 text-white' : 'bg-gray-200 text-gray-700 hover:bg-gray-300 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600'}" %>
+    <%= form_tag admin_featured_listing_featurable_items_path(@featured_listing), 
+        method: :get,
+        data: { controller: "search", turbo_frame: "search_results" } do %>
+      <div class="mb-6">
+        <div class="flex gap-4">
+          <div class="flex-1">
+            <%= text_field_tag :search, params[:search], 
+                placeholder: "Search items...",
+                class: "w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500",
+                data: { action: "input->search#submit" } %>
+          </div>
+          <div class="w-48">
+            <%= select_tag :type, 
+                options_for_select([["All Types", ""], ["Companies", "Company"], ["Solutions", "Solution"]], params[:type]),
+                class: "w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500",
+                data: { action: "change->search#submit" } %>
+          </div>
         </div>
       </div>
-    </div>
+    <% end %>
 
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-      <% @items.each do |item| %>
-        <div class="p-4 bg-white rounded-lg shadow dark:bg-gray-800">
-          <div class="flex items-center justify-between mb-4">
-            <h5 class="text-xl font-bold leading-none text-gray-900 dark:text-white">
-              <%= item.name %>
-            </h5>
-            <%= button_to admin_featured_listing_featurable_items_path(@featured_listing),
-                method: :post,
-                params: { type: item.class.name, id: item.id },
-                class: "text-blue-600 hover:text-blue-900 dark:text-blue-400 dark:hover:text-blue-300",
-                data: { turbo_frame: "featured_listing_#{@featured_listing.id}" } do %>
-              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
-              </svg>
-            <% end %>
-          </div>
+    <%= form_tag admin_featured_listing_featurable_items_path(@featured_listing), method: :post do %>
+      <%= turbo_frame_tag "search_results" do %>
+        <%= render partial: "search_results" %>
+      <% end %>
 
-          <div class="flow-root">
-            <div class="flex items-center space-x-4">
-              <div class="flex-1">
-                <p class="text-sm text-gray-500 dark:text-gray-400">
-                  <%= item.class.name %>
-                </p>
-                <% if item.respond_to?(:description) %>
-                  <p class="text-sm text-gray-500 dark:text-gray-400 mt-2">
-                    <%= truncate(item.description, length: 100) %>
-                  </p>
-                <% end %>
-              </div>
-            </div>
-          </div>
+      <% if @featurable_items.any? %>
+        <div class="mt-6 flex justify-end">
+          <%= submit_tag "Add Selected Items", 
+              class: "px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2" %>
         </div>
       <% end %>
-    </div>
-
-    <% if @items.empty? %>
-      <div class="text-center py-8">
-        <p class="text-gray-500 dark:text-gray-400">No items available to feature</p>
-      </div>
     <% end %>
   </div>
 <% end %> 
