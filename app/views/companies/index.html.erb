@@ -5,9 +5,79 @@
       <svg class="w-6 h-6 text-gray-400" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
         <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"></path>
       </svg>
-      <span class="ml-1 text-sm font-medium text-gray-500 md:ml-2">Companies</span>
+      <%= link_to "Companies", companies_path, class: "ml-1 text-sm font-medium text-gray-700 hover:text-blue-600 md:ml-2" %>
     </div>
   </li>
+
+  <%# Industry Filter Breadcrumb %>
+  <% if params[:industry].present? %>
+    <li>
+      <div class="flex items-center">
+        <svg class="w-6 h-6 text-gray-400" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+          <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"></path>
+        </svg>
+        <% industry = Array(params[:industry]).first %>
+        <span class="ml-1 text-sm font-medium text-gray-500 md:ml-2 flex items-center">
+          <svg class="w-4 h-4 mr-1.5 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
+            <path fill-rule="evenodd" d="M4 4a2 2 0 012-2h8a2 2 0 012 2v12a1 1 0 01-1.581.814l-4.419-2.95-4.419 2.95A1 1 0 014 16V4zm7 0H9v8.5l3 2V4z" clip-rule="evenodd" />
+          </svg>
+          <%= industry.titleize %>
+        </span>
+      </div>
+    </li>
+  <% end %>
+
+  <%# Tech Stack Filter Breadcrumb %>
+  <% if params[:tech_stacks].present? %>
+    <li>
+      <div class="flex items-center">
+        <svg class="w-6 h-6 text-gray-400" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+          <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"></path>
+        </svg>
+        <% tech_stack = params[:tech_stacks].is_a?(Array) ? params[:tech_stacks].first : params[:tech_stacks] %>
+        <span class="ml-1 text-sm font-medium text-gray-500 md:ml-2 flex items-center">
+          <svg class="w-4 h-4 mr-1.5 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
+            <path fill-rule="evenodd" d="M12.316 3.051a1 1 0 01.633 1.265l-4 12a1 1 0 11-1.898-.632l4-12a1 1 0 011.265-.633zM5.707 6.293a1 1 0 010 1.414L3.414 10l2.293 2.293a1 1 0 11-1.414 1.414l-3-3a1 1 0 010-1.414l3-3a1 1 0 011.414 0zm8.586 0a1 1 0 011.414 0l3 3a1 1 0 010 1.414l-3 3a1 1 0 11-1.414-1.414L16.586 10l-2.293-2.293a1 1 0 010-1.414z" clip-rule="evenodd" />
+          </svg>
+          <%= tech_stack %>
+        </span>
+      </div>
+    </li>
+  <% end %>
+
+  <%# Search Query Breadcrumb %>
+  <% if params[:search].present? %>
+    <li>
+      <div class="flex items-center">
+        <svg class="w-6 h-6 text-gray-400" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+          <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"></path>
+        </svg>
+        <span class="ml-1 text-sm font-medium text-gray-500 md:ml-2 flex items-center">
+          <svg class="w-4 h-4 mr-1.5 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
+            <path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clip-rule="evenodd" />
+          </svg>
+          "<%= params[:search] %>"
+        </span>
+      </div>
+    </li>
+  <% end %>
+
+  <%# Tags Breadcrumb %>
+  <% if params[:tags].present? %>
+    <li>
+      <div class="flex items-center">
+        <svg class="w-6 h-6 text-gray-400" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+          <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"></path>
+        </svg>
+        <span class="ml-1 text-sm font-medium text-gray-500 md:ml-2 flex items-center">
+          <svg class="w-4 h-4 mr-1.5 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
+            <path fill-rule="evenodd" d="M17.707 9.293a1 1 0 010 1.414l-7 7a1 1 0 01-1.414 0l-7-7A.997.997 0 012 10V5a3 3 0 013-3h5c.256 0 .512.098.707.293l7 7zM5 6a1 1 0 100-2 1 1 0 000 2z" clip-rule="evenodd" />
+          </svg>
+          <%= Tag.where(id: params[:tags]).map(&:name).join(", ") %>
+        </span>
+      </div>
+    </li>
+  <% end %>
 <% end %>
 
 <%# Page Title %>
@@ -361,66 +431,6 @@
     }
   }
 </style>
-
-<!-- Stimulus Controller for Bottom Sheet -->
-<%= javascript_tag do %>
-  import { Controller } from "@hotwired/stimulus"
-
-  export default class extends Controller {
-    static targets = ["sheet"]
-    
-    connect() {
-      this.originalHeight = window.innerHeight
-    }
-    
-    open(event) {
-      event.preventDefault()
-      document.body.classList.add('bottom-sheet-open')
-      this.sheetTarget.classList.remove('hidden')
-      requestAnimationFrame(() => {
-        this.sheetTarget.classList.remove('opacity-0', 'scale-95')
-        this.sheetTarget.classList.add('opacity-100', 'scale-100')
-      })
-    }
-    
-    close(event) {
-      event.preventDefault()
-      document.body.classList.remove('bottom-sheet-open')
-      this.sheetTarget.classList.add('opacity-0', 'scale-95')
-      setTimeout(() => {
-        this.sheetTarget.classList.add('hidden')
-      }, 200)
-    }
-  }
-<% end %>
-
-<!-- Stimulus Controller for Sticky Search -->
-<%= javascript_tag do %>
-  import { Controller } from "@hotwired/stimulus"
-
-  export default class extends Controller {
-    connect() {
-      if (window.innerWidth < 768) {
-        this.observeScroll()
-      }
-    }
-    
-    observeScroll() {
-      const observer = new IntersectionObserver(
-        ([entry]) => {
-          if (!entry.isIntersecting) {
-            this.element.classList.add('shadow-md')
-          } else {
-            this.element.classList.remove('shadow-md')
-          }
-        },
-        { threshold: 1 }
-      )
-      
-      observer.observe(this.element)
-    }
-  }
-<% end %>
 
 <!-- Company List and Pagination -->
 <div class="max-w-7xl mx-auto px-4 py-8">
