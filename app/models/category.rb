@@ -1,3 +1,14 @@
+# Category model implementing a hierarchical categorization system.
+#
+# Key features:
+# - Self-referential associations to create category trees (parent/children)
+# - Polymorphic associations with categorizable resources
+# - Multiple category types (industry, technology, problem_domain, job_function)
+# - Slug generation for SEO-friendly URLs
+# - Methods for navigating category hierarchies (ancestors, breadcrumb, etc.)
+# - Association with featured listings for category-specific featured content
+#
+# Used to categorize companies, solutions, and other resources across multiple dimensions.
 class Category < ApplicationRecord
   # Self-referential associations for hierarchy
   belongs_to :parent, class_name: "Category", optional: true

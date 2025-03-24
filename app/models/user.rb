@@ -1,3 +1,10 @@
+# User model for authentication and authorization.
+# Handles user accounts with three roles:
+# - member: Regular community member
+# - company_owner: Tech company representative who can manage their company profiles
+# - admin: Platform administrator with full access
+#
+# Uses Devise for authentication functionality and implements custom role management.
 class User < ApplicationRecord
   # Include default devise modules. Others available are:
   # :confirmable, :lockable, :timeoutable, :trackable and :omniauthable

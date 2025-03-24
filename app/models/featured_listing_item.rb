@@ -1,3 +1,13 @@
+# FeaturedListingItem join model connecting featured listings to featurable resources.
+#
+# Key features:
+# - Polymorphic association with featurable resources (companies, solutions)
+# - Manages positioning of items within a featured listing
+# - Ensures unique items per listing
+# - Automatically sets position for new items
+#
+# This model enables the organization and display order of multiple
+# featured items within a single featured listing.
 class FeaturedListingItem < ApplicationRecord
   belongs_to :featured_listing
   belongs_to :featurable, polymorphic: true

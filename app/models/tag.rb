@@ -1,3 +1,12 @@
+# Tag model for implementing a flexible tagging system.
+#
+# Key features:
+# - Simple tag storage with name normalization (lowercase, strip)
+# - Polymorphic association for flexible tagging of different resource types
+# - Legacy direct association with companies (being deprecated)
+#
+# Used to tag companies, solutions, and other resources for better
+# search, filtering, and discovery capabilities.
 class Tag < ApplicationRecord
   validates :name, presence: true, uniqueness: { case_sensitive: false }
 

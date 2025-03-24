@@ -1,3 +1,13 @@
+# Technology model for tracking technology stack information used by companies.
+#
+# Key features:
+# - Categorized by technology type
+# - Tracks popularity of technologies
+# - Associated with companies directly (HABTM) and through join table
+# - Offers scopes for filtering by category and popularity
+#
+# Used to represent programming languages, frameworks, tools, and other
+# technical components that companies use in their products and services.
 class Technology < ApplicationRecord
   # Legacy associations - will be deprecated
   has_many :company_technologies, dependent: :destroy

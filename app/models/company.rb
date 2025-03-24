@@ -1,3 +1,15 @@
+# Company model representing tech companies in the platform.
+#
+# Core entity that:
+# - Belongs to a user (company owner)
+# - Has categorization through both legacy and polymorphic associations
+# - Has tagging through both legacy and polymorphic associations
+# - Maintains technology stack information
+# - Can be featured in listings
+# - Has associated solutions
+#
+# The model is undergoing architectural evolution, with legacy associations
+# gradually being replaced by more flexible polymorphic ones.
 class Company < ApplicationRecord
   include Featurable
   belongs_to :owner, class_name: "User", foreign_key: "user_id", optional: true

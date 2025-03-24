@@ -1,3 +1,16 @@
+# Solution model representing software or hardware products/services offered by companies.
+#
+# Key features:
+# - Can be associated with a company
+# - Categorized by solution_type and deployment_type
+# - Uses polymorphic categorization and tagging
+# - Can be featured in listings
+# - Tracks popularity
+# - Provides extensive filtering options
+#
+# Solutions are classified by:
+# - Solution types (SaaS, Mobile App, API Service, etc.)
+# - Deployment types (Cloud, Self-hosted, Mobile, etc.)
 class Solution < ApplicationRecord
   include Featurable
   belongs_to :company, optional: true

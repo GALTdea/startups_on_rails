@@ -1,3 +1,14 @@
+# FeaturedListing model for managing featured content on the platform.
+#
+# Key features:
+# - Associates with a specific category for targeted featuring
+# - Manages collection of featurable items (companies, solutions)
+# - Supports time-limited featuring with expiration dates
+# - Includes ordering and positioning of featured items
+# - Comprehensive scopes for determining active, current, and featured listings
+#
+# This model powers the featured content displays across the platform,
+# allowing for strategic promotion of selected companies and solutions.
 class FeaturedListing < ApplicationRecord
   belongs_to :category
 
