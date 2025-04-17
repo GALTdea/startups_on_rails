@@ -1,33 +1,37 @@
-<div class="bg-white rounded-lg shadow-md overflow-hidden border border-gray-200 hover:shadow-lg transition-shadow duration-300">
+<div class="bg-white rounded-xl shadow-sm hover:shadow-md transition-all duration-300 border border-gray-100 overflow-hidden group">
   <div class="p-6">
-    <div class="flex justify-between items-start mb-4">
+    <div class="flex justify-between items-start mb-6">
       <div>
-        <h3 class="text-lg font-bold text-gray-900 mb-2"><%= listing.title %></h3>
-        <p class="text-gray-600 mb-4"><%= listing.category.name %></p>
+        <h3 class="text-xl font-bold text-gray-900 mb-2 group-hover:text-blue-600 transition-colors duration-200"><%= listing.title %></h3>
+        <div class="flex items-center space-x-2">
+          <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
+            <%= listing.category.name %>
+          </span>
+          <% if listing.featured_until.present? %>
+            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+              <%= pluralize(listing.days_remaining, 'day') %> remaining
+            </span>
+          <% end %>
+        </div>
       </div>
-      <% if listing.featured_until.present? %>
-        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
-          <%= pluralize(listing.days_remaining, 'day') %>
-        </span>
-      <% end %>
     </div>
 
     <div class="space-y-3 mb-6">
       <% if listing.featured_listing_items.any? %>
-        <% listing.featured_listing_items.first(10).each do |item| %>
-          <div class="flex items-center space-x-3 p-2 rounded-md hover:bg-gray-50">
+        <% listing.featured_listing_items.first(5).each do |item| %>
+          <div class="flex items-center space-x-3 p-3 rounded-lg hover:bg-gray-50 transition-colors duration-200">
             <div class="flex-shrink-0">
-              <div class="h-8 w-8 rounded-full bg-gray-200 flex items-center justify-center">
+              <div class="h-12 w-12 rounded-lg bg-gray-100 flex items-center justify-center">
                 <% if item.featurable.is_a?(Company) %>
                   <% if item.featurable.respond_to?(:logo_url) && item.featurable.logo_url.present? %>
-                    <%= image_tag item.featurable.logo_url, class: "h-8 w-8 rounded-full object-cover", alt: item.featurable.name %>
+                    <%= image_tag item.featurable.logo_url, class: "h-10 w-10 object-contain", alt: item.featurable.name %>
                   <% else %>
-                    <svg class="h-5 w-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                    <svg class="h-6 w-6 text-gray-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
                       <path d="M9 6a3 3 0 11-6 0 3 3 0 016 0zM17 6a3 3 0 11-6 0 3 3 0 016 0zM12.93 17c.046-.327.07-.66.07-1a6.97 6.97 0 00-1.5-4.33A5 5 0 0119 16v1h-6.07zM6 11a5 5 0 015 5v1H1v-1a5 5 0 015-5z" />
                     </svg>
                   <% end %>
                 <% else %>
-                  <svg class="h-5 w-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                  <svg class="h-6 w-6 text-gray-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
                     <path fill-rule="evenodd" d="M4 4a2 2 0 012-2h8a2 2 0 012 2v12a2 2 0 01-2 2H6a2 2 0 01-2-2V4zm2 0h8v12H6V4z" clip-rule="evenodd" />
                   </svg>
                 <% end %>
@@ -39,9 +43,9 @@
             </div>
           </div>
         <% end %>
-        <% if listing.featured_listing_items.count > 10 %>
+        <% if listing.featured_listing_items.count > 5 %>
           <div class="text-center text-sm text-gray-500">
-            +<%= listing.featured_listing_items.count - 10 %> more items
+            +<%= listing.featured_listing_items.count - 5 %> more items
           </div>
         <% end %>
       <% else %>
@@ -68,6 +72,11 @@
         link_text = "View all companies"
       end
     %>
-    <%= link_to link_text, link_path, class: "text-blue-600 hover:text-blue-800 font-medium" %>
+    <%= link_to link_path, class: "inline-flex items-center text-blue-600 hover:text-blue-800 font-medium group" do %>
+      <%= link_text %>
+      <svg class="ml-2 w-4 h-4 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+      </svg>
+    <% end %>
   </div>
 </div> 
