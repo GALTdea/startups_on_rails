@@ -447,5 +447,81 @@ puts "Created #{Technology.count} technologies"
 puts "Created #{Company.count} companies (#{Company.published.count} published, #{Company.count - Company.published.count} unpublished)"
 puts "Created #{CompanyTechnology.count} company technology associations"
 
+# Create featured listings
+puts "Creating featured listings..."
+
+# Get some published companies, technologies, and solutions
+published_companies = Company.published.to_a
+technologies = Technology.all.to_a
+solutions = Solution.all.to_a
+
+# Create 10 featured listings with different categories
+featured_listing_titles = [
+  "Top SaaS Companies",
+  "Leading Fintech Solutions",
+  "Innovative Healthtech Startups",
+  "Best Developer Tools",
+  "Emerging AI Companies",
+  "Sustainable Tech Solutions",
+  "Next-Gen E-commerce Platforms",
+  "Enterprise Software Leaders",
+  "Blockchain Innovators",
+  "Data Analytics Pioneers"
+]
+
+featured_listing_titles.each_with_index do |title, index|
+  # Select a category based on the title
+  category_name = case title
+  when /SaaS/i then "SaaS"
+  when /Fintech/i then "Fintech"
+  when /Healthtech/i then "Healthtech"
+  when /Developer Tools/i then "Developer Tools"
+  when /AI/i then "Artificial Intelligence"
+  when /Sustainable/i then "Green Tech"
+  when /E-commerce/i then "E-commerce"
+  when /Enterprise/i then "Enterprise Software"
+  when /Blockchain/i then "Blockchain"
+  when /Data Analytics/i then "Data Analytics"
+  else "Technology"
+  end
+
+  category = Category.find_by(name: category_name) || Category.where(category_type: 'industry').sample
+
+  # Create the featured listing
+  featured_listing = FeaturedListing.create!(
+    title: title,
+    description: "A curated collection of #{title.downcase} that are making waves in the industry.",
+    category: category,
+    position: index + 1,
+    active: true,
+    featured_until: rand(30..90).days.from_now
+  )
+
+  # Add items to the featured listing
+  case title
+  when /SaaS|Fintech|Healthtech|E-commerce|Enterprise/i
+    # Add companies
+    companies = published_companies.select { |c| c.categories.include?(category) }.sample(5)
+    companies.each do |company|
+      featured_listing.add_item(company)
+    end
+  when /Developer Tools|AI|Blockchain|Data Analytics/i
+    # Add technologies - just take random technologies since they don't have categories
+    technologies.sample(5).each do |tech|
+      featured_listing.add_item(tech)
+    end
+  else
+    # Add solutions
+    solutions = solutions.select { |s| s.categories.include?(category) }.sample(5)
+    solutions.each do |solution|
+      featured_listing.add_item(solution)
+    end
+  end
+
+  puts "Created featured listing: #{title} with #{featured_listing.featured_listing_items.count} items"
+end
+
+puts "Created #{FeaturedListing.count} featured listings"
+
 # Load solutions seed
 load Rails.root.join('db/seeds/solutions.rb')
