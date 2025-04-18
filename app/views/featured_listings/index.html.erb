@@ -1,0 +1,89 @@
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+  <div class="text-center mb-12">
+    <h1 class="text-4xl font-extrabold text-gray-900 sm:text-5xl sm:tracking-tight lg:text-6xl">
+      Featured Collections
+    </h1>
+    <p class="mt-5 max-w-xl mx-auto text-xl text-gray-500">
+      Explore our curated collections of companies, technologies, and solutions
+    </p>
+  </div>
+
+  <div class="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3">
+    <% @featured_listings.each do |listing| %>
+      <div class="group relative bg-white rounded-xl shadow-sm hover:shadow-md transition-all duration-300 border border-gray-100 overflow-hidden">
+        <div class="absolute inset-0 bg-gradient-to-br from-amber-50 to-orange-50 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+        
+        <div class="relative p-6">
+          <div class="flex items-center space-x-4 mb-4">
+            <div class="flex-shrink-0">
+              <div class="h-12 w-12 rounded-lg bg-amber-100 flex items-center justify-center">
+                <svg class="h-6 w-6 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+                </svg>
+              </div>
+            </div>
+            <div>
+              <h3 class="text-lg font-bold text-gray-900 group-hover:text-amber-600 transition-colors duration-200">
+                <%= listing.title %>
+              </h3>
+              <p class="text-sm text-gray-500"><%= listing.category.name %></p>
+            </div>
+          </div>
+
+          <% if listing.description.present? %>
+            <p class="text-sm text-gray-600 line-clamp-2 mb-4"><%= listing.description %></p>
+          <% end %>
+
+          <div class="space-y-3">
+            <% if listing.featured_listing_items.any? %>
+              <% listing.featured_listing_items.first(3).each do |item| %>
+                <div class="flex items-center space-x-3 p-2 rounded-lg hover:bg-gray-50 transition-colors duration-200">
+                  <div class="flex-shrink-0">
+                    <div class="h-8 w-8 rounded-lg bg-gray-100 flex items-center justify-center">
+                      <% if item.featurable.respond_to?(:logo_url) && item.featurable.logo_url.present? %>
+                        <%= image_tag item.featurable.logo_url, class: "h-6 w-6 object-contain", alt: item.featurable.name %>
+                      <% else %>
+                        <svg class="h-4 w-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+                        </svg>
+                      <% end %>
+                    </div>
+                  </div>
+                  <div class="flex-1 min-w-0">
+                    <p class="text-sm font-medium text-gray-900 truncate"><%= item.featurable.name %></p>
+                    <p class="text-xs text-gray-500"><%= item.featurable_type %></p>
+                  </div>
+                </div>
+              <% end %>
+              <% if listing.featured_listing_items.count > 3 %>
+                <div class="text-center text-sm text-gray-500">
+                  +<%= listing.featured_listing_items.count - 3 %> more items
+                </div>
+              <% end %>
+            <% end %>
+          </div>
+
+          <div class="mt-4 flex items-center justify-between">
+            <div class="flex items-center space-x-2">
+              <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-amber-100 text-amber-800">
+                <%= pluralize(listing.featured_listing_items.count, 'item') %>
+              </span>
+              <% if listing.featured_until.present? %>
+                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                  <%= pluralize(listing.days_remaining, 'day') %> remaining
+                </span>
+              <% end %>
+            </div>
+
+            <%= link_to featured_listing_path(listing), class: "inline-flex items-center text-sm font-medium text-amber-600 hover:text-amber-800 group/link" do %>
+              View collection
+              <svg class="ml-2 w-4 h-4 group-hover/link:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+              </svg>
+            <% end %>
+          </div>
+        </div>
+      </div>
+    <% end %>
+  </div>
+</div> 

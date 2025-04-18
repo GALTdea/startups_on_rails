@@ -7,28 +7,68 @@
       Discover innovative companies, technologies, and solutions built with Ruby on Rails
     </p>
   </div>
-  <%= render "featured_section", 
-      title: "Featured Companies",
-      items: @featured_companies,
-      view_all_path: companies_path %>
 
-  <%= render "featured_section", 
-      title: "Featured Technologies",
-      items: @featured_technologies,
-      view_all_path: technologies_path %>
+  <div class="mb-16">
+    <div class="sm:hidden">
+      <label for="section-tabs" class="sr-only">Select a section</label>
+      <select id="section-tabs" name="section-tabs" class="block w-full rounded-md border-gray-300 focus:border-blue-500 focus:ring-blue-500">
+        <option selected>Featured Companies</option>
+        <option>Featured Technologies</option>
+        <option>Featured Solutions</option>
+        <option>Curated Collections</option>
+      </select>
+    </div>
+    
+    <div class="hidden sm:block">
+      <div class="border-b border-gray-200">
+        <nav class="-mb-px flex space-x-8" aria-label="Tabs">
+          <button class="border-blue-500 text-blue-600 whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm" data-tab-target="featured-companies">
+            Featured Companies
+          </button>
+          <button class="border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm" data-tab-target="featured-technologies">
+            Featured Technologies
+          </button>
+          <button class="border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm" data-tab-target="featured-solutions">
+            Featured Solutions
+          </button>
+          <button class="border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm" data-tab-target="curated-collections">
+            Curated Collections
+          </button>
+        </nav>
+      </div>
+    </div>
 
-  <%= render "featured_section", 
-      title: "Featured Solutions", 
-      items: @featured_solutions,
-      view_all_path: solutions_path %>
-</div>
+    <div class="mt-8">
+      <div id="featured-companies" class="tab-content">
+        <%= render "companies/featured_companies_grid", 
+            featured_companies: @featured_companies %>
+      </div>
 
-<div class="container mx-auto px-4 py-8">
-  <h1 class="text-3xl font-bold text-gray-900 mb-8">Curated Collections</h1>
+      <div id="featured-technologies" class="tab-content hidden">
+        <%= render "technologies/featured_technologies_grid", 
+            featured_technologies: @featured_technologies %>
+      </div>
 
-  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-    <% @featured_listings.each do |listing| %>
-      <%= render "shared/featured_listing_card", listing: listing %>
-    <% end %>
+      <div id="featured-solutions" class="tab-content hidden">
+        <%= render "solutions/featured_solutions_grid", 
+            featured_solutions: @featured_solutions %>
+      </div>
+
+      <div id="curated-collections" class="tab-content hidden">
+        <%= render "listings/curated_collections_grid", 
+            featured_listings: @featured_listings %>
+      </div>
+    </div>
   </div>
 </div>
+
+<%# Add Stimulus controller for tab functionality %>
+<%= content_for :javascript do %>
+  <script type="module">
+    import { Application } from "@hotwired/stimulus"
+    import TabsController from "./controllers/tabs_controller"
+
+    const application = Application.start()
+    application.register("tabs", TabsController)
+  </script>
+<% end %>
