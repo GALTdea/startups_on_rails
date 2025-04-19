@@ -1,4 +1,4 @@
-<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12" data-controller="tabs">
   <div class="text-center mb-12">
     <h1 class="text-4xl font-extrabold text-gray-900 sm:text-5xl sm:tracking-tight lg:text-6xl">
       Startups on Rails
@@ -22,16 +22,28 @@
     <div class="hidden sm:block">
       <div class="border-b border-gray-200">
         <nav class="-mb-px flex space-x-8" aria-label="Tabs">
-          <button class="border-blue-500 text-blue-600 whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm" data-tab-target="featured-companies">
+          <button class="border-blue-500 text-blue-600 whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm" 
+                  data-tabs-target="tab" 
+                  data-tab-target="featured-companies"
+                  data-action="click->tabs#switch">
             Featured Companies
           </button>
-          <button class="border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm" data-tab-target="featured-technologies">
+          <button class="border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm"
+                  data-tabs-target="tab"
+                  data-tab-target="featured-technologies"
+                  data-action="click->tabs#switch">
             Featured Technologies
           </button>
-          <button class="border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm" data-tab-target="featured-solutions">
+          <button class="border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm"
+                  data-tabs-target="tab"
+                  data-tab-target="featured-solutions"
+                  data-action="click->tabs#switch">
             Featured Solutions
           </button>
-          <button class="border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm" data-tab-target="curated-collections">
+          <button class="border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm"
+                  data-tabs-target="tab"
+                  data-tab-target="curated-collections"
+                  data-action="click->tabs#switch">
             Curated Collections
           </button>
         </nav>
@@ -39,22 +51,22 @@
     </div>
 
     <div class="mt-8">
-      <div id="featured-companies" class="tab-content">
+      <div id="featured-companies" class="tab-content" data-tabs-target="content">
         <%= render "companies/featured_companies_grid", 
             featured_companies: @featured_companies %>
       </div>
 
-      <div id="featured-technologies" class="tab-content hidden">
+      <div id="featured-technologies" class="tab-content hidden" data-tabs-target="content">
         <%= render "technologies/featured_technologies_grid", 
             featured_technologies: @featured_technologies %>
       </div>
 
-      <div id="featured-solutions" class="tab-content hidden">
+      <div id="featured-solutions" class="tab-content hidden" data-tabs-target="content">
         <%= render "solutions/featured_solutions_grid", 
             featured_solutions: @featured_solutions %>
       </div>
 
-      <div id="curated-collections" class="tab-content hidden">
+      <div id="curated-collections" class="tab-content hidden" data-tabs-target="content">
         <%= render "listings/curated_collections_grid", 
             featured_listings: @featured_listings %>
       </div>
@@ -63,12 +75,3 @@
 </div>
 
 <%# Add Stimulus controller for tab functionality %>
-<%= content_for :javascript do %>
-  <script type="module">
-    import { Application } from "@hotwired/stimulus"
-    import TabsController from "./controllers/tabs_controller"
-
-    const application = Application.start()
-    application.register("tabs", TabsController)
-  </script>
-<% end %>
