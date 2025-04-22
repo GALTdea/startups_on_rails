@@ -26,7 +26,7 @@ User.destroy_all
 # Create admin user
 puts "Creating admin user..."
 admin = User.create!(
-  email: 'admin@example.com',
+  email: 'admin@email.com',
   password: 'password',
   password_confirmation: 'password',
   role: :admin
