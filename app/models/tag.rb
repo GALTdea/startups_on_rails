@@ -15,6 +15,10 @@ class Tag < ApplicationRecord
 
   # Polymorphic association
   has_many :taggables, dependent: :destroy
+  # Taggable is used to tag companies, solutions, technologies, and other resources.
+  # it allows a polymorphic association to be created between the tag and the resource it is tagged to.
+  # Instead of having a separate table for each taggable type, or a separate column for each taggable type, we can use a single table for all taggables.
+  # it also allows for the tag to be used in a search query. does so by using the taggable_type and taggable_id columns to find the taggable.
 
   before_validation :normalize_name
 
