@@ -6,8 +6,10 @@ class PagesController < ApplicationController
     @featured_companies = FeaturedListing.featured_by_category_type("industry")
                                          .includes(:category)
 
+    # retrieve featured listing array with category type "technology"
     @featured_technologies = FeaturedListing.featured_by_category_type("technology")
                                             .includes(:category)
+
 
     @featured_solutions = FeaturedListing.featured_by_category_type("solution")
                                          .includes(:category)
