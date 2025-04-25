@@ -1,0 +1,87 @@
+# app/views/companies/_company_featured_listing_grid.html.erb
+<div class="bg-white rounded-xl shadow-md p-6 mb-8">
+  <div class="mb-6">
+    <h3 class="text-2xl font-bold text-gray-900"><%= featured_listing.title %></h3>
+    <% if featured_listing.description.present? %>
+      <p class="mt-1 text-sm text-gray-500"><%= featured_listing.description %></p>
+    <% end %>
+  </div>
+
+  <% 
+  # Get all items from this featured listing
+  items = featured_listing.featured_listing_items
+  # Group in sets of 8 (or more if needed)
+  rows_count = (items.size.to_f / 4).ceil 
+  %>
+
+  <div class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
+    <% items.each_with_index do |item, index| %>
+      <% company = item.featurable %>
+      <% if company.present? %>
+        <div class="group relative bg-white rounded-xl shadow-sm hover:shadow-md transition-all duration-300 border border-gray-100 overflow-hidden">
+          <div class="h-48 w-full overflow-hidden">
+            <% if company.respond_to?(:cover_image_url) && company.cover_image_url.present? %>
+              <%= image_tag company.cover_image_url, class: "w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" %>
+            <% else %>
+              <div class="w-full h-full bg-gray-100 flex items-center justify-center">
+                <% if company.logo.attached? %>
+                  <%= image_tag company.logo, class: "h-16 w-16 object-contain" %>
+                <% else %>
+                  <svg class="h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+                  </svg>
+                <% end %>
+              </div>
+            <% end %>
+          </div>
+
+          <div class="p-6">
+            <div class="flex items-start justify-between mb-4">
+              <div class="flex-1">
+                <h3 class="text-lg font-bold text-gray-900 group-hover:text-blue-600 transition-colors duration-200">
+                  <%= company.name %>
+                </h3>
+                <% if company.location.present? %>
+                  <p class="mt-1 text-sm text-gray-500"><%= company.location %></p>
+                <% end %>
+              </div>
+              <% if company.logo.attached? %>
+                <div class="flex-shrink-0 ml-4">
+                  <%= image_tag company.logo, class: "h-10 w-10 rounded-lg object-contain bg-white border border-gray-100" %>
+                </div>
+              <% end %>
+            </div>
+
+            <% if company.description.present? %>
+              <p class="text-sm text-gray-600 line-clamp-2 mb-4"><%= company.description %></p>
+            <% end %>
+
+            <div class="flex items-center space-x-4">
+              <% if company.technologies.any? %>
+                <div class="flex -space-x-2">
+                  <% company.technologies.first(3).each do |tech| %>
+                    <% if tech.respond_to?(:icon_url) && tech.icon_url.present? %>
+                      <%= image_tag tech.icon_url, class: "h-8 w-8 rounded-full border-2 border-white", title: tech.name %>
+                    <% end %>
+                  <% end %>
+                  <% if company.technologies.count > 3 %>
+                    <div class="h-8 w-8 rounded-full border-2 border-white bg-gray-100 flex items-center justify-center">
+                      <span class="text-xs font-medium text-gray-600">+<%= company.technologies.count - 3 %></span>
+                    </div>
+                  <% end %>
+                </div>
+              <% end %>
+
+              <%= link_to company_path(company), class: "inline-flex items-center text-sm font-medium text-blue-600 hover:text-blue-800 group/link" do %>
+                Learn more
+                <svg class="ml-2 w-4 h-4 group-hover/link:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                </svg>
+              <% end %>
+            </div>
+          </div>
+        </div>
+      <% end %>
+    <% end %>
+  </div>
+</div>

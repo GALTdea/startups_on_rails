@@ -77,4 +77,22 @@
 <%# Second tab system (new) %>
 <%= render "listings/list_tabs", featured_listings: @featured_listings %>
 
+<%# Third section with company grids %>
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+  <div class="text-center mb-12">
+    <h2 class="text-4xl font-extrabold text-gray-900 sm:text-5xl sm:tracking-tight">
+      Featured Companies by Category
+    </h2>
+    <p class="mt-5 max-w-xl mx-auto text-xl text-gray-500">
+      Explore innovative companies in different industries built with Ruby on Rails
+    </p>
+  </div>
+
+  <div class="space-y-12">
+    <% @featured_companies.each do |featured_listing| %>
+      <%= render "companies/company_featured_listing_grid", featured_listing: featured_listing %>
+    <% end %>
+  </div>
+</div>
+
 <%# Add Stimulus controller for tab functionality %>
