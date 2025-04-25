@@ -28,7 +28,7 @@ class FeaturedListing < ApplicationRecord
   scope :by_position, -> { order(position: :asc) }
   scope :featured, -> { active.current.by_position }
 
-  # Class methods
+  # Class methods. returns a list of featured items by category type
   def self.featured_by_category_type(category_type, limit = 5)
     joins(:category)
       .where(categories: { category_type: category_type })
