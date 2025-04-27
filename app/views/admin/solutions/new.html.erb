@@ -1,0 +1,16 @@
+<div class="flex justify-between items-center mb-6">
+  <div class="flex items-center">
+    <%= link_to admin_solutions_path, class: "text-gray-400 hover:text-gray-600 mr-2" do %>
+      <svg class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+      </svg>
+    <% end %>
+    <h1 class="text-2xl font-bold">New Solution</h1>
+  </div>
+</div>
+
+<div class="bg-white shadow-sm rounded-lg overflow-hidden">
+  <div class="p-6">
+    <%= render "form", solution: @solution %>
+  </div>
+</div> 

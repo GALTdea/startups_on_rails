@@ -1,0 +1,124 @@
+<div class="flex justify-between items-center mb-6">
+  <h1 class="text-2xl font-bold">Solutions</h1>
+  
+  <div class="flex space-x-2">
+    <%= link_to new_admin_solution_path, class: "inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500" do %>
+      <svg class="mr-1.5 h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+      </svg>
+      New Solution
+    <% end %>
+  </div>
+</div>
+
+<!-- Filters and search -->
+<div class="bg-white rounded-lg shadow-sm p-4 mb-6">
+  <%= form_with url: admin_solutions_path, method: :get, class: "space-y-4", data: { controller: "form", action: "change->form#submit" } do |form| %>
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+      <!-- Search -->
+      <div>
+        <%= form.label :search, "Search", class: "block text-sm font-medium text-gray-700 mb-1" %>
+        <div class="relative">
+          <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+            <svg class="h-5 w-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+              <path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clip-rule="evenodd" />
+            </svg>
+          </div>
+          <%= form.text_field :search, value: params[:search], placeholder: "Search solutions...", class: "pl-10 focus:ring-blue-500 focus:border-blue-500 block w-full rounded-md border-gray-300 py-2" %>
+        </div>
+      </div>
+
+      <!-- Status -->
+      <div>
+        <%= form.label :status, "Status", class: "block text-sm font-medium text-gray-700 mb-1" %>
+        <%= form.select :status, options_for_select([["All", ""], ["Published", "published"], ["Draft", "draft"]], params[:status]), {}, class: "block w-full rounded-md border-gray-300 py-2 focus:ring-blue-500 focus:border-blue-500" %>
+      </div>
+
+      <!-- Date -->
+      <div>
+        <%= form.label :date, "Date", class: "block text-sm font-medium text-gray-700 mb-1" %>
+        <%= form.select :date, options_for_select([["All time", ""], ["Today", "today"], ["This week", "week"], ["This month", "month"]], params[:date]), {}, class: "block w-full rounded-md border-gray-300 py-2 focus:ring-blue-500 focus:border-blue-500" %>
+      </div>
+
+      <!-- Clear filters / Apply -->
+      <div class="flex items-end space-x-2">
+        <%= link_to "Clear Filters", admin_solutions_path, class: "text-gray-500 text-sm py-2" %>
+        <%= form.submit "Apply Filters", class: "inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500" %>
+      </div>
+    </div>
+  <% end %>
+</div>
+
+<!-- Solutions table -->
+<div class="bg-white rounded-lg shadow-sm overflow-hidden">
+  <div class="overflow-x-auto">
+    <table class="min-w-full divide-y divide-gray-200">
+      <thead class="bg-gray-50">
+        <tr>
+          <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Solution</th>
+          <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Company</th>
+          <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Type</th>
+          <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+          <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Created</th>
+          <th scope="col" class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+        </tr>
+      </thead>
+      <tbody class="bg-white divide-y divide-gray-200">
+        <% if @solutions.any? %>
+          <% @solutions.each do |solution| %>
+            <tr>
+              <td class="px-6 py-4 whitespace-nowrap">
+                <div class="flex items-center">
+                  <% if solution.logo.attached? %>
+                    <%= image_tag solution.logo.variant(resize_to_limit: [40, 40]), class: "h-10 w-10 mr-3 bg-gray-100 rounded-lg object-contain" %>
+                  <% else %>
+                    <div class="h-10 w-10 mr-3 rounded-lg bg-gray-100 flex items-center justify-center text-gray-500">
+                      <svg class="h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 3v2m6-2v2M9 19v2m6-2v2M5 9H3m2 6H3m18-6h-2m2 6h-2M7 19h10a2 2 0 002-2V7a2 2 0 00-2-2H7a2 2 0 00-2 2v10a2 2 0 002 2zM9 9h6v6H9V9z" />
+                      </svg>
+                    </div>
+                  <% end %>
+                  <div>
+                    <div class="text-sm font-medium text-gray-900"><%= solution.name %></div>
+                    <div class="text-sm text-gray-500 truncate max-w-xs"><%= solution.website %></div>
+                  </div>
+                </div>
+              </td>
+              <td class="px-6 py-4 whitespace-nowrap">
+                <% if solution.company %>
+                  <%= link_to solution.company.name, admin_company_path(solution.company), class: "text-sm text-blue-600 hover:text-blue-900" %>
+                <% else %>
+                  <span class="text-sm text-gray-500">-</span>
+                <% end %>
+              </td>
+              <td class="px-6 py-4 whitespace-nowrap">
+                <span class="text-sm text-gray-900"><%= solution.solution_type %></span>
+                <div class="text-xs text-gray-500"><%= solution.deployment_type %></div>
+              </td>
+              <td class="px-6 py-4 whitespace-nowrap">
+                <% if solution.published %>
+                  <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">Published</span>
+                <% else %>
+                  <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-yellow-100 text-yellow-800">Draft</span>
+                <% end %>
+              </td>
+              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                <%= time_ago_in_words(solution.created_at) %> ago
+              </td>
+              <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                <%= link_to "View", solution_path(solution), class: "text-blue-600 hover:text-blue-900 mr-3" %>
+                <%= link_to "Edit", edit_admin_solution_path(solution), class: "text-blue-600 hover:text-blue-900" %>
+              </td>
+            </tr>
+          <% end %>
+        <% else %>
+          <tr>
+            <td colspan="6" class="px-6 py-4 text-center text-sm text-gray-500">
+              No solutions found. <%= link_to "Create a new solution", new_admin_solution_path, class: "text-blue-600 hover:text-blue-900" %>.
+            </td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+</div> 

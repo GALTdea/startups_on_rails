@@ -19,6 +19,7 @@ Rails.application.routes.draw do
     resources :companies
     resources :categories
     resources :tags, only: [ :new, :create ]
+    resources :solutions
     get "dashboard", to: "dashboard#index"
     resources :users
     resources :companies
