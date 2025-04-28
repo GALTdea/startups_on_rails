@@ -6,6 +6,10 @@ class SolutionsController < ApplicationController
   def index
     @solutions = Solution.published.order(popularity: :desc)
 
+    # Load categories for filtering
+    @root_categories = Category.roots.includes(:children).order(:category_type, :name)
+    @category_types = Category::CATEGORY_TYPES.map { |type| [ type.humanize, type ] }
+
     # Filter by company
     @solutions = @solutions.by_company(params[:company_id]) if params[:company_id].present?
 
@@ -14,6 +18,12 @@ class SolutionsController < ApplicationController
 
     # Filter by deployment type
     @solutions = @solutions.by_deployment(params[:deployment_type]) if params[:deployment_type].present?
+
+    # Filter by categories
+    @solutions = @solutions.by_category(params[:category_ids]) if params[:category_ids].present?
+
+    # Filter by category type
+    @solutions = @solutions.by_category_type(params[:category_type]) if params[:category_type].present?
 
     # Search by term
     @solutions = @solutions.search(params[:search]) if params[:search].present?
@@ -78,7 +88,8 @@ class SolutionsController < ApplicationController
     params.require(:solution).permit(
       :name, :description, :website, :pricing,
       :solution_type, :deployment_type, :popularity,
-      :published, :company_id, :logo
+      :published, :company_id, :logo,
+      category_ids: []
     )
   end
 
