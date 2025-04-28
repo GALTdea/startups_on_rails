@@ -42,7 +42,7 @@ Rails.application.routes.draw do
   resources :companies, only: [ :index, :show ] do
     resources :solutions
   end
-  root to: "pages#index"
+  root to: "solutions#index"
 
   resources :technologies
 
