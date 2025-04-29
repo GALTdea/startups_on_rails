@@ -25,6 +25,8 @@ class Solution < ApplicationRecord
   has_many :taggables, as: :taggable, dependent: :destroy
   has_many :tags, through: :taggables, source: :tag
 
+  has_and_belongs_to_many :technologies
+
   validates :name, presence: true, uniqueness: true
   validates :description, presence: true
   validates :website, presence: true
@@ -113,5 +115,21 @@ class Solution < ApplicationRecord
 
   def self.search(query)
     where("name ILIKE ? OR description ILIKE ?", "%#{query}%", "%#{query}%")
+  end
+
+  # Add scopes for tech stack filtering
+  scope :with_technology, ->(technology_ids) {
+    joins(:technologies)
+      .where(technologies: { id: technology_ids })
+      .distinct
+  }
+
+  # Helper methods
+  def add_technology(technology)
+    technologies << technology unless technologies.include?(technology)
+  end
+
+  def remove_technology(technology)
+    technologies.delete(technology)
   end
 end

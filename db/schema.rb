@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_03_19_195356) do
+ActiveRecord::Schema[8.0].define(version: 2025_04_29_011640) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -179,6 +179,13 @@ ActiveRecord::Schema[8.0].define(version: 2025_03_19_195356) do
     t.index ["name"], name: "index_solutions_on_name"
     t.index ["popularity"], name: "index_solutions_on_popularity"
     t.index ["solution_type"], name: "index_solutions_on_solution_type"
+  end
+
+  create_table "solutions_technologies", id: false, force: :cascade do |t|
+    t.bigint "solution_id", null: false
+    t.bigint "technology_id", null: false
+    t.index ["solution_id", "technology_id"], name: "index_solutions_technologies_on_solution_id_and_technology_id", unique: true
+    t.index ["technology_id", "solution_id"], name: "index_solutions_technologies_on_technology_id_and_solution_id"
   end
 
   create_table "taggables", force: :cascade do |t|

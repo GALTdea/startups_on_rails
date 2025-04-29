@@ -4,6 +4,7 @@
 # - Categorized by technology type
 # - Tracks popularity of technologies
 # - Associated with companies directly (HABTM) and through join table
+# - Associated with solutions directly (HABTM)
 # - Offers scopes for filtering by category and popularity
 #
 # Used to represent programming languages, frameworks, tools, and other
@@ -15,6 +16,7 @@ class Technology < ApplicationRecord
 
   # New direct HABTM association
   has_and_belongs_to_many :companies
+  has_and_belongs_to_many :solutions
 
   validates :name, presence: true, uniqueness: true
   validates :category, presence: true

@@ -10,6 +10,9 @@ class SolutionsController < ApplicationController
     @root_categories = Category.roots.includes(:children).order(:category_type, :name)
     @category_types = Category::CATEGORY_TYPES.map { |type| [ type.humanize, type ] }
 
+    # Load technologies for filtering
+    @technologies = Technology.order(:name)
+
     # Filter by company
     @solutions = @solutions.by_company(params[:company_id]) if params[:company_id].present?
 
@@ -24,6 +27,11 @@ class SolutionsController < ApplicationController
 
     # Filter by category type
     @solutions = @solutions.by_category_type(params[:category_type]) if params[:category_type].present?
+
+    # Filter by technology stack - handle case when technologies are missing
+    if params[:technology_ids].present? && Technology.exists?
+      @solutions = @solutions.with_technology(params[:technology_ids])
+    end
 
     # Search by term
     @solutions = @solutions.search(params[:search]) if params[:search].present?

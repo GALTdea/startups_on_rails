@@ -55,58 +55,148 @@
             <%= form.select :deployment_type, Solution::DEPLOYMENT_TYPES, { include_blank: "All Deployments", selected: params[:deployment_type] }, class: "mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-blue-500 focus:border-blue-500 rounded-md" %>
           </div>
           
-          <%# Category filter section %>
-          <div class="border-t border-gray-200 pt-4">
-            <h3 class="text-sm font-medium text-gray-900 mb-2">Categories</h3>
-            <div class="space-y-4">
-              <%# Category Type selector %>
-              <div>
-                <%= form.label :category_type, "Category Type", class: "block text-sm font-medium text-gray-700" %>
-                <%= form.select :category_type, 
-                      @category_types,
-                      { include_blank: "All Category Types", selected: params[:category_type] }, 
-                      class: "mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-blue-500 focus:border-blue-500 rounded-md",
-                      data: { action: "change->solutions-filter#updateCategoryList" } %>
-              </div>
-              
-              <%# Category tree with hierarchy %>
-              <div id="categories-list" class="space-y-2 mt-2">
-                <% @root_categories.group_by(&:category_type).each do |category_type, categories| %>
-                  <div class="category-group" data-category-type="<%= category_type %>" data-solutions-filter-target="categoryGroup">
-                    <h4 class="text-xs font-medium text-gray-500 uppercase tracking-wider mb-2"><%= category_type.humanize %></h4>
-                    <div class="space-y-1.5">
-                      <% categories.each do |category| %>
-                        <div class="flex items-start">
-                          <div class="flex items-center h-5">
-                            <%= form.check_box "category_ids[]", 
-                                  { multiple: true, id: "category_#{category.id}", checked: params[:category_ids]&.include?(category.id.to_s) },
-                                  category.id, nil %>
-                          </div>
-                          <div class="ml-2 text-sm">
-                            <%= form.label "category_ids_#{category.id}", category.name, class: "font-medium text-gray-700 cursor-pointer" %>
-                            
-                            <% if category.children.any? %>
-                              <div class="ml-4 mt-1.5 space-y-1.5">
-                                <% category.children.each do |child| %>
-                                  <div class="flex items-start">
-                                    <div class="flex items-center h-5">
-                                      <%= form.check_box "category_ids[]", 
-                                            { multiple: true, id: "category_#{child.id}", checked: params[:category_ids]&.include?(child.id.to_s) },
-                                            child.id, nil %>
-                                    </div>
-                                    <div class="ml-2 text-sm">
-                                      <%= form.label "category_ids_#{child.id}", child.name, class: "text-gray-600 cursor-pointer" %>
-                                    </div>
-                                  </div>
-                                <% end %>
-                              </div>
-                            <% end %>
-                          </div>
-                        </div>
-                      <% end %>
+          <%# Technology/Tech Stack filter section - moved above categories %>
+          <div class="border-t border-gray-200 pt-4 mt-4">
+            <div class="flex items-center justify-between">
+              <h3 class="text-sm font-medium text-gray-900">Tech Stack</h3>
+              <button type="button" 
+                      class="text-sm text-blue-600 hover:text-blue-800 focus:outline-none"
+                      data-action="click->solutions-filter#toggleTechStack">
+                <span data-solutions-filter-target="techStackToggleText">Show</span>
+                <svg xmlns="http://www.w3.org/2000/svg" 
+                     class="h-4 w-4 inline ml-1 transition-transform" 
+                     fill="none" 
+                     viewBox="0 0 24 24" 
+                     stroke="currentColor"
+                     data-solutions-filter-target="techStackToggleIcon">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                </svg>
+              </button>
+            </div>
+            
+            <div class="mt-2 hidden" data-solutions-filter-target="techStackContent">
+              <% if @technologies.exists? %>
+                <%# Technology search %>
+                <div class="mb-3">
+                  <div class="relative rounded-md shadow-sm">
+                    <input type="text" 
+                           id="tech-search" 
+                           placeholder="Search technologies..." 
+                           class="block w-full pr-10 border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500 text-sm"
+                           data-action="input->solutions-filter#searchTechnologies">
+                    <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
+                      <svg class="h-4 w-4 text-gray-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                      </svg>
                     </div>
                   </div>
+                </div>
+                
+                <%# Selected technologies count %>
+                <% if params[:technology_ids].present? %>
+                  <div class="mb-2 text-xs text-gray-500">
+                    <%= pluralize(Array(params[:technology_ids]).size, 'technology') %> selected
+                  </div>
                 <% end %>
+                
+                <%# Technology list %>
+                <div class="max-h-48 overflow-y-auto pr-2 space-y-1.5" data-solutions-filter-target="technologyList">
+                  <% @technologies.each do |technology| %>
+                    <div class="flex items-start tech-item" data-tech-name="<%= technology.name.downcase %>">
+                      <div class="flex items-center h-5">
+                        <%= form.check_box "technology_ids[]", 
+                              { multiple: true, id: "technology_#{technology.id}", checked: params[:technology_ids]&.include?(technology.id.to_s) },
+                              technology.id, nil %>
+                      </div>
+                      <div class="ml-2 text-sm">
+                        <%= form.label "technology_ids_#{technology.id}", technology.name, class: "text-gray-600 cursor-pointer" %>
+                      </div>
+                    </div>
+                  <% end %>
+                </div>
+              <% else %>
+                <p class="text-sm text-gray-500">No technologies available.</p>
+              <% end %>
+            </div>
+          </div>
+          
+          <%# Category filter section %>
+          <div class="border-t border-gray-200 pt-4">
+            <div class="flex items-center justify-between">
+              <h3 class="text-sm font-medium text-gray-900">Categories</h3>
+              <button type="button" 
+                      class="text-sm text-blue-600 hover:text-blue-800 focus:outline-none"
+                      data-action="click->solutions-filter#toggleCategories">
+                <span data-solutions-filter-target="categoriesToggleText">Show</span>
+                <svg xmlns="http://www.w3.org/2000/svg" 
+                     class="h-4 w-4 inline ml-1 transition-transform" 
+                     fill="none" 
+                     viewBox="0 0 24 24" 
+                     stroke="currentColor"
+                     data-solutions-filter-target="categoriesToggleIcon">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                </svg>
+              </button>
+            </div>
+            
+            <div class="mt-2 hidden" data-solutions-filter-target="categoriesContent">
+              <div class="space-y-4">
+                <%# Category Type selector %>
+                <div>
+                  <%= form.label :category_type, "Category Type", class: "block text-sm font-medium text-gray-700" %>
+                  <%= form.select :category_type, 
+                        @category_types,
+                        { include_blank: "All Category Types", selected: params[:category_type] }, 
+                        class: "mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-blue-500 focus:border-blue-500 rounded-md",
+                        data: { action: "change->solutions-filter#updateCategoryList" } %>
+                </div>
+                
+                <%# Selected categories count %>
+                <% if params[:category_ids].present? %>
+                  <div class="mb-2 text-xs text-gray-500">
+                    <%= pluralize(Array(params[:category_ids]).size, 'category') %> selected
+                  </div>
+                <% end %>
+                
+                <%# Category tree with hierarchy %>
+                <div id="categories-list" class="space-y-2 mt-2">
+                  <% @root_categories.group_by(&:category_type).each do |category_type, categories| %>
+                    <div class="category-group" data-category-type="<%= category_type %>" data-solutions-filter-target="categoryGroup">
+                      <h4 class="text-xs font-medium text-gray-500 uppercase tracking-wider mb-2"><%= category_type.humanize %></h4>
+                      <div class="space-y-1.5">
+                        <% categories.each do |category| %>
+                          <div class="flex items-start">
+                            <div class="flex items-center h-5">
+                              <%= form.check_box "category_ids[]", 
+                                    { multiple: true, id: "category_#{category.id}", checked: params[:category_ids]&.include?(category.id.to_s) },
+                                    category.id, nil %>
+                            </div>
+                            <div class="ml-2 text-sm">
+                              <%= form.label "category_ids_#{category.id}", category.name, class: "font-medium text-gray-700 cursor-pointer" %>
+                              
+                              <% if category.children.any? %>
+                                <div class="ml-4 mt-1.5 space-y-1.5">
+                                  <% category.children.each do |child| %>
+                                    <div class="flex items-start">
+                                      <div class="flex items-center h-5">
+                                        <%= form.check_box "category_ids[]", 
+                                              { multiple: true, id: "category_#{child.id}", checked: params[:category_ids]&.include?(child.id.to_s) },
+                                              child.id, nil %>
+                                      </div>
+                                      <div class="ml-2 text-sm">
+                                        <%= form.label "category_ids_#{child.id}", child.name, class: "text-gray-600 cursor-pointer" %>
+                                      </div>
+                                    </div>
+                                  <% end %>
+                                </div>
+                              <% end %>
+                            </div>
+                          </div>
+                        <% end %>
+                      </div>
+                    </div>
+                  <% end %>
+                </div>
               </div>
             </div>
           </div>
@@ -121,7 +211,7 @@
     
     <div class="md:col-span-2">
       <%# Active filters display - moved to top of main content %>
-      <% if params[:category_ids].present? || params[:solution_type].present? || params[:deployment_type].present? || params[:search].present? || params[:category_type].present? %>
+      <% if params[:category_ids].present? || params[:solution_type].present? || params[:deployment_type].present? || params[:search].present? || params[:category_type].present? || params[:technology_ids].present? %>
         <div class="bg-white p-4 rounded-lg shadow-sm mb-6">
           <div class="flex items-center">
             <h3 class="text-sm font-medium text-gray-900 mr-3">Active Filters:</h3>
@@ -163,8 +253,27 @@
                                                      solution_type: params[:solution_type],
                                                      deployment_type: params[:deployment_type],
                                                      search: params[:search],
-                                                     category_type: params[:category_type]), 
+                                                     category_type: params[:category_type],
+                                                     technology_ids: params[:technology_ids]), 
                                   class: "ml-1 text-indigo-500" %>
+                    </span>
+                  <% end %>
+                <% end %>
+              <% end %>
+              
+              <% if params[:technology_ids].present? && defined?(Technology) %>
+                <% Array(params[:technology_ids]).each do |tech_id| %>
+                  <% if technology = Technology.find_by(id: tech_id) %>
+                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-teal-100 text-teal-800">
+                      Tech: <%= technology.name %>
+                      <%= link_to "×", solutions_path(
+                                        technology_ids: Array(params[:technology_ids]) - [tech_id],
+                                        category_ids: params[:category_ids],
+                                        solution_type: params[:solution_type],
+                                        deployment_type: params[:deployment_type],
+                                        search: params[:search],
+                                        category_type: params[:category_type]), 
+                                  class: "ml-1 text-teal-500" %>
                     </span>
                   <% end %>
                 <% end %>
@@ -215,6 +324,18 @@
                         <span class="px-2 py-1 bg-indigo-100 text-indigo-800 text-xs rounded-full">
                           <%= primary_category.name %>
                         </span>
+                      <% end %>
+                      
+                      <%# Display technologies if available %>
+                      <% if solution.technologies.any? && defined?(Technology) %>
+                        <% solution.technologies.first(2).each do |tech| %>
+                          <span class="px-2 py-1 bg-teal-100 text-teal-800 text-xs rounded-full">
+                            <%= tech.name %>
+                          </span>
+                        <% end %>
+                        <% if solution.technologies.size > 2 %>
+                          <span class="text-xs text-gray-500">+<%= solution.technologies.size - 2 %> more</span>
+                        <% end %>
                       <% end %>
                     </div>
                   </div>
