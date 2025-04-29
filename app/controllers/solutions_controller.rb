@@ -13,6 +13,16 @@ class SolutionsController < ApplicationController
     # Load technologies for filtering
     @technologies = Technology.order(:name)
 
+    # Prepare parameter arrays - handle nested arrays
+    category_ids = params[:category_ids].present? ? Array(params[:category_ids]).flatten : []
+    technology_ids = params[:technology_ids].present? ? Array(params[:technology_ids]).flatten : []
+
+    # Add debug logging in development
+    if Rails.env.development?
+      Rails.logger.debug "Original category_ids param: #{params[:category_ids].inspect}"
+      Rails.logger.debug "Processed category_ids: #{category_ids.inspect}"
+    end
+
     # Filter by company
     @solutions = @solutions.by_company(params[:company_id]) if params[:company_id].present?
 
@@ -23,14 +33,14 @@ class SolutionsController < ApplicationController
     @solutions = @solutions.by_deployment(params[:deployment_type]) if params[:deployment_type].present?
 
     # Filter by categories
-    @solutions = @solutions.by_category(params[:category_ids]) if params[:category_ids].present?
+    @solutions = @solutions.by_category(category_ids) if category_ids.present?
 
     # Filter by category type
     @solutions = @solutions.by_category_type(params[:category_type]) if params[:category_type].present?
 
     # Filter by technology stack - handle case when technologies are missing
-    if params[:technology_ids].present? && Technology.exists?
-      @solutions = @solutions.with_technology(params[:technology_ids])
+    if technology_ids.present? && Technology.exists?
+      @solutions = @solutions.with_technology(technology_ids)
     end
 
     # Search by term
@@ -97,7 +107,7 @@ class SolutionsController < ApplicationController
       :name, :description, :website, :pricing,
       :solution_type, :deployment_type, :popularity,
       :published, :company_id, :logo,
-      category_ids: []
+      category_ids: [], technology_ids: []
     )
   end
 

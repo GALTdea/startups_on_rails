@@ -41,10 +41,23 @@ class Solution < ApplicationRecord
 
   # Scopes for filtering by category
   scope :by_category, ->(category_ids) {
-    return if category_ids.blank? || category_ids.reject(&:blank?).empty?
+    return if category_ids.blank? || (category_ids.respond_to?(:reject) && category_ids.reject(&:blank?).empty?)
+
+    # Handle possibly nested arrays by flattening
+    flat_ids = if category_ids.is_a?(Array)
+                 category_ids.flatten.compact.reject(&:blank?)
+    else
+                 [ category_ids ].compact.reject(&:blank?)
+    end
+
+    return if flat_ids.empty?
+
+    # Convert to integers
+    int_ids = flat_ids.map { |id| id.to_s.to_i }.reject(&:zero?)
+    return if int_ids.empty?
 
     joins(:categorizables)
-      .where(categorizables: { category_id: category_ids.reject(&:blank?) })
+      .where(categorizables: { category_id: int_ids })
       .distinct
   }
 
@@ -119,8 +132,23 @@ class Solution < ApplicationRecord
 
   # Add scopes for tech stack filtering
   scope :with_technology, ->(technology_ids) {
+    return if technology_ids.blank? || (technology_ids.respond_to?(:reject) && technology_ids.reject(&:blank?).empty?)
+
+    # Handle possibly nested arrays by flattening
+    flat_ids = if technology_ids.is_a?(Array)
+                 technology_ids.flatten.compact.reject(&:blank?)
+    else
+                 [ technology_ids ].compact.reject(&:blank?)
+    end
+
+    return if flat_ids.empty?
+
+    # Convert to integers
+    int_ids = flat_ids.map { |id| id.to_s.to_i }.reject(&:zero?)
+    return if int_ids.empty?
+
     joins(:technologies)
-      .where(technologies: { id: technology_ids })
+      .where(technologies: { id: int_ids })
       .distinct
   }
 
