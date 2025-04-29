@@ -214,22 +214,6 @@
             <%= link_to "Clear Filters", solutions_path, class: "text-sm text-gray-500 hover:text-gray-700" %>
             <%= form.submit "Apply Filters", class: "inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500" %>
           </div>
-          
-          <%# Debug information - only visible to admins %>
-          <% if Rails.env.development? && current_user&.admin? %>
-            <div class="mt-4 p-3 bg-gray-100 rounded-md text-xs">
-              <details>
-                <summary class="cursor-pointer text-gray-700">Debug Info</summary>
-                <div class="mt-2 text-gray-600">
-                  <p>Original category_ids: <%= params[:category_ids].inspect %></p>
-                  <p>Flattened category_ids: <%= Array(params[:category_ids]).flatten.inspect %></p>
-                  <p>Original technology_ids: <%= params[:technology_ids].inspect %></p>
-                  <p>Flattened technology_ids: <%= Array(params[:technology_ids]).flatten.inspect %></p>
-                </div>
-              </details>
-            </div>
-          <% end %>
-          
         <% end %>
       </div>
     </div>
