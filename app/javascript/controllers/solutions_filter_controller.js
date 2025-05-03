@@ -19,6 +19,7 @@ export default class extends Controller {
     ]
 
     connect() {
+        console.log("From solutions filter controller")
         this.updateCategoryVisibility()
         this.initTechStackState()
         this.initCategoriesState()
@@ -132,8 +133,22 @@ export default class extends Controller {
      * Open the modal for more filters
      */
     openModal() {
+        console.log('openModal method called');
         if (this.hasModalTarget) {
-            this.modalTarget.classList.remove('hidden')
+            console.log('Modal target found');
+            this.modalTarget.classList.remove('hidden');
+        } else {
+            console.error('Modal target not found!');
+            console.log('Available targets:', this.targets);
+
+            // Fallback to document.querySelector if the target isn't found
+            const modal = document.getElementById('filters-modal');
+            if (modal) {
+                console.log('Found modal via document.getElementById');
+                modal.classList.remove('hidden');
+            } else {
+                console.error('Modal not found at all!');
+            }
         }
     }
 

@@ -27,27 +27,52 @@
     <% end %>
   </div>
   
-  <div class="mb-8">
-    <div class="bg-white rounded-lg shadow-sm p-4 flex flex-col md:flex-row md:items-center md:space-x-4 space-y-4 md:space-y-0">
-      <%= form_with url: solutions_path, method: :get, data: { controller: "solutions-filter", turbo_frame: "_top" }, class: "flex flex-col md:flex-row md:items-center w-full gap-4" do |form| %>
-        <div>
-          <%= form.label :search, "Search", class: "block text-sm font-medium text-gray-700" %>
-          <div class="mt-1 relative rounded-md shadow-sm">
-            <%= form.text_field :search, value: params[:search], class: "block w-full pr-10 border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500", placeholder: "Search solutions..." %>
+  <div data-controller="solutions-filter">
+    <div class="mb-8">
+      <div class="bg-white rounded-lg shadow-sm p-4 flex flex-col md:flex-row md:items-center md:space-x-4 space-y-4 md:space-y-0">
+        <%= form_with url: solutions_path, method: :get, data: { turbo_frame: "_top" }, class: "flex flex-col md:flex-row md:items-center w-full gap-4" do |form| %>
+          <div>
+            <%= form.label :search, "Search", class: "block text-sm font-medium text-gray-700" %>
+            <div class="mt-1 relative rounded-md shadow-sm">
+              <%= form.text_field :search, value: params[:search], class: "block w-full pr-10 border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500", placeholder: "Search solutions..." %>
+            </div>
           </div>
-        </div>
-        <div>
-          <%= form.label :solution_type, "Solution Type", class: "block text-sm font-medium text-gray-700" %>
-          <%= form.select :solution_type, Solution::SOLUTION_TYPES, { include_blank: "All Types", selected: params[:solution_type] }, class: "mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-blue-500 focus:border-blue-500 rounded-md" %>
-        </div>
-        <div class="flex-1"></div>
+          <div>
+            <%= form.label :solution_type, "Solution Type", class: "block text-sm font-medium text-gray-700" %>
+            <%= form.select :solution_type, Solution::SOLUTION_TYPES, { include_blank: "All Types", selected: params[:solution_type] }, class: "mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-blue-500 focus:border-blue-500 rounded-md" %>
+          </div>
+          <div class="flex-1"></div>
+          <button type="button"
+                  data-action="click->solutions-filter#openModal"
+                  class="inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+            More Filters
+          </button>
+          <%= form.submit "Apply", class: "inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500" %>
+        <% end %>
+      </div>
+    </div>
+
+    <div id="filters-modal" class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40 hidden" data-solutions-filter-target="modal">
+      <div class="bg-white rounded-lg shadow-lg w-full max-w-3xl mx-auto p-8 relative">
         <button type="button"
-                data-action="click->solutions-filter#openModal"
-                class="inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
-          More Filters
+                class="absolute top-4 right-4 text-gray-400 hover:text-gray-600"
+                data-action="click->solutions-filter#closeModal">
+          <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+          </svg>
         </button>
-        <%= form.submit "Apply", class: "inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500" %>
-      <% end %>
+        <h2 class="text-xl font-semibold mb-6">More Filters</h2>
+        <%= form_with url: solutions_path, method: :get, data: { turbo_frame: "_top" }, class: "space-y-6" do |form| %>
+          <div>
+            <%= form.label :deployment_type, "Deployment Type", class: "block text-sm font-medium text-gray-700" %>
+            <%= form.select :deployment_type, Solution::DEPLOYMENT_TYPES, { include_blank: "All Deployments", selected: params[:deployment_type] }, class: "mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-blue-500 focus:border-blue-500 rounded-md" %>
+          </div>
+          <div class="flex justify-end space-x-2">
+            <button type="button" data-action="click->solutions-filter#closeModal" class="px-4 py-2 rounded-md border border-gray-300 text-gray-700 bg-white hover:bg-gray-50">Cancel</button>
+            <%= form.submit "Apply Filters", class: "inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500" %>
+          </div>
+        <% end %>
+      </div>
     </div>
   </div>
   
@@ -127,29 +152,6 @@
       </div>
     </div>
   <% end %>
-  
-  <div id="filters-modal" class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40 hidden" data-solutions-filter-target="modal">
-    <div class="bg-white rounded-lg shadow-lg w-full max-w-3xl mx-auto p-8 relative">
-      <button type="button"
-              class="absolute top-4 right-4 text-gray-400 hover:text-gray-600"
-              data-action="click->solutions-filter#closeModal">
-        <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
-        </svg>
-      </button>
-      <h2 class="text-xl font-semibold mb-6">More Filters</h2>
-      <%= form_with url: solutions_path, method: :get, data: { turbo_frame: "_top" }, class: "space-y-6" do |form| %>
-        <div>
-          <%= form.label :deployment_type, "Deployment Type", class: "block text-sm font-medium text-gray-700" %>
-          <%= form.select :deployment_type, Solution::DEPLOYMENT_TYPES, { include_blank: "All Deployments", selected: params[:deployment_type] }, class: "mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-blue-500 focus:border-blue-500 rounded-md" %>
-        </div>
-        <div class="flex justify-end space-x-2">
-          <button type="button" data-action="click->solutions-filter#closeModal" class="px-4 py-2 rounded-md border border-gray-300 text-gray-700 bg-white hover:bg-gray-50">Cancel</button>
-          <%= form.submit "Apply Filters", class: "inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500" %>
-        </div>
-      <% end %>
-    </div>
-  </div>
   
   <% if @solutions.any? %>
     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
