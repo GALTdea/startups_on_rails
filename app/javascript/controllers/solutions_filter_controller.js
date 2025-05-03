@@ -14,7 +14,8 @@ export default class extends Controller {
         "techStackToggleIcon",
         "categoriesContent",
         "categoriesToggleText",
-        "categoriesToggleIcon"
+        "categoriesToggleIcon",
+        "modal"
     ]
 
     connect() {
@@ -125,5 +126,23 @@ export default class extends Controller {
                 item.classList.add('hidden')
             }
         })
+    }
+
+    /**
+     * Open the modal for more filters
+     */
+    openModal() {
+        if (this.hasModalTarget) {
+            this.modalTarget.classList.remove('hidden')
+        }
+    }
+
+    /**
+     * Close the modal for more filters
+     */
+    closeModal() {
+        if (this.hasModalTarget) {
+            this.modalTarget.classList.add('hidden')
+        }
     }
 } 
