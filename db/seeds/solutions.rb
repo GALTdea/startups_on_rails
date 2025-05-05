@@ -83,7 +83,13 @@ Company.published.each do |company|
       deployment_type: Solution::DEPLOYMENT_TYPES.sample,
       popularity: rand(1..100),
       published: [ true, true, true, false ].sample, # 75% chance of being published
-      company: company
+      company: company,
+      # New metadata fields
+      target_audience: Solution::TARGET_AUDIENCE.keys.sample,
+      technical_complexity: Solution::TECHNICAL_COMPLEXITY.keys.sample,
+      support_level: Solution::SUPPORT_LEVEL.keys.sample,
+      geographical_availability: Solution::GEOGRAPHICAL_AVAILABILITY.keys.sample,
+      customer_size: Solution::CUSTOMER_SIZE.keys.sample
     )
 
     # Add categories from different types
