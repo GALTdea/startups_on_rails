@@ -161,7 +161,7 @@
                 </div>
                 
                 <%# Technology list %>
-                <div class="max-h-48 overflow-y-auto pr-2 grid grid-cols-2 sm:grid-cols-3 gap-3" data-solutions-filter-target="technologyList">
+                <div class="grid grid-cols-2 sm:grid-cols-3 gap-3" data-solutions-filter-target="technologyList">
                   <% @technologies.each do |technology| %>
                     <div class="tech-item" data-tech-name="<%= technology.name.downcase %>">
                       <div class="flex items-center">
@@ -237,7 +237,7 @@
               </div>
               
               <%# Category list with checkboxes %>
-              <div id="categories-list" class="max-h-48 overflow-y-auto pr-2">
+              <div id="categories-list">
                 <% @root_categories.group_by(&:category_type).each do |category_type, categories| %>
                   <div class="category-group mb-4" data-category-type="<%= category_type %>" data-solutions-filter-target="categoryGroup">
                     <h4 class="text-xs font-medium text-gray-500 mb-2"><%= category_type.humanize %></h4>
