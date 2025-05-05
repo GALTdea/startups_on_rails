@@ -16,71 +16,58 @@ export default class extends Controller {
         "categoriesToggleText",
         "categoriesToggleIcon",
         "modal",
-        "categoryTypeInput"
+        "categoryTypeInput",
+        "deploymentTypeContent",
+        "deploymentTypeToggleText",
+        "deploymentTypeToggleIcon"
     ]
 
     connect() {
         console.log("From solutions filter controller")
         this.updateCategoryVisibility()
-        this.initTechStackState()
-        this.initCategoriesState()
     }
 
     /**
-     * Initialize the tech stack dropdown state
-     * Show it if technologies are selected
+     * Toggle a section's visibility
+     * @param {Event} event - The click event
      */
-    initTechStackState() {
-        // Check if there are any selected technologies
-        const urlParams = new URLSearchParams(window.location.search)
-        if (urlParams.has('technology_ids')) {
-            this.toggleTechStack()
+    toggleSection(event) {
+        const sectionName = event.currentTarget.dataset.section
+        let contentTarget, toggleTextTarget, toggleIconTarget
+
+        // Determine which targets to use based on section name
+        switch (sectionName) {
+            case 'deployment-type':
+                contentTarget = this.deploymentTypeContentTarget
+                toggleTextTarget = this.deploymentTypeToggleTextTarget
+                toggleIconTarget = this.deploymentTypeToggleIconTarget
+                break
+            case 'tech-stack':
+                contentTarget = this.techStackContentTarget
+                toggleTextTarget = this.techStackToggleTextTarget
+                toggleIconTarget = this.techStackToggleIconTarget
+                break
+            case 'categories':
+                contentTarget = this.categoriesContentTarget
+                toggleTextTarget = this.categoriesToggleTextTarget
+                toggleIconTarget = this.categoriesToggleIconTarget
+                break
+            default:
+                console.error('Unknown section name:', sectionName)
+                return
         }
-    }
 
-    /**
-     * Initialize the categories dropdown state
-     * Show it if categories are selected
-     */
-    initCategoriesState() {
-        // Check if there are any selected categories
-        const urlParams = new URLSearchParams(window.location.search)
-        if (urlParams.has('category_ids') || urlParams.has('category_type')) {
-            this.toggleCategories()
-        }
-    }
-
-    /**
-     * Toggle the tech stack dropdown
-     */
-    toggleTechStack() {
-        const isHidden = this.techStackContentTarget.classList.contains('hidden')
+        // Toggle the section visibility
+        const isHidden = contentTarget.classList.contains('hidden')
 
         if (isHidden) {
-            this.techStackContentTarget.classList.remove('hidden')
-            this.techStackToggleTextTarget.textContent = 'Hide'
-            this.techStackToggleIconTarget.classList.add('rotate-180')
+            contentTarget.classList.remove('hidden')
+            toggleTextTarget.textContent = 'Hide'
+            toggleIconTarget.classList.add('rotate-180')
         } else {
-            this.techStackContentTarget.classList.add('hidden')
-            this.techStackToggleTextTarget.textContent = 'Show'
-            this.techStackToggleIconTarget.classList.remove('rotate-180')
-        }
-    }
-
-    /**
-     * Toggle the categories dropdown
-     */
-    toggleCategories() {
-        const isHidden = this.categoriesContentTarget.classList.contains('hidden')
-
-        if (isHidden) {
-            this.categoriesContentTarget.classList.remove('hidden')
-            this.categoriesToggleTextTarget.textContent = 'Hide'
-            this.categoriesToggleIconTarget.classList.add('rotate-180')
-        } else {
-            this.categoriesContentTarget.classList.add('hidden')
-            this.categoriesToggleTextTarget.textContent = 'Show'
-            this.categoriesToggleIconTarget.classList.remove('rotate-180')
+            contentTarget.classList.add('hidden')
+            toggleTextTarget.textContent = 'Show'
+            toggleIconTarget.classList.remove('rotate-180')
         }
     }
 
