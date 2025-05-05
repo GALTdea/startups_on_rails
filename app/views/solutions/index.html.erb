@@ -53,7 +53,7 @@
     </div>
 
     <div id="filters-modal" class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40 hidden" data-solutions-filter-target="modal">
-      <div class="bg-white rounded-lg shadow-lg w-full max-w-3xl mx-auto p-8 relative overflow-y-auto max-h-[90vh]">
+      <div class="bg-white rounded-lg shadow-lg w-full max-w-3xl mx-auto p-6 relative overflow-y-auto max-h-[90vh]">
         <button type="button"
                 class="absolute top-4 right-4 text-gray-400 hover:text-gray-600"
                 data-action="click->solutions-filter#closeModal">
@@ -61,175 +61,188 @@
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
           </svg>
         </button>
-        <h2 class="text-xl font-semibold mb-6">More Filters</h2>
+        
+        <h2 class="text-xl font-semibold mb-6">Filter Solutions</h2>
+        
         <%= form_with url: solutions_path, method: :get, data: { turbo_frame: "_top" }, class: "space-y-6" do |form| %>
           <%# Original search and solution_type hidden fields to preserve those values %>
           <%= form.hidden_field :search, value: params[:search] %>
           <%= form.hidden_field :solution_type, value: params[:solution_type] %>
           
-          <div>
-            <%= form.label :deployment_type, "Deployment Type", class: "block text-sm font-medium text-gray-700" %>
-            <%= form.select :deployment_type, Solution::DEPLOYMENT_TYPES, { include_blank: "All Deployments", selected: params[:deployment_type] }, class: "mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-blue-500 focus:border-blue-500 rounded-md" %>
-          </div>
-          
-          <%# Technology/Tech Stack filter section %>
-          <div class="border-t border-gray-200 pt-4 mt-4">
-            <div class="flex items-center justify-between">
-              <h3 class="text-sm font-medium text-gray-900">Tech Stack</h3>
-              <button type="button" 
-                      class="text-sm text-blue-600 hover:text-blue-800 focus:outline-none"
-                      data-action="click->solutions-filter#toggleTechStack">
-                <span data-solutions-filter-target="techStackToggleText">Show</span>
-                <svg xmlns="http://www.w3.org/2000/svg" 
-                     class="h-4 w-4 inline ml-1 transition-transform" 
-                     fill="none" 
-                     viewBox="0 0 24 24" 
-                     stroke="currentColor"
-                     data-solutions-filter-target="techStackToggleIcon">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
-                </svg>
-              </button>
-            </div>
-            
-            <div class="mt-2 hidden" data-solutions-filter-target="techStackContent">
-              <% if @technologies.exists? %>
-                <%# Technology search %>
-                <div class="mb-3">
-                  <div class="relative rounded-md shadow-sm">
-                    <input type="text" 
-                           id="tech-search" 
-                           placeholder="Search technologies..." 
-                           class="block w-full pr-10 border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500 text-sm"
-                           data-action="input->solutions-filter#searchTechnologies">
-                    <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
-                      <svg class="h-4 w-4 text-gray-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                      </svg>
-                    </div>
-                  </div>
+          <%# Deployment Type Section %>
+          <div class="mb-6">
+            <h3 class="text-sm font-medium text-gray-900 uppercase tracking-wider mb-3">Deployment Type</h3>
+            <div class="grid grid-cols-2 sm:grid-cols-3 gap-3">
+              <% Solution::DEPLOYMENT_TYPES.each do |deployment_type| %>
+                <div class="flex items-center">
+                  <%= form.radio_button :deployment_type, deployment_type, 
+                        id: "deployment_type_#{deployment_type.parameterize}", 
+                        class: "h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300",
+                        checked: params[:deployment_type] == deployment_type %>
+                  <label for="deployment_type_<%= deployment_type.parameterize %>" class="ml-2 text-sm text-gray-700">
+                    <%= deployment_type %>
+                  </label>
                 </div>
-                
-                <%# Selected technologies count %>
-                <% if params[:technology_ids].present? %>
-                  <div class="mb-2 text-xs text-gray-500">
-                    <%= pluralize(Array(params[:technology_ids]).size, 'technology') %> selected
-                  </div>
-                <% end %>
-                
-                <%# Technology list %>
-                <div class="max-h-48 overflow-y-auto pr-2 space-y-1.5" data-solutions-filter-target="technologyList">
-                  <% @technologies.each do |technology| %>
-                    <div class="flex items-start tech-item" data-tech-name="<%= technology.name.downcase %>">
-                      <div class="flex items-center h-5">
-                        <%= form.check_box :technology_ids, 
-                              { multiple: true, 
-                                id: "technology_#{technology.id}", 
-                                checked: Array(params[:technology_ids]).flatten.map(&:to_s).include?(technology.id.to_s) 
-                              },
-                              technology.id, nil %>
-                      </div>
-                      <div class="ml-2 text-sm">
-                        <%= form.label "technology_#{technology.id}", technology.name, class: "text-gray-600 cursor-pointer" %>
-                      </div>
-                    </div>
-                  <% end %>
-                </div>
-              <% else %>
-                <p class="text-sm text-gray-500">No technologies available.</p>
               <% end %>
-            </div>
-          </div>
-          
-          <%# Category filter section %>
-          <div class="border-t border-gray-200 pt-4">
-            <div class="flex items-center justify-between">
-              <h3 class="text-sm font-medium text-gray-900">Categories</h3>
-              <button type="button" 
-                      class="text-sm text-blue-600 hover:text-blue-800 focus:outline-none"
-                      data-action="click->solutions-filter#toggleCategories">
-                <span data-solutions-filter-target="categoriesToggleText">Show</span>
-                <svg xmlns="http://www.w3.org/2000/svg" 
-                     class="h-4 w-4 inline ml-1 transition-transform" 
-                     fill="none" 
-                     viewBox="0 0 24 24" 
-                     stroke="currentColor"
-                     data-solutions-filter-target="categoriesToggleIcon">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
-                </svg>
-              </button>
-            </div>
-            
-            <div class="mt-2 hidden" data-solutions-filter-target="categoriesContent">
-              <div class="space-y-4">
-                <%# Category Type selector %>
-                <div>
-                  <%= form.label :category_type, "Category Type", class: "block text-sm font-medium text-gray-700" %>
-                  <%= form.select :category_type, 
-                        @category_types,
-                        { include_blank: "All Category Types", selected: params[:category_type] }, 
-                        class: "mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-blue-500 focus:border-blue-500 rounded-md",
-                        data: { action: "change->solutions-filter#updateCategoryList" } %>
-                </div>
-                
-                <%# Selected categories count %>
-                <% if params[:category_ids].present? %>
-                  <div class="mb-2 text-xs text-gray-500">
-                    <%= pluralize(Array(params[:category_ids]).size, 'category') %> selected
-                  </div>
-                <% end %>
-                
-                <%# Category tree with hierarchy %>
-                <div id="categories-list" class="space-y-2 mt-2">
-                  <% @root_categories.group_by(&:category_type).each do |category_type, categories| %>
-                    <div class="category-group" data-category-type="<%= category_type %>" data-solutions-filter-target="categoryGroup">
-                      <h4 class="text-xs font-medium text-gray-500 uppercase tracking-wider mb-2"><%= category_type.humanize %></h4>
-                      <div class="space-y-1.5">
-                        <% categories.each do |category| %>
-                          <div class="flex items-start">
-                            <div class="flex items-center h-5">
-                              <%= form.check_box :category_ids, 
-                                    { multiple: true, 
-                                      id: "category_#{category.id}", 
-                                      checked: Array(params[:category_ids]).flatten.map(&:to_s).include?(category.id.to_s) 
-                                    },
-                                    category.id, nil %>
-                            </div>
-                            <div class="ml-2 text-sm">
-                              <%= form.label "category_#{category.id}", category.name, class: "font-medium text-gray-700 cursor-pointer" %>
-                              
-                              <% if category.children.any? %>
-                                <div class="ml-4 mt-1.5 space-y-1.5">
-                                  <% category.children.each do |child| %>
-                                    <div class="flex items-start">
-                                      <div class="flex items-center h-5">
-                                        <%= form.check_box :category_ids, 
-                                              { multiple: true, 
-                                                id: "category_#{child.id}", 
-                                                checked: Array(params[:category_ids]).flatten.map(&:to_s).include?(child.id.to_s) 
-                                              },
-                                              child.id, nil %>
-                                      </div>
-                                      <div class="ml-2 text-sm">
-                                        <%= form.label "category_#{child.id}", child.name, class: "text-gray-600 cursor-pointer" %>
-                                      </div>
-                                    </div>
-                                  <% end %>
-                                </div>
-                              <% end %>
-                            </div>
-                          </div>
-                        <% end %>
-                      </div>
-                    </div>
-                  <% end %>
-                </div>
+              <div class="flex items-center">
+                <%= form.radio_button :deployment_type, "", 
+                      id: "deployment_type_all", 
+                      class: "h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300",
+                      checked: params[:deployment_type].blank? %>
+                <label for="deployment_type_all" class="ml-2 text-sm text-gray-700">
+                  All Types
+                </label>
               </div>
             </div>
           </div>
           
-          <div class="pt-4 flex justify-between">
-            <%= link_to "Clear Filters", solutions_path, class: "text-sm text-gray-500 hover:text-gray-700" %>
-            <%= form.submit "Apply Filters", class: "inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500" %>
+          <hr class="border-gray-200">
+          
+          <%# Technology/Tech Stack section %>
+          <div class="mb-6">
+            <div class="flex items-center justify-between mb-3">
+              <h3 class="text-sm font-medium text-gray-900 uppercase tracking-wider">Tech Stack</h3>
+              <% if params[:technology_ids].present? %>
+                <span class="text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded-full">
+                  <%= pluralize(Array(params[:technology_ids]).size, 'selected') %>
+                </span>
+              <% end %>
+            </div>
+            
+            <% if @technologies.exists? %>
+              <%# Technology search %>
+              <div class="mb-4">
+                <div class="relative rounded-md shadow-sm">
+                  <input type="text" 
+                         id="tech-search" 
+                         placeholder="Search technologies..." 
+                         class="block w-full pr-10 border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500 text-sm"
+                         data-action="input->solutions-filter#searchTechnologies">
+                  <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
+                    <svg class="h-4 w-4 text-gray-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                    </svg>
+                  </div>
+                </div>
+              </div>
+              
+              <%# Technology list %>
+              <div class="max-h-48 overflow-y-auto pr-2 grid grid-cols-2 sm:grid-cols-3 gap-3" data-solutions-filter-target="technologyList">
+                <% @technologies.each do |technology| %>
+                  <div class="tech-item" data-tech-name="<%= technology.name.downcase %>">
+                    <div class="flex items-center">
+                      <%= form.check_box :technology_ids, 
+                            { multiple: true, 
+                              id: "technology_#{technology.id}", 
+                              checked: Array(params[:technology_ids]).flatten.map(&:to_s).include?(technology.id.to_s),
+                              class: "h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded" 
+                            },
+                            technology.id, nil %>
+                      <label for="technology_<%= technology.id %>" class="ml-2 text-sm text-gray-700 cursor-pointer">
+                        <%= technology.name %>
+                      </label>
+                    </div>
+                  </div>
+                <% end %>
+              </div>
+            <% else %>
+              <p class="text-sm text-gray-500">No technologies available.</p>
+            <% end %>
+          </div>
+          
+          <hr class="border-gray-200">
+          
+          <%# Categories section %>
+          <div class="mb-6">
+            <div class="flex items-center justify-between mb-3">
+              <h3 class="text-sm font-medium text-gray-900 uppercase tracking-wider">Categories</h3>
+              <% if params[:category_ids].present? %>
+                <span class="text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded-full">
+                  <%= pluralize(Array(params[:category_ids]).size, 'selected') %>
+                </span>
+              <% end %>
+            </div>
+            
+            <%# Category Type filter pills %>
+            <div class="flex flex-wrap gap-2 mb-4">
+              <button type="button" 
+                      class="px-3 py-1 rounded-full text-xs font-medium <%= params[:category_type].blank? ? 'bg-blue-100 text-blue-800' : 'bg-gray-100 text-gray-600 hover:bg-gray-200' %>"
+                      data-action="click->solutions-filter#selectCategoryType"
+                      data-category-type="">
+                All Types
+              </button>
+              
+              <% @category_types.each do |category_type| %>
+                <button type="button" 
+                        class="px-3 py-1 rounded-full text-xs font-medium <%= params[:category_type] == category_type ? 'bg-blue-100 text-blue-800' : 'bg-gray-100 text-gray-600 hover:bg-gray-200' %>"
+                        data-action="click->solutions-filter#selectCategoryType"
+                        data-category-type="<%= category_type %>">
+                  <%#= category_type.humanize %>
+                </button>
+              <% end %>
+              
+              <%= form.hidden_field :category_type, value: params[:category_type], data: { 'solutions-filter-target': 'categoryTypeInput' } %>
+            </div>
+            
+            <%# Category list with checkboxes %>
+            <div id="categories-list" class="max-h-48 overflow-y-auto pr-2">
+              <% @root_categories.group_by(&:category_type).each do |category_type, categories| %>
+                <div class="category-group mb-4" data-category-type="<%= category_type %>" data-solutions-filter-target="categoryGroup">
+                  <h4 class="text-xs font-medium text-gray-500 mb-2"><%= category_type.humanize %></h4>
+                  <div class="grid grid-cols-2 gap-2">
+                    <% categories.each do |category| %>
+                      <div>
+                        <div class="flex items-center">
+                          <%= form.check_box :category_ids, 
+                                { multiple: true, 
+                                  id: "category_#{category.id}", 
+                                  checked: Array(params[:category_ids]).flatten.map(&:to_s).include?(category.id.to_s),
+                                  class: "h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                                },
+                                category.id, nil %>
+                          <label for="category_<%= category.id %>" class="ml-2 text-sm text-gray-700 font-medium cursor-pointer">
+                            <%= category.name %>
+                          </label>
+                        </div>
+                        
+                        <% if category.children.any? %>
+                          <div class="ml-6 mt-1">
+                            <% category.children.each do |child| %>
+                              <div class="flex items-center mt-1">
+                                <%= form.check_box :category_ids, 
+                                      { multiple: true, 
+                                        id: "category_#{child.id}", 
+                                        checked: Array(params[:category_ids]).flatten.map(&:to_s).include?(child.id.to_s),
+                                        class: "h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                                      },
+                                      child.id, nil %>
+                                <label for="category_<%= child.id %>" class="ml-2 text-sm text-gray-600 cursor-pointer">
+                                  <%= child.name %>
+                                </label>
+                              </div>
+                            <% end %>
+                          </div>
+                        <% end %>
+                      </div>
+                    <% end %>
+                  </div>
+                </div>
+              <% end %>
+            </div>
+          </div>
+          
+          <hr class="border-gray-200 mb-4">
+          
+          <div class="flex items-center justify-between">
+            <%= link_to "Clear All", solutions_path, class: "text-sm text-gray-500 hover:text-gray-700" %>
+            <div class="space-x-2">
+              <button type="button" 
+                      data-action="click->solutions-filter#closeModal" 
+                      class="inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md shadow-sm text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500">
+                Cancel
+              </button>
+              <%= form.submit "Apply Filters", class: "inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500" %>
+            </div>
           </div>
         <% end %>
       </div>

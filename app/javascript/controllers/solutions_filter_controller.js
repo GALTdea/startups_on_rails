@@ -15,7 +15,8 @@ export default class extends Controller {
         "categoriesContent",
         "categoriesToggleText",
         "categoriesToggleIcon",
-        "modal"
+        "modal",
+        "categoryTypeInput"
     ]
 
     connect() {
@@ -159,5 +160,33 @@ export default class extends Controller {
         if (this.hasModalTarget) {
             this.modalTarget.classList.add('hidden')
         }
+    }
+
+    /**
+     * Handle selection of category type via pill buttons
+     * @param {Event} event - The click event
+     */
+    selectCategoryType(event) {
+        const selectedType = event.currentTarget.dataset.categoryType;
+
+        // Update the hidden input value
+        if (this.hasCategoryTypeInputTarget) {
+            this.categoryTypeInputTarget.value = selectedType;
+        }
+
+        // Update the UI
+        this.updateCategoryVisibility(selectedType);
+
+        // Update active state of pills
+        const pills = document.querySelectorAll('[data-action="click->solutions-filter#selectCategoryType"]');
+        pills.forEach(pill => {
+            if (pill.dataset.categoryType === selectedType) {
+                pill.classList.add('bg-blue-100', 'text-blue-800');
+                pill.classList.remove('bg-gray-100', 'text-gray-600', 'hover:bg-gray-200');
+            } else {
+                pill.classList.remove('bg-blue-100', 'text-blue-800');
+                pill.classList.add('bg-gray-100', 'text-gray-600', 'hover:bg-gray-200');
+            }
+        });
     }
 } 
