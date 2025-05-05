@@ -112,6 +112,68 @@
       <%= simple_format(@solution.description) %>
     </div>
     
+    <%# Solution Metadata Section %>
+    <div class="mt-8 pt-8 border-t border-gray-200">
+      <h2 class="text-xl font-semibold mb-4">Solution Specifications</h2>
+      
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-4">
+        <% if @solution.target_audience.present? %>
+          <div>
+            <dt class="text-sm font-medium text-gray-600">Target Audience</dt>
+            <dd class="mt-1 flex items-center">
+              <span class="px-2.5 py-1 bg-orange-100 text-orange-800 text-sm rounded-full">
+                <%= @solution.target_audience_name %>
+              </span>
+            </dd>
+          </div>
+        <% end %>
+        
+        <% if @solution.technical_complexity.present? %>
+          <div>
+            <dt class="text-sm font-medium text-gray-600">Technical Complexity</dt>
+            <dd class="mt-1 flex items-center">
+              <span class="px-2.5 py-1 bg-pink-100 text-pink-800 text-sm rounded-full">
+                <%= @solution.technical_complexity_name %>
+              </span>
+            </dd>
+          </div>
+        <% end %>
+        
+        <% if @solution.support_level.present? %>
+          <div>
+            <dt class="text-sm font-medium text-gray-600">Support Level</dt>
+            <dd class="mt-1 flex items-center">
+              <span class="px-2.5 py-1 bg-lime-100 text-lime-800 text-sm rounded-full">
+                <%= @solution.support_level_name %>
+              </span>
+            </dd>
+          </div>
+        <% end %>
+        
+        <% if @solution.geographical_availability.present? %>
+          <div>
+            <dt class="text-sm font-medium text-gray-600">Geographical Availability</dt>
+            <dd class="mt-1 flex items-center">
+              <span class="px-2.5 py-1 bg-sky-100 text-sky-800 text-sm rounded-full">
+                <%= @solution.geographical_availability_name %>
+              </span>
+            </dd>
+          </div>
+        <% end %>
+        
+        <% if @solution.customer_size.present? %>
+          <div>
+            <dt class="text-sm font-medium text-gray-600">Ideal Company Size</dt>
+            <dd class="mt-1 flex items-center">
+              <span class="px-2.5 py-1 bg-amber-100 text-amber-800 text-sm rounded-full">
+                <%= @solution.customer_size_name %>
+              </span>
+            </dd>
+          </div>
+        <% end %>
+      </div>
+    </div>
+    
     <% if @solution.company %>
       <div class="mt-8 pt-8 border-t border-gray-200">
         <h2 class="text-xl font-semibold mb-4">About the Company</h2>

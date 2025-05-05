@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_04_29_011640) do
+ActiveRecord::Schema[8.0].define(version: 2025_05_05_200931) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -174,11 +174,21 @@ ActiveRecord::Schema[8.0].define(version: 2025_04_29_011640) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.bigint "company_id"
+    t.string "target_audience", comment: "Primary user persona (Technical, Non-technical, Marketing, etc.)"
+    t.string "technical_complexity", comment: "Implementation difficulty (No-code, Low-code, Technical)"
+    t.string "support_level", comment: "Level of support provided (Self-service, Email/chat, etc.)"
+    t.string "geographical_availability", default: "Global", comment: "Regions where the solution is available"
+    t.string "customer_size", comment: "Ideal company size for the solution"
     t.index ["company_id"], name: "index_solutions_on_company_id"
+    t.index ["customer_size"], name: "index_solutions_on_customer_size"
     t.index ["deployment_type"], name: "index_solutions_on_deployment_type"
+    t.index ["geographical_availability"], name: "index_solutions_on_geographical_availability"
     t.index ["name"], name: "index_solutions_on_name"
     t.index ["popularity"], name: "index_solutions_on_popularity"
     t.index ["solution_type"], name: "index_solutions_on_solution_type"
+    t.index ["support_level"], name: "index_solutions_on_support_level"
+    t.index ["target_audience"], name: "index_solutions_on_target_audience"
+    t.index ["technical_complexity"], name: "index_solutions_on_technical_complexity"
   end
 
   create_table "solutions_technologies", id: false, force: :cascade do |t|

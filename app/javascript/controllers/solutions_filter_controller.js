@@ -19,7 +19,10 @@ export default class extends Controller {
         "categoryTypeInput",
         "deploymentTypeContent",
         "deploymentTypeToggleText",
-        "deploymentTypeToggleIcon"
+        "deploymentTypeToggleIcon",
+        "advancedFiltersContent",
+        "advancedFiltersToggleText",
+        "advancedFiltersToggleIcon"
     ]
 
     connect() {
@@ -51,6 +54,11 @@ export default class extends Controller {
                 contentTarget = this.categoriesContentTarget
                 toggleTextTarget = this.categoriesToggleTextTarget
                 toggleIconTarget = this.categoriesToggleIconTarget
+                break
+            case 'advanced-filters':
+                contentTarget = this.advancedFiltersContentTarget
+                toggleTextTarget = this.advancedFiltersToggleTextTarget
+                toggleIconTarget = this.advancedFiltersToggleIconTarget
                 break
             default:
                 console.error('Unknown section name:', sectionName)

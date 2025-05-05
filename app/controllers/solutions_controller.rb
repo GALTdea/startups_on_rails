@@ -43,6 +43,13 @@ class SolutionsController < ApplicationController
       @solutions = @solutions.with_technology(technology_ids)
     end
 
+    # New metadata filters
+    @solutions = @solutions.by_target_audience(params[:target_audience]) if params[:target_audience].present?
+    @solutions = @solutions.by_technical_complexity(params[:technical_complexity]) if params[:technical_complexity].present?
+    @solutions = @solutions.by_support_level(params[:support_level]) if params[:support_level].present?
+    @solutions = @solutions.by_geographical_availability(params[:geographical_availability]) if params[:geographical_availability].present?
+    @solutions = @solutions.by_customer_size(params[:customer_size]) if params[:customer_size].present?
+
     # Search by term
     @solutions = @solutions.search(params[:search]) if params[:search].present?
 
@@ -107,6 +114,8 @@ class SolutionsController < ApplicationController
       :name, :description, :website, :pricing,
       :solution_type, :deployment_type, :popularity,
       :published, :company_id, :logo,
+      :target_audience, :technical_complexity, :support_level,
+      :geographical_availability, :customer_size,
       category_ids: [], technology_ids: []
     )
   end
