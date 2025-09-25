@@ -69,7 +69,7 @@ end
 
 gem "devise", "~> 4.9", ">= 4.9.3"
 
-gem "pundit", "~> 2.4"
+gem "pundit", "~> 2.5"
 
 # Fast, lightweight and modern pagination for Rails
 gem "pagy", "~> 9.3", ">= 9.3.3"
